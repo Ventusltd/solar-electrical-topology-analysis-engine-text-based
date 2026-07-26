@@ -1,0 +1,5 @@
+.canvas-wrap{position:relative;overflow:auto!important;cursor:grab;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:none;background:radial-gradient(circle at center,rgba(0,229,255,.04),transparent 50%)}
+.canvas-wrap.dragging{cursor:grabbing;user-select:none}
+.canvas-wrap canvas{display:block;width:2200px!important;height:1350px!important;max-width:none!important;max-height:none!important}
+#zoomReadout{position:sticky!important;top:12px;left:14px;width:max-content;z-index:5;pointer-events:none}
+@media(max-width:700px){.canvas-wrap{height:72vh!important;min-height:560px}.canvas-wrap canvas{width:2200px!important;height:1350px!important}}
