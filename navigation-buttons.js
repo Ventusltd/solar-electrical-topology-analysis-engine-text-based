@@ -18,10 +18,10 @@
 
   buttons.forEach(button=>button.addEventListener('click',()=>applyView(Number(button.dataset.viewZoom))));
 
-  // Disable gesture and wheel navigation. Selection and cable-ruler clicks remain available.
+  // Disable canvas gesture navigation while preserving ordinary page scrolling.
+  canvas.style.touchAction='pan-y';
   canvas.addEventListener('wheel',event=>{event.preventDefault();event.stopImmediatePropagation();},{capture:true,passive:false});
   canvas.addEventListener('pointermove',event=>{event.stopImmediatePropagation();},{capture:true});
-  canvas.addEventListener('touchmove',event=>{event.preventDefault();event.stopImmediatePropagation();},{capture:true,passive:false});
   canvas.addEventListener('gesturestart',event=>{event.preventDefault();event.stopImmediatePropagation();},{capture:true,passive:false});
   canvas.addEventListener('gesturechange',event=>{event.preventDefault();event.stopImmediatePropagation();},{capture:true,passive:false});
 
