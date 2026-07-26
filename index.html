@@ -1,113 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Solar DC String Topology Engine</title>
-<meta name="description" content="2D solar DC topology engine modelling complete string circuits: home-runs, module leads, connectors, temperature, loop geometry, inductance and capacitance.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solar DC String Topology Engine V7 — In Development</title>
+<meta name="description" content="Open-source geometry-derived solar DC string topology and complete-circuit electrical research engine.">
 <link rel="stylesheet" href="./styles.css">
 <link rel="stylesheet" href="./spider-navigation.css">
 </head>
 <body>
-<header class="topbar"><div><div class="kicker">GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING</div><h1>Solar DC String Topology Engine</h1><p>Geometry-derived complete-circuit study of home-run cables, module leads, connector contacts, loop area, inductance and capacitance to earth.</p></div><div class="status"><span></span> V6 COMPLETE CIRCUIT</div></header>
-<div class="reliance"><strong>ENGINEERING SCREENING OUTPUT</strong>The Ventus values are treated as editable hypotheses, not validated constants. Results remain indicative until geometry, module leads, connector resistance, cable data, capacitance and installation conditions are confirmed from project evidence and reviewed by a competent person.</div>
+<header class="topbar">
+  <div>
+    <div class="kicker">GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING</div>
+    <h1>Solar DC String Topology Engine</h1>
+    <p>Geometry-derived complete-circuit study of home-runs, module leads, connector interfaces, loop area, differential and common-mode inductance, and capacitance to earth.</p>
+  </div>
+  <div class="status development"><span></span> V7 IN DEVELOPMENT</div>
+</header>
+<div class="danger-banner"><strong>USE AT YOUR OWN RISK.</strong> Research prototype only. It is not a design certificate, warranty, protection setting, construction instruction or compliance verdict. Every result remains conditional on the stated geometry, evidence and assumptions.</div>
+<div class="reliance"><strong>ENGINEERING SCREENING OUTPUT</strong>Values are editable hypotheses until confirmed from controlled drawings, manufacturer data, field measurement or testing. Defaulted inputs produce criteria and margins, not equipment specifications.</div>
 <main class="layout">
 <aside class="controls">
-<section><h2>Physical A-frame</h2>
-<label>Modules along row <input id="modulesAlong" type="number" min="1" value="30"></label>
-<label>Ranks per face <input id="ranksUp" type="number" min="1" value="5"></label>
-<label>Faces per table <input id="faces" type="number" min="1" max="2" value="2"></label>
-<label>Tilt (degrees) <input id="tilt" type="number" min="0" max="60" step="0.1" value="10"></label>
-<label>Module width along row (m) <input id="moduleWidth" type="number" step="0.001" value="1.303"></label>
-<label>Module length up slope (m) <input id="moduleLength" type="number" step="0.001" value="2.384"></label>
-<label>Clamp gap (m) <input id="clampGap" type="number" min="0" step="0.001" value="0.020"></label>
-<label>Along-row gap (m) <input id="alongGap" type="number" min="0" step="0.001" value="0.020"></label>
-<label>Near-end allowance (m) <input id="nearAllowance" type="number" min="0" step="0.5" value="10"></label>
-<div class="provenance">Geometry and allowance: <strong>ASSUMED · EDITABLE</strong></div>
+<section>
+  <h2>Physical A-frame</h2>
+  <label>Modules along row <input id="modulesAlong" type="number" min="1" value="30"></label>
+  <label>Ranks per face <input id="ranksUp" type="number" min="1" value="5"></label>
+  <label>Faces per table <input id="faces" type="number" min="1" max="2" value="2"></label>
+  <label>Tilt (degrees) <input id="tilt" type="number" min="0" max="60" step="0.1" value="10"></label>
+  <label>Module width along row (m) <input id="moduleWidth" type="number" min="0.1" step="0.001" value="1.303"></label>
+  <label>Module length up slope (m) <input id="moduleLength" type="number" min="0.1" step="0.001" value="2.384"></label>
+  <label>Clamp / module gap (m) <input id="alongGap" type="number" min="0" step="0.001" value="0.020"></label>
+  <label>Rank clamp gap (m) <input id="clampGap" type="number" min="0" step="0.001" value="0.020"></label>
+  <label>Near-end route allowance (m) <input id="nearAllowance" type="number" min="0" step="0.5" value="10"></label>
+  <div class="provenance">Row span is derived as <strong>N × module width + (N−1) × gap</strong>. Geometry and allowance: <strong>ASSUMED · EDITABLE</strong>.</div>
 </section>
-<section><h2>String bands</h2><p class="note">Comma-separated counts create equal-length string groups. Drag the large drawing like the Spider Sandbox; use + and − for controlled mobile zoom.</p>
-<label>East face bands <input id="eastBands" type="text" value="5,5,2"></label>
-<label>West face bands <input id="westBands" type="text" value="5,5,2"></label>
-<label>Modules per string <input id="modulesPerString" type="number" min="1" value="30"></label>
-<label>MPPT count <input id="mpptCount" type="number" min="1" value="12"></label>
+<section>
+  <h2>Inverter archetype and wiring</h2>
+  <label>East face bands <input id="eastBands" type="text" value="5,5,2"></label>
+  <label>West face bands <input id="westBands" type="text" value="5,5,2"></label>
+  <label>Modules per string <input id="modulesPerString" type="number" min="1" value="30"></label>
+  <label>MPPT count <input id="mpptCount" type="number" min="1" value="12"></label>
+  <label>Wiring topology <select id="wiringMode"><option value="sequential" selected>Sequential / far return</option><option value="leapfrog">Leapfrog / both ends near</option><option value="custom">Custom terminal fractions</option></select></label>
+  <label>Custom + terminal fraction <input id="positiveFraction" type="number" min="0" max="1" step="0.05" value="0"></label>
+  <label>Custom − terminal fraction <input id="negativeFraction" type="number" min="0" max="1" step="0.05" value="1"></label>
+  <div class="provenance">Wiring mode is a <strong>MODEL SCENARIO</strong>. Do not classify installed wiring from a photograph alone.</div>
 </section>
-<section><h2>Complete series circuit</h2>
-<label>Positive lead/module (m) <input id="positiveLead" type="number" min="0" step="0.01" value="0.35"></label>
-<label>Negative lead/module (m) <input id="negativeLead" type="number" min="0" step="0.01" value="0.35"></label>
-<label>Module-lead CSA (mm²) <input id="leadCsa" type="number" min="0.1" step="0.1" value="4"></label>
-<label>Extension leads total (m) <input id="extensionLead" type="number" min="0" step="0.1" value="0"></label>
-<label>Connector contacts/string <input id="connectorContacts" type="number" min="0" step="1" value="62"></label>
-<label>Contact resistance (mΩ) <input id="connectorMilliOhm" type="number" min="0" step="0.01" value="0.35"></label>
-<label>Extra terminations (mΩ) <input id="terminationMilliOhm" type="number" min="0" step="0.01" value="0.50"></label>
-<div class="provenance">Lead lengths and contact resistance: <strong>UNVERIFIED USER INPUTS</strong>. Replace from manufacturer or measured evidence.</div>
+<section>
+  <h2>Plant basis</h2>
+  <label>Installed inverters <input id="siteInverters" type="number" min="1" value="900"></label>
+  <label>Actual site strings <input id="siteStrings" type="number" min="1" value="18918"></label>
+  <label>Maximum strings / inverter <input id="maxStringsPerInverter" type="number" min="1" value="24"></label>
+  <label>Inverter rating (kVA) <input id="inverterKva" type="number" min="1" value="352"></label>
+  <label>Registered export (MW) <input id="registeredMw" type="number" min="0" step="0.1" value="280"></label>
+  <label>Installed DC (MWp) <input id="siteDcMwp" type="number" min="0" step="0.0001" value="372.8376"></label>
+  <div class="provenance">Default fleet basis: <strong>900 inverters · 18,918 strings · 24-input hardware ceiling</strong>. The selected 24-string drawing is an archetype, not a claim that every inverter is full.</div>
 </section>
-<section><h2>Electrical and temperature</h2>
-<label>Module Vmp (V) <input id="moduleVmp" type="number" step="0.1" value="38.1"></label>
-<label>Module Voc (V) <input id="moduleVoc" type="number" step="0.1" value="45.9"></label>
-<label>Module Imp (A) <input id="moduleImp" type="number" step="0.01" value="17.35"></label>
-<label>βVoc (%/°C) <input id="betaVoc" type="number" step="0.01" value="-0.25"></label>
-<label>Cold cell temperature (°C) <input id="coldTemp" type="number" value="-10"></label>
-<label>Home-run CSA (mm²) <input id="csa" type="number" step="0.1" value="6"></label>
-<label>Home-run temperature (°C) <input id="conductorTemp" type="number" value="70"></label>
-<label>Module-lead temperature (°C) <input id="leadTemp" type="number" value="75"></label>
-<label>Reference comparison (°C) <input id="referenceTemp" type="number" value="20"></label>
-<label>Connector temperature coeff. (/°C) <input id="connectorAlpha" type="number" step="0.0001" value="0.0039"></label>
+<section>
+  <h2>Complete series circuit</h2>
+  <label>Positive factory lead/module (m) <input id="positiveLead" type="number" min="0" step="0.01" value="0.35"></label>
+  <label>Negative factory lead/module (m) <input id="negativeLead" type="number" min="0" step="0.01" value="0.28"></label>
+  <label>Module-lead CSA (mm²) <input id="leadCsa" type="number" min="0.1" step="0.1" value="4"></label>
+  <label>Extension leads total/string (m) <input id="extensionLead" type="number" min="0" step="0.1" value="0"></label>
+  <label>Additional mated interfaces <input id="additionalConnectorPairs" type="number" min="0" step="1" value="4"></label>
+  <label>Resistance basis <select id="connectorBasis"><option value="per_mated_pair" selected>Per mated pair</option><option value="per_contact_half">Per contact half</option><option value="measured_total_string">Measured total string</option></select></label>
+  <label>Connector resistance (mΩ) <input id="connectorMilliOhm" type="number" min="0" step="0.01" value="0.35"></label>
+  <label>Extra total terminations (mΩ) <input id="terminationMilliOhm" type="number" min="0" step="0.01" value="0.50"></label>
+  <label>Connector temperature coeff. (/°C) <input id="connectorAlpha" type="number" step="0.0001" value="0.0039"></label>
+  <div class="provenance">Connector count is graph-derived: <strong>N−1 inter-module pairs + additional interfaces</strong>. Resistance basis must match the evidence source.</div>
 </section>
-<section><h2>Loop geometry and capacitance</h2>
-<label>Cable OD (mm) <input id="cableOd" type="number" step="0.1" value="6.4"></label>
-<label>External pair spacing (mm) <input id="externalSpacing" type="number" min="0.1" step="1" value="40"></label>
-<label>Module-loop separation (mm) <input id="moduleSpacing" type="number" min="0.1" step="10" value="500"></label>
-<label>Effective εr <input id="epsilonR" type="number" step="0.1" value="2.3"></label>
-<label>Module capacitance to frame (pF) <input id="moduleCapPf" type="number" min="0" step="10" value="125"></label>
-<label>Wet multiplier <input id="wetMultiplier" type="number" min="1" step="0.1" value="3"></label>
-<label>Surface state <select id="surfaceState"><option value="dry">Dry</option><option value="wet">Wet scenario</option></select></label>
-<label>Disturbance rise time (µs) <input id="riseTime" type="number" min="0.001" step="0.1" value="1.2"></label>
-<div class="provenance">125 pF is retained only as a visible placeholder. It is not represented as validated module data.</div>
+<section>
+  <h2>Coiled surplus scenario</h2>
+  <label>Coils per string <input id="coilsPerString" type="number" min="0" step="1" value="0"></label>
+  <label>Turns per coil <input id="coilTurns" type="number" min="0" step="0.1" value="3.5"></label>
+  <label>Mean coil diameter (mm) <input id="coilDiameter" type="number" min="0" step="5" value="150"></label>
+  <label>Coil arrangement <select id="coilMode"><option value="single_pole" selected>Single-pole coils</option><option value="paired_opposed">Both poles coiled together, opposing current</option><option value="paired_same">Both poles coiled together, same sense</option></select></label>
+  <div class="provenance">Default coil count is zero. Add only from measured or drawing-derived evidence. Coil calculations are screening approximations.</div>
 </section>
-<section><h2>Cable ruler</h2><p class="note">Draw or type additional route segments. Each segment is separately reported.</p>
-<label>Segment type <select id="manualType"><option value="surface_pair">Surface pair</option><option value="trench_pair">Trench pair</option><option value="rail_mounted_pair">Rail-mounted pair</option><option value="free_air_pair">Free-air pair</option><option value="custom">Custom</option></select></label>
-<label>Conductor separation (mm) <input id="manualSpacing" type="number" min="0.1" step="1" value="40"></label>
-<label>Typed length (m) <input id="manualLength" type="number" min="0" step="0.1" value="10"></label>
-<label>Provenance <select id="manualProvenance"><option value="measured">Measured</option><option value="assumed" selected>Assumed</option><option value="defaulted">Defaulted</option></select></label>
-<div class="button-row"><button id="drawCable" class="primary">DRAW CABLE</button><button id="addTyped">ADD TYPED</button></div>
-<div class="button-row"><button id="undoCable">UNDO</button><button id="clearCables">CLEAR</button></div>
-<div id="drawStatus" class="provenance">Ruler: <strong>READY</strong></div>
+<section>
+  <h2>Electrical and temperature</h2>
+  <label>Module Vmp (V) <input id="moduleVmp" type="number" step="0.1" value="38.1"></label>
+  <label>Module Voc (V) <input id="moduleVoc" type="number" step="0.1" value="45.9"></label>
+  <label>Module Imp (A) <input id="moduleImp" type="number" step="0.01" value="17.35"></label>
+  <label>βVoc (%/°C) <input id="betaVoc" type="number" step="0.01" value="-0.25"></label>
+  <label>Cold cell temperature (°C) <input id="coldTemp" type="number" value="-10"></label>
+  <label>Home-run CSA (mm²) <input id="csa" type="number" step="0.1" value="6"></label>
+  <label>Home-run R20 (mΩ/m) <input id="homeR20" type="number" min="0" step="0.01" value="3.39"></label>
+  <label>Module-lead R20 (mΩ/m) <input id="leadR20" type="number" min="0" step="0.01" value="5.09"></label>
+  <label>Home-run temperature (°C) <input id="conductorTemp" type="number" value="70"></label>
+  <label>Module-lead temperature (°C) <input id="leadTemp" type="number" value="75"></label>
+  <label>Reference comparison (°C) <input id="referenceTemp" type="number" value="20"></label>
+  <div class="provenance">Default R20 values represent flexible tinned copper screening inputs. Replace with the controlled cable datasheet.</div>
+</section>
+<section>
+  <h2>Loop and common-mode geometry</h2>
+  <label>Cable OD (mm) <input id="cableOd" type="number" step="0.1" value="6.4"></label>
+  <label>External pair spacing (mm) <input id="externalSpacing" type="number" min="0.1" step="1" value="40"></label>
+  <label>Module-loop separation (mm) <input id="moduleSpacing" type="number" min="0.1" step="10" value="500"></label>
+  <label>Effective εr for line <input id="epsilonR" type="number" min="0.1" step="0.1" value="1.3"></label>
+  <label>Route height above earth (m) <input id="routeHeight" type="number" min="0.01" step="0.1" value="1.5"></label>
+  <label>Disturbance rise time (µs) <input id="riseTime" type="number" min="0.001" step="0.1" value="1.2"></label>
+  <div class="provenance">Separation, formation, route height and rise time are <strong>ASSUMED</strong> until measured. The engine reports the criterion and margin.</div>
+</section>
+<section>
+  <h2>Capacitance to frame and earth</h2>
+  <label>Glass thickness (mm) <input id="glassThickness" type="number" min="0.1" step="0.1" value="2.0"></label>
+  <label>Glass εr <input id="glassEpsilon" type="number" min="1" step="0.1" value="7.5"></label>
+  <label>Dry effective area/module (m²) <input id="dryArea" type="number" min="0" step="0.001" value="0.074"></label>
+  <label>Wet faces <select id="wetFaces"><option value="1" selected>One wetted face</option><option value="2">Two wetted faces</option></select></label>
+  <label>Measured dry C/module (nF, 0=derive) <input id="measuredDryCap" type="number" min="0" step="0.1" value="0"></label>
+  <label>Measured wet C/module (nF, 0=derive) <input id="measuredWetCap" type="number" min="0" step="0.1" value="0"></label>
+  <label>Cable dielectric εr <input id="cableEpsilon" type="number" min="1" step="0.1" value="2.3"></label>
+  <label>Wetted cable fraction <input id="wettedCableFraction" type="number" min="0" max="1" step="0.05" value="0"></label>
+  <div class="provenance">Dry area is a <strong>DEFAULTED FRINGING PROXY</strong>. Wet full-area values are geometry-derived scenarios. Measurement overrides either scenario.</div>
+</section>
+<section>
+  <h2>Cable ruler</h2>
+  <p class="note">Draw or type an additional paired route. Each ruler is separately reported and does not alter generated string geometry.</p>
+  <label>Segment type <select id="manualType"><option value="surface_pair">Surface pair</option><option value="trench_pair">Trench pair</option><option value="rail_mounted_pair">Rail-mounted pair</option><option value="free_air_pair">Free-air pair</option><option value="custom">Custom</option></select></label>
+  <label>Conductor separation (mm) <input id="manualSpacing" type="number" min="0.1" step="1" value="40"></label>
+  <label>Typed length (m) <input id="manualLength" type="number" min="0" step="0.1" value="10"></label>
+  <label>Provenance <select id="manualProvenance"><option value="measured">Measured</option><option value="assumed" selected>Assumed</option><option value="defaulted">Defaulted</option></select></label>
+  <div class="button-row"><button id="drawCable" class="primary">DRAW CABLE</button><button id="addTyped">ADD TYPED</button></div>
+  <div class="button-row"><button id="undoCable">UNDO</button><button id="clearCables">CLEAR</button></div>
+  <div id="drawStatus" class="provenance">Ruler: <strong>READY</strong></div>
 </section>
 <div class="button-row"><button id="reset">RESET</button><button id="export" class="primary">EXPORT STUDY JSON</button></div>
 </aside>
 <section class="workbench">
-<div class="canvas-head"><div><h2>Scalable plan · complete closed circuit</h2><p>Drag the large drawing in any direction. Use the fixed − and + controls on mobile or the mouse wheel on desktop. Zoom remains centred on the point being viewed.</p></div><div class="legend"><span class="east">East face</span><span class="west">West face</span><span class="pos">Positive</span><span class="neg">Negative</span><span class="loop">Loop area</span><span class="inv">Inverter</span></div></div>
-<div class="canvas-wrap">
-  <canvas id="scene"></canvas>
-  <div class="zoom-toolbar" aria-label="Drawing zoom controls"><button type="button" id="zoomOut" aria-label="Zoom out">−</button><button type="button" id="zoomReset" aria-label="Reset zoom"><span id="zoomPercent">100%</span></button><button type="button" id="zoomIn" aria-label="Zoom in">+</button></div>
-  <div id="zoomReadout">DRAG TO MOVE · USE − / + TO ZOOM</div>
-</div>
-<div class="section-inset"><canvas id="sectionCanvas" width="520" height="190"></canvas><div><strong>A-frame section inset</strong><p>Module slope geometry remains separate from plan projection. The electrical model accounts for external conductors and module-integrated series leads.</p></div></div>
-<div id="modelDecision" class="decision"></div><div id="warningBox" class="warnings"></div>
-<div class="selection"><h2>Selected complete circuit</h2><div id="selectedSummary">Click a string in plan.</div></div>
-<div class="metrics">
-<article><span>External + / −</span><strong id="externalLengths">—</strong><small>home-run conductors</small></article>
-<article><span>Module leads</span><strong id="moduleLeadLength">—</strong><small>integrated series conductors</small></article>
-<article><span>Total conductor</span><strong id="routeLength">—</strong><small>complete current path</small></article>
-<article><span>Connectors</span><strong id="connectorCount">—</strong><small>series contacts</small></article>
-<article><span>R at reference</span><strong id="resistanceReference">—</strong><small>comparison temperature</small></article>
-<article><span>R operating</span><strong id="loopResistance">—</strong><small>cables + contacts</small></article>
-<article><span>Voltage drop</span><strong id="voltageDrop">—</strong><small>at module Imp</small></article>
-<article><span>Power loss</span><strong id="powerLoss">—</strong><small>complete circuit I²R</small></article>
-<article><span>Loop area guide</span><strong id="loopArea">—</strong><small>plan projection</small></article>
-<article><span>Loop inductance</span><strong id="loopInductance">—</strong><small>segmented two-wire approximation</small></article>
-<article><span>Capacitance to frame</span><strong id="capacitanceEarth">—</strong><small>editable scenario</small></article>
-<article><span>One-way delay</span><strong id="delay">—</strong><small id="roundTrip">—</small></article>
-<article><span>Cold string Voc</span><strong id="coldVoc">—</strong><small>module-count derived</small></article>
-<article><span>Total strings</span><strong id="totalStrings">—</strong><small>generated topology</small></article>
-<article><span>Array footprint</span><strong id="footprint">—</strong><small>plan projection</small></article>
-<article><span>Manual ruler total</span><strong id="manualTotal">0.00 m</strong><small>drawn + typed</small></article>
-</div>
-<details open><summary>Selected resistance and loss breakdown</summary><div id="breakdown" class="breakdown"></div></details>
-<details open><summary>All strings · complete-circuit schedule</summary><div class="table-scroll"><table><thead><tr><th>ID</th><th>Face</th><th>Band</th><th>+ external m</th><th>− external m</th><th>Module leads m</th><th>Total m</th><th>Contacts</th><th>R op Ω</th><th>ΔV V</th><th>Loss W</th><th>Area m²</th><th>L µH</th><th>C-earth nF</th><th>MPPT</th></tr></thead><tbody id="stringTable"></tbody></table></div></details>
-<details open><summary>Manual cable electrical sub-table</summary><div class="table-scroll"><table><thead><tr><th>ID</th><th>Type</th><th>Length m</th><th>Spacing mm</th><th>R Ω</th><th>L µH</th><th>C nF</th><th>Z₀ Ω</th><th>Delay µs</th><th>Provenance</th></tr></thead><tbody id="manualTable"></tbody></table></div></details>
-<details open><summary>Calculation trace and evidence status</summary><pre id="trace"></pre></details>
+  <div class="canvas-head">
+    <div><h2>Scalable plan · complete closed circuit</h2><p>Drag the large drawing like the Spider Sandbox. Use − and + on mobile or the mouse wheel on desktop. Tap a string to inspect it.</p></div>
+    <div class="legend"><span class="east">East face</span><span class="west">West face</span><span class="pos">Positive</span><span class="neg">Negative</span><span class="loop">Loop area</span><span class="inv">Inverter</span></div>
+  </div>
+  <div class="canvas-wrap">
+    <canvas id="scene"></canvas>
+    <div class="zoom-tools" aria-label="Canvas zoom controls"><button id="zoomOut" type="button" aria-label="Zoom out">−</button><button id="zoomReset" type="button">100%</button><button id="zoomIn" type="button" aria-label="Zoom in">+</button></div>
+    <div id="zoomReadout">100% · DRAG TO MOVE</div>
+  </div>
+  <div class="section-inset"><canvas id="sectionCanvas" width="520" height="190"></canvas><div><strong>A-frame section inset</strong><p>Module slope geometry remains separate from plan projection. The electrical model distinguishes 6 mm² external conductors, 4 mm² module leads, mated connector interfaces and optional coil segments.</p></div></div>
+  <div id="modelDecision" class="decision"></div>
+  <div id="warningBox" class="warnings"></div>
+  <div class="site-summary" id="siteSummary"></div>
+  <div class="selection"><h2>Selected complete circuit</h2><div id="selectedSummary">Click a string in plan.</div></div>
+  <div class="metrics">
+    <article><span>Row span</span><strong id="rowSpan">—</strong><small>N×width + (N−1)×gap</small></article>
+    <article><span>External + / −</span><strong id="externalLengths">—</strong><small>home-run conductors</small></article>
+    <article><span>Module leads</span><strong id="moduleLeadLength">—</strong><small>complete factory-lead metal</small></article>
+    <article><span>Total conductor</span><strong id="routeLength">—</strong><small>complete current path</small></article>
+    <article><span>Mated interfaces</span><strong id="connectorCount">—</strong><small id="connectorBasisLabel">resistance basis</small></article>
+    <article><span>R at reference</span><strong id="resistanceReference">—</strong><small>complete circuit</small></article>
+    <article><span>R operating</span><strong id="loopResistance">—</strong><small>home-runs + leads + contacts</small></article>
+    <article><span>Voltage drop</span><strong id="voltageDrop">—</strong><small>at module Imp</small></article>
+    <article><span>Power loss</span><strong id="powerLoss">—</strong><small>complete-circuit I²R</small></article>
+    <article><span>Loop area guide</span><strong id="loopArea">—</strong><small>segment-based plan screen</small></article>
+    <article><span>Differential L low-f</span><strong id="loopInductanceLow">—</strong><small>includes internal conductor L</small></article>
+    <article><span>Differential L high-f</span><strong id="loopInductanceHigh">—</strong><small>internal conductor L removed</small></article>
+    <article><span>Common-mode L</span><strong id="commonModeInductance">—</strong><small>two poles against earth</small></article>
+    <article><span>Differential cable C</span><strong id="differentialCapacitance">—</strong><small>pole-to-pole route capacitance</small></article>
+    <article><span>C-earth dry / wet</span><strong id="capacitanceEarth">—</strong><small>module + wet cable scenarios</small></article>
+    <article><span>Worst segment Z₀</span><strong id="surgeImpedance">—</strong><small>high-frequency screening</small></article>
+    <article><span>Initial wave / lumped</span><strong id="kickVoltage">—</strong><small>connector-opening scenarios</small></article>
+    <article><span>One-way delay</span><strong id="delay">—</strong><small id="roundTrip">—</small></article>
+    <article><span>Magnetic energy</span><strong id="magneticEnergy">—</strong><small>selected string scope</small></article>
+    <article><span>Electric energy dry / wet</span><strong id="electricEnergy">—</strong><small>selected string scope</small></article>
+    <article><span>Cold string Voc</span><strong id="coldVoc">—</strong><small>module-count derived</small></article>
+    <article><span>Archetype strings</span><strong id="totalStrings">—</strong><small>selected inverter drawing</small></article>
+    <article><span>Array footprint</span><strong id="footprint">—</strong><small>plan projection</small></article>
+    <article><span>Manual ruler total</span><strong id="manualTotal">0.00 m</strong><small>drawn + typed</small></article>
+  </div>
+  <details open><summary>Selected resistance and loss breakdown</summary><div id="breakdown" class="breakdown"></div></details>
+  <details open><summary>MPPT pairing and forced cross-band review</summary><div class="table-scroll"><table><thead><tr><th>MPPT</th><th>String A</th><th>String B</th><th>Type</th><th>External length ratio</th><th>Parallel L high-f µH</th></tr></thead><tbody id="mpptTable"></tbody></table></div></details>
+  <details open><summary>All strings · complete-circuit schedule</summary><div class="table-scroll"><table><thead><tr><th>ID</th><th>Face</th><th>Band</th><th>Mode</th><th>+ ext m</th><th>− ext m</th><th>Module leads m</th><th>Total m</th><th>Mated pairs</th><th>R op Ω</th><th>ΔV V</th><th>Loss W</th><th>Area m²</th><th>L low µH</th><th>L high µH</th><th>L CM µH</th><th>C diff nF</th><th>C-earth dry/wet µF</th><th>Z₀ Ω</th><th>MPPT</th></tr></thead><tbody id="stringTable"></tbody></table></div></details>
+  <details open><summary>Manual cable electrical sub-table</summary><div class="table-scroll"><table><thead><tr><th>ID</th><th>Type</th><th>Length m</th><th>Spacing mm</th><th>R Ω</th><th>L low µH</th><th>L high µH</th><th>C nF</th><th>Z₀ Ω</th><th>Delay µs</th><th>Provenance</th></tr></thead><tbody id="manualTable"></tbody></table></div></details>
+  <details open><summary>Calculation trace and evidence status</summary><pre id="trace"></pre></details>
 </section>
 </main>
-<footer><span>Generic reproducible example · planned geometry, not as-built</span><span>Every exported value carries inputs and evidence status; no output is a warranty or design certificate.</span></footer>
-<script src="./physics.generated.js"></script><script src="./app.js"></script><script src="./spider-navigation.js"></script>
-</body></html>
+<footer><span>Generic reproducible research model · planned geometry, not as-built</span><span>V7 IN DEVELOPMENT · USE AT YOUR OWN RISK</span></footer>
+<script src="./physics.generated.js"></script>
+<script src="./app.js"></script>
+<script src="./spider-navigation.js"></script>
+</body>
+</html>
