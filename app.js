@@ -1,355 +1,62 @@
 'use strict';
-
-const MU0 = 4 * Math.PI * 1e-7;
-const EPS0 = 8.8541878128e-12;
-const RHO20 = 1.724e-8;
-const ALPHA_CU = 0.00393;
-const MAX_DC_VOLTAGE = 1500;
-const FACTORY_POS_LEAD_M = 0.35;
-const FACTORY_NEG_LEAD_M = 0.28;
-
-const canvas = document.getElementById('scene');
-const ctx = canvas.getContext('2d');
-const $ = id => document.getElementById(id);
-const inputIds = ['moduleCount','modulesPerTable','moduleLength','moduleWidth','moduleGap','tableGap','rowCount','rowPitch','moduleVmp','moduleVoc','moduleImp','betaVoc','coldTemp','csa','cableOd','spacing','epsilonR','frameCap','conductorTemp','riseTime','routeMode','maintenanceLoop'];
-
-const state = {
-  inverter: { x: 27, y: 7 },
-  dragging: false,
-  dragOffset: { x: 0, y: 0 },
-  view: null,
-  lastStudy: null
-};
-
-function num(id) { return Number($(id).value); }
-function fmt(v, d = 2) { return Number.isFinite(v) ? v.toLocaleString('en-GB', {minimumFractionDigits:d, maximumFractionDigits:d}) : '—'; }
-function set(id, value) { $(id).textContent = value; }
-function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
-
-function model() {
-  return {
-    moduleCount: Math.max(1, Math.round(num('moduleCount'))),
-    modulesPerTable: Math.max(1, Math.round(num('modulesPerTable'))),
-    moduleLength: num('moduleLength'),
-    moduleWidth: num('moduleWidth'),
-    moduleGap: num('moduleGap'),
-    tableGap: num('tableGap'),
-    rowCount: Math.max(1, Math.round(num('rowCount'))),
-    rowPitch: num('rowPitch'),
-    moduleVmp: num('moduleVmp'),
-    moduleVoc: num('moduleVoc'),
-    moduleImp: num('moduleImp'),
-    betaVoc: num('betaVoc'),
-    coldTemp: num('coldTemp'),
-    csaMm2: num('csa'),
-    cableOdMm: num('cableOd'),
-    spacingMm: num('spacing'),
-    epsilonR: num('epsilonR'),
-    frameCapNf: num('frameCap'),
-    conductorTemp: num('conductorTemp'),
-    riseTimeUs: num('riseTime'),
-    routeMode: $('routeMode').value,
-    maintenanceLoopM: num('maintenanceLoop')
-  };
+const P=window.SolarPhysics,$=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d'),section=$('sectionCanvas'),sctx=section.getContext('2d');
+const ids=['modulesAlong','ranksUp','faces','tilt','moduleWidth','moduleLength','clampGap','alongGap','dropToInverter','eastBands','westBands','modulesPerString','mpptCount','moduleVmp','moduleVoc','moduleImp','betaVoc','coldTemp','csa','cableOd','conductorTemp','epsilonR','spacingPreset','spacing','riseTime','wetState','glassThickness','glassEr','wettedPct'];
+const state={zoom:1,panX:0,panY:0,panning:false,last:null,selected:null,inverter:{x:-2,y:0},dragInv:false,study:null};
+const num=id=>Number($(id).value),fmt=(v,d=2)=>Number.isFinite(v)?v.toLocaleString('en-GB',{minimumFractionDigits:d,maximumFractionDigits:d}):'—',set=(id,v)=>$(id).textContent=v;
+function bands(id){const a=$(id).value.split(',').map(x=>Math.round(Number(x.trim()))).filter(x=>Number.isFinite(x)&&x>0);return a.length?a:[1];}
+function input(){return{modulesAlong:Math.max(1,Math.round(num('modulesAlong'))),ranksUp:Math.max(1,Math.round(num('ranksUp'))),faces:Math.max(1,Math.min(2,Math.round(num('faces')))),tilt:num('tilt'),moduleWidth:num('moduleWidth'),moduleLength:num('moduleLength'),clampGap:num('clampGap'),alongGap:num('alongGap'),drop:num('dropToInverter'),eastBands:bands('eastBands'),westBands:bands('westBands'),modulesPerString:Math.max(1,Math.round(num('modulesPerString'))),mpptCount:Math.max(1,Math.round(num('mpptCount'))),moduleVmp:num('moduleVmp'),moduleVoc:num('moduleVoc'),moduleImp:num('moduleImp'),betaVoc:num('betaVoc'),coldTemp:num('coldTemp'),csa:num('csa'),cableOd:num('cableOd'),temp:num('conductorTemp'),epsilonR:num('epsilonR'),spacingPreset:$('spacingPreset').value,spacing:num('spacing'),riseUs:num('riseTime'),wetState:$('wetState').value,glassThickness:num('glassThickness'),glassEr:num('glassEr'),wettedPct:num('wettedPct')/100};}
+function applySpacing(m){if(m.spacingPreset==='touching')m.spacing=m.cableOd;if(m.spacingPreset==='rank')m.spacing=(m.moduleLength+m.clampGap)*1000;$('spacing').disabled=m.spacingPreset!=='custom';$('spacing').value=Number(m.spacing.toFixed(3));$('spacingProv').textContent=m.spacingPreset==='custom'?'ASSUMED':'PRESET · ASSUMED';}
+function build(m){
+ const rankPitch=m.moduleLength+m.clampGap, modulePitch=m.moduleWidth+m.alongGap, bandLength=m.modulesAlong*modulePitch-m.alongGap;
+ const defs=[{face:'E',sign:-1,list:m.eastBands},{face:'W',sign:1,list:m.faces===2?m.westBands:[]}];
+ const strings=[]; let maxX=0;
+ defs.forEach(def=>{let x0=0;def.list.forEach((count,bi)=>{for(let r=0;r<count;r++){
+   const y=def.sign*(r+.5)*rankPitch; const id=`${def.face}-B${bi+1}-R${r+1}`;
+   strings.push({id,face:def.face,band:bi,rank:r,bandCount:count,x0,x1:x0+bandLength,y,rankPitch,series:Array.from({length:m.modulesPerString},(_,i)=>i+1)});
+  } x0+=bandLength+m.alongGap*5; maxX=Math.max(maxX,x0);});});
+ const maxRanks=Math.max(1,...m.eastBands,...m.westBands),height=2*maxRanks*rankPitch;
+ state.inverter.x=-Math.max(.8,m.drop);state.inverter.y=0;
+ return{strings,rankPitch,modulePitch,bandLength,width:maxX,height,maxRanks};
 }
-
-function buildGeometry(m) {
-  const tablesNeeded = Math.ceil(m.moduleCount / m.modulesPerTable);
-  const tablesPerRow = Math.ceil(tablesNeeded / m.rowCount);
-  const tableWidth = m.modulesPerTable * m.moduleWidth + (m.modulesPerTable - 1) * m.moduleGap;
-  const arrayWidth = tablesPerRow * tableWidth + Math.max(0, tablesPerRow - 1) * m.tableGap;
-  const arrayHeight = (m.rowCount - 1) * m.rowPitch + m.moduleLength;
-  const modules = [];
-  let visibleIndex = 0;
-
-  for (let r = 0; r < m.rowCount; r++) {
-    for (let t = 0; t < tablesPerRow; t++) {
-      for (let p = 0; p < m.modulesPerTable; p++) {
-        const x = t * (tableWidth + m.tableGap) + p * (m.moduleWidth + m.moduleGap);
-        const y = r * m.rowPitch;
-        modules.push({
-          id: `R${String(r+1).padStart(2,'0')}-T${String(t+1).padStart(2,'0')}-M${String(p+1).padStart(2,'0')}`,
-          row: r, table: t, posInTable: p, x, y, w: m.moduleWidth, h: m.moduleLength,
-          active: visibleIndex < m.moduleCount,
-          visibleIndex: visibleIndex++
-        });
-      }
-    }
-  }
-
-  const activeByRow = [];
-  for (let r = 0; r < m.rowCount; r++) {
-    const rowMods = modules.filter(x => x.row === r && x.active).sort((a,b) => a.x-b.x);
-    if (r % 2 === 1) rowMods.reverse();
-    activeByRow.push(...rowMods);
-  }
-  const sequence = activeByRow.slice(0, m.moduleCount);
-  const first = sequence[0];
-  const last = sequence[sequence.length - 1];
-  const terminal = (mod, positive) => ({
-    x: positive ? mod.x + mod.w : mod.x,
-    y: mod.y + mod.h * 0.52
-  });
-  const negStart = terminal(first, false);
-  const posEnd = terminal(last, true);
-
-  return { modules, sequence, tablesNeeded, tablesPerRow, tableWidth, arrayWidth, arrayHeight, negStart, posEnd };
+function pairMppts(strings,count){
+ const pairs=[],left=[]; const grouped=new Map(); strings.forEach(s=>{const k=s.face+'-'+s.band;if(!grouped.has(k))grouped.set(k,[]);grouped.get(k).push(s);});
+ grouped.forEach(g=>{g.sort((a,b)=>a.rank-b.rank);while(g.length>=2)pairs.push([g.shift(),g.shift()]);if(g.length)left.push(g.shift());});
+ while(left.length>=2)pairs.push([left.shift(),left.shift()]);while(left.length)pairs.push([left.shift()]);
+ return pairs.map((p,i)=>({mppt:i+1,strings:p,crossBand:p.length===2&&(p[0].face!==p[1].face||p[0].band!==p[1].band)}));
 }
-
-function orthogonalRoute(start, end, mode, polarity, g, m) {
-  if (mode === 'paired') {
-    const spineY = g.arrayHeight + 1.1;
-    const sharedX = Math.max(g.arrayWidth + 1.1, Math.min(end.x - 1, g.arrayWidth + 2.0));
-    const offset = polarity === 'pos' ? -m.spacingMm / 1000 / 2 : m.spacingMm / 1000 / 2;
-    return [start, {x:start.x,y:spineY+offset}, {x:sharedX,y:spineY+offset}, {x:sharedX,y:end.y+offset}, end];
-  }
-  const corridorY = polarity === 'pos' ? -1.1 : g.arrayHeight + 1.3;
-  return [start, {x:start.x,y:corridorY}, {x:end.x,y:corridorY}, end];
+function routeFor(s,m){
+ const near=s.x0,across=s.rank*s.rankPitch,base=near+across+m.drop;
+ const sep=m.spacing/1000,side=s.face==='E'?-1:1;
+ const anchor={x:s.x0,y:s.y};
+ const pos=[anchor,{x:near,y:s.y+side*sep/2},{x:near,y:side*(.15+across)},{x:state.inverter.x,y:side*(.15+across)},{x:state.inverter.x,y:-.12}];
+ const neg=[anchor,{x:near,y:s.y-side*sep/2},{x:near,y:side*(.15+across+sep)},{x:state.inverter.x,y:side*(.15+across+sep)},{x:state.inverter.x,y:.12}];
+ return{positive:pos,negative:neg,derivedLength:base,positiveLength:base,negativeLength:base};
 }
-
-function polylineLength(points) {
-  let s = 0;
-  for (let i=1;i<points.length;i++) s += Math.hypot(points[i].x-points[i-1].x, points[i].y-points[i-1].y);
-  return s;
+function studyString(s,m){
+ const route=routeFor(s,m),conductorD=P.conductorDiameterFromArea(m.csa),tw=P.twoWire(m.spacing,conductorD,m.epsilonR);
+ const metal=route.positiveLength+route.negativeLength+m.modulesPerString*(.35+.28),R=P.dcResistance(metal,m.csa,m.temp),L=tw.inductancePerM*route.derivedLength;
+ const area=m.moduleWidth*m.moduleLength*m.wettedPct,dielectric=m.wetState==='wet'?m.glassThickness:Math.max(m.glassThickness,4),er=m.wetState==='wet'?m.glassEr:Math.max(2.5,m.glassEr/2);
+ const cModule=P.parallelPlateCap(area,dielectric,er),Cframe=cModule*m.modulesPerString,Cpair=tw.capacitancePerM*route.derivedLength,V=m.modulesPerString*m.moduleVmp;
+ const delay=route.derivedLength/tw.velocity,rise=m.riseUs*1e-6,criterion=2*delay,margin=rise/criterion;
+ return{s,route,tw,conductorD,metal,R,L,Cframe,Cpair,V,coldVoc:P.coldVoc(m.moduleVoc,m.modulesPerString,m.betaVoc,m.coldTemp),delay,criterion,margin,distributed:rise<criterion,wave:m.moduleImp*tw.z0,mag:P.storedMagnetic(L,m.moduleImp),elec:P.storedElectric(Cframe,V),cModule};
 }
-
-function loopArea(pos, neg) {
-  const polygon = [...pos, ...neg.slice().reverse()];
-  let a = 0;
-  for (let i=0;i<polygon.length;i++) {
-    const p = polygon[i], q = polygon[(i+1)%polygon.length];
-    a += p.x*q.y - q.x*p.y;
-  }
-  return Math.abs(a)/2;
-}
-
-function calculate(m, g) {
-  const invPosPort = {x:state.inverter.x, y:state.inverter.y-0.28};
-  const invNegPort = {x:state.inverter.x, y:state.inverter.y+0.28};
-  const posRoute = orthogonalRoute(g.posEnd, invPosPort, m.routeMode, 'pos', g, m);
-  const negRoute = orthogonalRoute(g.negStart, invNegPort, m.routeMode, 'neg', g, m);
-  const posHome = polylineLength(posRoute) + 2*m.maintenanceLoopM;
-  const negHome = polylineLength(negRoute) + 2*m.maintenanceLoopM;
-  const factoryLeadTotal = m.moduleCount * (FACTORY_POS_LEAD_M + FACTORY_NEG_LEAD_M);
-  const installed = posHome + negHome + factoryLeadTotal;
-  const loopBasis = (posHome + negHome) / 2;
-  const area = loopArea(posRoute, negRoute);
-
-  const warnings = [];
-  const errors = [];
-  if ([m.moduleLength,m.moduleWidth,m.rowPitch,m.csaMm2,m.cableOdMm,m.spacingMm,m.epsilonR,m.moduleVmp,m.moduleVoc,m.moduleImp].some(v => !Number.isFinite(v) || v <= 0)) errors.push('All physical and electrical dimensions must be positive numeric values.');
-  if (m.spacingMm <= m.cableOdMm) errors.push(`Conductor centres ${fmt(m.spacingMm,1)} mm do not exceed cable outside diameter ${fmt(m.cableOdMm,1)} mm.`);
-
-  const conductorArea = m.csaMm2 * 1e-6;
-  const r20 = RHO20 * installed / conductorArea;
-  const loopR = r20 * (1 + ALPHA_CU * (m.conductorTemp - 20));
-  const stringVmp = m.moduleCount * m.moduleVmp;
-  const stringPower = stringVmp * m.moduleImp;
-  const vDrop = m.moduleImp * loopR;
-  const vDropPct = 100*vDrop/stringVmp;
-  const loss = m.moduleImp*m.moduleImp*loopR;
-  const lossPct = 100*loss/stringPower;
-
-  const d = m.cableOdMm/1000;
-  const D = m.spacingMm/1000;
-  const ratio = D/d;
-  const acosh = ratio > 1 ? Math.acosh(ratio) : NaN;
-  const lPerM = MU0/Math.PI*acosh;
-  const cPerM = Math.PI*EPS0*m.epsilonR/acosh;
-  const L = lPerM*loopBasis;
-  const Cpair = cPerM*loopBasis;
-  const Cframe = m.moduleCount*m.frameCapNf*1e-9;
-  const z0 = Math.sqrt(lPerM/cPerM);
-  const velocity = 1/Math.sqrt(lPerM*cPerM);
-  const delay = loopBasis/velocity;
-  const roundTrip = 2*delay;
-  const magneticEnergy = 0.5*L*m.moduleImp*m.moduleImp;
-  const electricEnergy = 0.5*Cframe*stringVmp*stringVmp;
-  const coldVoc = m.moduleCount*m.moduleVoc*(1+(m.betaVoc/100)*(m.coldTemp-25));
-  const riseTime = m.riseTimeUs*1e-6;
-  const distributed = riseTime < 2*delay;
-  const marginal = !distributed && riseTime < 4*delay;
-
-  if (vDropPct > 1) warnings.push(`Voltage drop ${fmt(vDropPct,2)}% exceeds the 1% screening marker.`);
-  if (coldVoc > MAX_DC_VOLTAGE) warnings.push(`Cold string Voc ${fmt(coldVoc,1)} V exceeds the declared ${MAX_DC_VOLTAGE} V screening limit.`);
-  if (m.routeMode === 'separated') warnings.push(`Separated polarity routing creates ${fmt(area,1)} m² of enclosed loop area and increases inductive/surge exposure.`);
-  if (m.frameCapNf === 100) warnings.push('Module-to-frame capacitance remains a defaulted 100 nF/module input; replace with measured or manufacturer evidence for quantitative common-mode studies.');
-  if (m.spacingMm/m.cableOdMm < 1.25) warnings.push('Polarity centre spacing is close to physical cable diameter; verify installed formation.');
-
-  return {posRoute,negRoute,posHome,negHome,factoryLeadTotal,installed,loopBasis,area,r20,loopR,stringVmp,stringPower,vDrop,vDropPct,loss,lossPct,lPerM,cPerM,L,Cpair,Cframe,z0,velocity,delay,roundTrip,magneticEnergy,electricEnergy,coldVoc,distributed,marginal,warnings,errors,acosh};
-}
-
-function worldBounds(g) {
-  const minX = -2.4, minY = -2.7;
-  const maxX = Math.max(g.arrayWidth+5, state.inverter.x+3);
-  const maxY = Math.max(g.arrayHeight+3.2, state.inverter.y+2.2);
-  return {minX,minY,maxX,maxY};
-}
-
-function resizeCanvas() {
-  const rect = canvas.getBoundingClientRect();
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = Math.max(1, Math.round(rect.width*dpr));
-  canvas.height = Math.max(1, Math.round(rect.height*dpr));
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-}
-
-function makeView(g) {
-  const rect = canvas.getBoundingClientRect();
-  const b = worldBounds(g), pad = 35;
-  const scale = Math.min((rect.width-2*pad)/(b.maxX-b.minX),(rect.height-2*pad)/(b.maxY-b.minY));
-  return {
-    scale, ox:pad-b.minX*scale, oy:pad-b.minY*scale,
-    sx:x=>pad+(x-b.minX)*scale,
-    sy:y=>pad+(y-b.minY)*scale,
-    wx:x=>(x-pad)/scale+b.minX,
-    wy:y=>(y-pad)/scale+b.minY
-  };
-}
-
-function line(points, colour, width=3, dash=[]) {
-  if (!points.length) return;
-  ctx.beginPath(); ctx.setLineDash(dash); ctx.strokeStyle=colour; ctx.lineWidth=width;
-  ctx.moveTo(state.view.sx(points[0].x),state.view.sy(points[0].y));
-  points.slice(1).forEach(p=>ctx.lineTo(state.view.sx(p.x),state.view.sy(p.y)));
-  ctx.stroke(); ctx.setLineDash([]);
-}
-
-function draw(m,g,s) {
-  resizeCanvas();
-  state.view = makeView(g);
-  const rect=canvas.getBoundingClientRect();
-  ctx.clearRect(0,0,rect.width,rect.height);
-
-  ctx.strokeStyle='#132131';ctx.lineWidth=1;
-  const grid=1;
-  for(let x=Math.floor(worldBounds(g).minX);x<worldBounds(g).maxX;x+=grid){ctx.beginPath();ctx.moveTo(state.view.sx(x),0);ctx.lineTo(state.view.sx(x),rect.height);ctx.stroke()}
-  for(let y=Math.floor(worldBounds(g).minY);y<worldBounds(g).maxY;y+=grid){ctx.beginPath();ctx.moveTo(0,state.view.sy(y));ctx.lineTo(rect.width,state.view.sy(y));ctx.stroke()}
-
-  g.modules.forEach(mod=>{
-    const x=state.view.sx(mod.x),y=state.view.sy(mod.y),w=mod.w*state.view.scale,h=mod.h*state.view.scale;
-    ctx.fillStyle=mod.active?'#102d43':'#12161b';ctx.strokeStyle=mod.active?'#2a9ed0':'#333b43';ctx.lineWidth=1;
-    ctx.fillRect(x,y,w,h);ctx.strokeRect(x,y,w,h);
-    ctx.strokeStyle=mod.active?'#1a5a7a':'#262c32';
-    for(let c=1;c<4;c++){ctx.beginPath();ctx.moveTo(x+w*c/4,y);ctx.lineTo(x+w*c/4,y+h);ctx.stroke()}
-    ctx.fillStyle=mod.active?'#9fdfff':'#53606b';ctx.font='9px ui-monospace,monospace';ctx.fillText(mod.active?String(mod.visibleIndex+1):'UNUSED',x+3,y+12);
-  });
-
-  const frameY=g.arrayHeight+0.35;
-  line([{x:0,y:frameY},{x:g.arrayWidth,y:frameY}], '#44e18a',2,[5,4]);
-  line(s.posRoute,'#ff5964',4);
-  line(s.negRoute,'#27d8ff',4);
-
-  g.sequence.forEach((mod,i)=>{
-    if(i===0)return;
-    const prev=g.sequence[i-1];
-    const a={x:prev.x+prev.w,y:prev.y+prev.h*.52};
-    const b={x:mod.x,y:mod.y+mod.h*.52};
-    line([a,b],'#b891ff',1.5,[3,3]);
-  });
-
-  const ix=state.view.sx(state.inverter.x),iy=state.view.sy(state.inverter.y),iw=2.1*state.view.scale,ih=1.35*state.view.scale;
-  ctx.fillStyle='#2b2008';ctx.strokeStyle='#ffb347';ctx.lineWidth=2;ctx.fillRect(ix-iw/2,iy-ih/2,iw,ih);ctx.strokeRect(ix-iw/2,iy-ih/2,iw,ih);
-  ctx.fillStyle='#ffe0a5';ctx.textAlign='center';ctx.font='bold 12px ui-monospace,monospace';ctx.fillText('INVERTER',ix,iy-4);ctx.font='10px ui-monospace,monospace';ctx.fillText('MPPT 01',ix,iy+13);ctx.textAlign='left';
-  ctx.fillStyle='#ff5964';ctx.beginPath();ctx.arc(state.view.sx(state.inverter.x),state.view.sy(state.inverter.y-.28),5,0,2*Math.PI);ctx.fill();
-  ctx.fillStyle='#27d8ff';ctx.beginPath();ctx.arc(state.view.sx(state.inverter.x),state.view.sy(state.inverter.y+.28),5,0,2*Math.PI);ctx.fill();
-
-  ctx.fillStyle='#73889d';ctx.font='11px ui-monospace,monospace';
-  ctx.fillText(`${m.moduleCount} active modules · ${g.tablesNeeded} tables · planned geometry`,16,rect.height-16);
-}
-
-function renderOutputs(m,g,s){
-  set('positiveLength',`${fmt(s.posHome,2)} m`); set('negativeLength',`${fmt(s.negHome,2)} m`); set('installedLength',`${fmt(s.installed,2)} m`); set('loopArea',`${fmt(s.area,2)} m²`);
-  set('loopResistance',`${fmt(s.loopR,4)} Ω`); set('voltageDrop',`${fmt(s.vDrop,2)} V`); set('voltageDropPct',`${fmt(s.vDropPct,2)}% of string Vmp`);
-  set('cableLoss',`${fmt(s.loss,1)} W`); set('cableLossPct',`${fmt(s.lossPct,2)}% of operating power`);
-  set('loopInductance',`${fmt(s.L*1e6,2)} µH`); set('inductancePerM',`${fmt(s.lPerM*1e6,4)} µH/m`);
-  set('pairCapacitance',`${fmt(s.Cpair*1e9,2)} nF`); set('capacitancePerM',`${fmt(s.cPerM*1e12,2)} pF/m`); set('frameCapacitance',`${fmt(s.Cframe*1e9,1)} nF`);
-  set('z0',`${fmt(s.z0,1)} Ω`); set('delay',`${fmt(s.delay*1e6,3)} µs`); set('roundTrip',`${fmt(s.roundTrip*1e6,3)} µs round trip`);
-  set('magneticEnergy',`${fmt(s.magneticEnergy*1000,3)} mJ`); set('electricEnergy',`${fmt(s.electricEnergy,3)} J`);
-  set('stringVmp',`${fmt(s.stringVmp,1)} V`); set('stringPower',`${fmt(s.stringPower/1000,2)} kW at Imp`); set('coldVoc',`${fmt(s.coldVoc,1)} V`);
-
-  const d=$('modelDecision');
-  d.className='decision'+(s.distributed?' distributed':'');
-  if(s.distributed) d.innerHTML=`<strong>DISTRIBUTED MODEL REQUIRED.</strong> One-way propagation delay ${fmt(s.delay*1e6,3)} µs; round-trip ${fmt(s.roundTrip*1e6,3)} µs; disturbance rise time ${fmt(m.riseTimeUs,3)} µs. The disturbance changes before the line can settle, so reflections and unequal electrical distances may affect peak voltage and current.`;
-  else if(s.marginal) d.innerHTML=`<strong>MODEL SELECTION MARGINAL.</strong> Rise time ${fmt(m.riseTimeUs,3)} µs is only moderately longer than the ${fmt(s.roundTrip*1e6,3)} µs round-trip delay. Compare lumped and distributed representations.`;
-  else d.innerHTML=`<strong>LUMPED MODEL ACCEPTABLE FOR THIS DECLARED DISTURBANCE.</strong> Rise time ${fmt(m.riseTimeUs,3)} µs is long relative to the ${fmt(s.roundTrip*1e6,3)} µs round-trip delay. Distributed parameters remain reported for study traceability.`;
-
-  $('warningBox').innerHTML=[...s.errors.map(x=>`<div class="warning error">HARD ERROR · ${x}</div>`),...s.warnings.map(x=>`<div class="warning">REVIEW · ${x}</div>`)].join('');
-  $('trace').textContent=buildTrace(m,g,s);
-}
-
-function buildTrace(m,g,s){
-  return `SOLAR DC STRING TOPOLOGY ENGINE · TIER 1 TRACE
-
-GEOMETRY
-Modules in electrical series     ${m.moduleCount}
-Modules per visible table        ${m.modulesPerTable}
-Positive home run                ${fmt(s.posHome,4)} m
-Negative home run                ${fmt(s.negHome,4)} m
-Factory module leads             ${fmt(s.factoryLeadTotal,4)} m (${FACTORY_POS_LEAD_M} m + ${FACTORY_NEG_LEAD_M} m per module)
-Total installed conductor        ${fmt(s.installed,4)} m
-Differential line-length basis   ${fmt(s.loopBasis,4)} m
-Enclosed 2D loop area            ${fmt(s.area,4)} m²
-
-STEADY STATE
-String Vmp                       ${fmt(s.stringVmp,3)} V
-String Imp                       ${fmt(m.moduleImp,3)} A
-Operating power                  ${fmt(s.stringPower,3)} W
-R20                              ${fmt(s.r20,6)} Ω
-R at ${fmt(m.conductorTemp,1)} °C                   ${fmt(s.loopR,6)} Ω
-Voltage drop                     ${fmt(s.vDrop,4)} V (${fmt(s.vDropPct,3)}%)
-I²R loss                         ${fmt(s.loss,4)} W (${fmt(s.lossPct,3)}%)
-Cold Voc at ${fmt(m.coldTemp,1)} °C                 ${fmt(s.coldVoc,3)} V
-
-DISTRIBUTED PARAMETERS
-Exact geometry term acosh(D/d)   ${fmt(s.acosh,7)}
-L′ loop                          ${fmt(s.lPerM*1e6,7)} µH/m
-C′ conductor pair                ${fmt(s.cPerM*1e12,7)} pF/m
-Loop inductance                  ${fmt(s.L*1e6,5)} µH
-Pair capacitance                 ${fmt(s.Cpair*1e9,5)} nF
-Declared frame capacitance       ${fmt(s.Cframe*1e9,5)} nF
-Characteristic impedance         ${fmt(s.z0,5)} Ω
-Propagation velocity             ${fmt(s.velocity/1e6,5)} Mm/s
-One-way delay                    ${fmt(s.delay*1e6,6)} µs
-Round-trip delay                 ${fmt(s.roundTrip*1e6,6)} µs
-
-STORED ENERGY
-Magnetic ½LI²                    ${fmt(s.magneticEnergy*1000,6)} mJ
-Electric ½CV² frame basis        ${fmt(s.electricEnergy,6)} J
-
-FORMULA BASIS
-R(T) = ρ20·l/A·[1 + α20(T−20 °C)]
-L′ = μ0/π·acosh(D/d)
-C′ = πε0εr/acosh(D/d)
-Z0 ≈ √(L′/C′)
-v = 1/√(L′C′)
-W_L = ½LI²; W_C = ½CV²
-Cold Voc = N·Voc_STC·[1 + βVoc(T−25 °C)]
-
-PROVENANCE
-Geometry                        user-edited / drawing-derived basis
-Module electrical data          manufacturer-style generic default
-Factory leads                   defaulted public-datasheet anchor
-Module-frame capacitance         assumed until measured/OEM evidence
-Inverter internal capacitance    unresolved and excluded
-
-BOUNDARY
-The present release calculates a geometry-derived Tier 1 study basis. It does not yet solve impulse waveforms, frequency-dependent losses, SPD residual voltage, mutual coupling matrices or inverter internal transients.`;
-}
-
-function run(){
-  const m=model();const g=buildGeometry(m);
-  if(!Number.isFinite(state.inverter.x)||state.inverter.x<g.arrayWidth+1){state.inverter.x=g.arrayWidth+5;state.inverter.y=Math.max(1,g.arrayHeight/2)}
-  const s=calculate(m,g);state.lastStudy={m,g,s};draw(m,g,s);renderOutputs(m,g,s);
-}
-
-function pointerWorld(ev){const r=canvas.getBoundingClientRect();return{x:state.view.wx(ev.clientX-r.left),y:state.view.wy(ev.clientY-r.top)}}
-canvas.addEventListener('pointerdown',ev=>{if(!state.view)return;const p=pointerWorld(ev);if(Math.abs(p.x-state.inverter.x)<1.4&&Math.abs(p.y-state.inverter.y)<1){state.dragging=true;state.dragOffset={x:p.x-state.inverter.x,y:p.y-state.inverter.y};canvas.setPointerCapture(ev.pointerId);canvas.style.cursor='grabbing'}});
-canvas.addEventListener('pointermove',ev=>{if(!state.dragging)return;const p=pointerWorld(ev);state.inverter.x=p.x-state.dragOffset.x;state.inverter.y=p.y-state.dragOffset.y;run()});
-canvas.addEventListener('pointerup',ev=>{state.dragging=false;canvas.releasePointerCapture(ev.pointerId);canvas.style.cursor='crosshair'});
-
-inputIds.forEach(id=>$(id).addEventListener('input',run));
-$('reset').addEventListener('click',()=>{state.inverter={x:27,y:7};document.querySelectorAll('input').forEach(i=>i.value=i.defaultValue);$('routeMode').value='paired';run()});
-$('export').addEventListener('click',()=>{if(!state.lastStudy)return;const {m,g,s}=state.lastStudy;const payload={schema_version:'0.2.0',generated_at:new Date().toISOString(),reliance_statement:'This tool produces an indicative topology and route-length study basis. It does not warrant installed cable quantities, prove routing feasibility, replace a survey, complete electrical design or certify compliance. Outputs must be reviewed by a competent person before use in procurement, construction or formal engineering studies.',inputs:m,objects:{inverter:state.inverter,modules:g.modules.map(({id,row,table,x,y,w,h,active})=>({id,row,table,x_m:x,y_m:y,width_m:w,height_m:h,active}))},routes:{positive:s.posRoute,negative:s.negRoute},results:{positive_length_m:s.posHome,negative_length_m:s.negHome,total_installed_conductor_m:s.installed,loop_area_m2:s.area,loop_resistance_ohm:s.loopR,loop_inductance_h:s.L,pair_capacitance_f:s.Cpair,frame_capacitance_f:s.Cframe,characteristic_impedance_ohm:s.z0,one_way_delay_s:s.delay,cold_voc_v:s.coldVoc},warnings:s.warnings,errors:s.errors};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='solar-dc-string-study-basis.json';a.click();URL.revokeObjectURL(a.href)});
-window.addEventListener('resize',run);
-run();
+function bounds(g){return{minX:-6,maxX:g.width+2,minY:-g.height/2-2,maxY:g.height/2+2};}
+function resize(){const r=canvas.getBoundingClientRect(),d=devicePixelRatio||1;canvas.width=Math.round(r.width*d);canvas.height=Math.round(r.height*d);ctx.setTransform(d,0,0,d,0,0);}
+function transform(g){const r=canvas.getBoundingClientRect(),b=bounds(g),pad=35,fit=Math.min((r.width-2*pad)/(b.maxX-b.minX),(r.height-2*pad)/(b.maxY-b.minY));const sc=fit*state.zoom,ox=pad-b.minX*fit+state.panX,oy=r.height/2+state.panY;return{sc,ox,oy,sx:x=>ox+x*sc,sy:y=>oy+y*sc,wx:x=>(x-ox)/sc,wy:y=>(y-oy)/sc};}
+function path(points,t,colour,width=2){ctx.beginPath();ctx.strokeStyle=colour;ctx.lineWidth=width;points.forEach((p,i)=>(i?ctx.lineTo(t.sx(p.x),t.sy(p.y)):ctx.moveTo(t.sx(p.x),t.sy(p.y))));ctx.stroke();}
+function drawSection(m,g){const w=section.width,h=section.height;sctx.clearRect(0,0,w,h);sctx.strokeStyle='#263342';sctx.beginPath();sctx.moveTo(20,h-25);sctx.lineTo(w-20,h-25);sctx.stroke();const cx=220,base=h-30,run=115,rise=Math.tan(m.tilt*Math.PI/180)*run;sctx.lineWidth=4;sctx.strokeStyle='#27d8ff';sctx.beginPath();sctx.moveTo(cx-run,base);sctx.lineTo(cx,base-rise);sctx.lineTo(cx+run,base);sctx.stroke();for(let side=-1;side<=1;side+=2)for(let r=0;r<m.ranksUp;r++){const f=(r+.5)/m.ranksUp,x=cx+side*run*f,y=base-rise*(1-f);sctx.fillStyle=side<0?'#1a7895':'#51458c';sctx.fillRect(x-8,y-5,16,10);}sctx.fillStyle='#ecf5ff';sctx.font='12px sans-serif';sctx.fillText(`${fmt(m.tilt,1)}° tilt`,360,42);sctx.fillText(`${m.ranksUp} ranks per full face`,340,62);}
+function draw(m,g,selectedStudy){resize();const t=transform(g);state.last={m,g,t};const r=canvas.getBoundingClientRect();ctx.clearRect(0,0,r.width,r.height);ctx.strokeStyle='#101a24';ctx.lineWidth=1;for(let x=0;x<=g.width;x+=10){ctx.beginPath();ctx.moveTo(t.sx(x),0);ctx.lineTo(t.sx(x),r.height);ctx.stroke();}
+ ctx.strokeStyle='#44e18a';ctx.beginPath();ctx.moveTo(t.sx(0),t.sy(0));ctx.lineTo(t.sx(g.width),t.sy(0));ctx.stroke();
+ g.strings.forEach(s=>{const selected=selectedStudy&&selectedStudy.s.id===s.id;ctx.fillStyle=selected?'#704d12':s.face==='E'?'#0f3d50':'#302653';ctx.strokeStyle=selected?'#ffb347':s.face==='E'?'#27d8ff':'#b891ff';const y0=s.face==='E'?s.y-s.rankPitch/2:s.y-s.rankPitch/2;ctx.fillRect(t.sx(s.x0),t.sy(y0),g.bandLength*t.sc,s.rankPitch*t.sc);ctx.strokeRect(t.sx(s.x0),t.sy(y0),g.bandLength*t.sc,s.rankPitch*t.sc);
+  const px=Math.max(1,m.moduleWidth*t.sc);for(let i=1;i<m.modulesAlong;i++){const x=s.x0+i*g.modulePitch;ctx.beginPath();ctx.moveTo(t.sx(x),t.sy(y0));ctx.lineTo(t.sx(x),t.sy(y0+s.rankPitch));ctx.stroke();}
+  if(t.sc>9){ctx.fillStyle='#dcecff';ctx.font='10px ui-monospace,monospace';ctx.fillText(s.id,t.sx(s.x0)+3,t.sy(s.y)+3);} });
+ if(selectedStudy){path(selectedStudy.route.positive,t,'#ff5964',3);path(selectedStudy.route.negative,t,'#27d8ff',3);}ctx.fillStyle='#ffb347';ctx.fillRect(t.sx(state.inverter.x)-8,t.sy(0)-16,16,32);ctx.fillStyle='#ffe1ad';ctx.font='11px sans-serif';ctx.fillText('INVERTER',t.sx(state.inverter.x)-28,t.sy(0)-22);set('zoomReadout',`${Math.round(state.zoom*100)}%`);drawSection(m,g);}
+function nearestString(wx,wy,g){return g.strings.find(s=>wx>=s.x0&&wx<=s.x1&&Math.abs(wy-s.y)<=s.rankPitch/2)||null;}
+function render(){const m=input();applySpacing(m);const g=build(m),pairs=pairMppts(g.strings,m.mpptCount);if(!state.selected||!g.strings.some(s=>s.id===state.selected))state.selected=g.strings[0]?.id||null;const s=g.strings.find(x=>x.id===state.selected),st=s?studyString(s,m):null;state.study=st;draw(m,g,st);
+ set('totalStrings',String(g.strings.length));set('footprint',`${fmt(g.width,1)} × ${fmt(g.height,1)} m`);if(st){set('routeLength',`${fmt(st.route.derivedLength,2)} m`);set('loopResistance',`${fmt(st.R,4)} Ω`);set('loopInductance',`${fmt(st.L*1e6,2)} µH`);set('frameCapacitance',`${fmt(st.Cframe*1e9,1)} nF`);set('z0',`${fmt(st.tw.z0,1)} Ω`);set('waveAmplitude',`${fmt(st.wave,0)} V`);set('delay',`${fmt(st.delay*1e6,3)} µs`);set('roundTrip',`${fmt(2*st.delay*1e6,3)} µs round trip`);set('magneticEnergy',`${fmt(st.mag*1000,2)} mJ`);set('electricEnergy',`${fmt(st.elec,3)} J`);set('coldVoc',`${fmt(st.coldVoc,1)} V`);$('selectedSummary').innerHTML=`<strong>${st.s.id}</strong> · ${st.s.face==='E'?'east':'west'} face · band ${st.s.band+1} · rank ${st.s.rank+1} · ${m.modulesPerString} modules in series`;
+  $('modelDecision').className='decision '+(st.distributed?'distributed':'');$('modelDecision').innerHTML=`<strong>${st.distributed?'DISTRIBUTED MODEL REQUIRED':'LUMPED MODEL ACCEPTABLE FOR THIS INPUT'}</strong><br>Rise time ${fmt(m.riseUs,3)} µs; criterion 2t<sub>d</sub> = ${fmt(st.criterion*1e6,3)} µs; margin t<sub>r</sub>/(2t<sub>d</sub>) = ${fmt(st.margin,2)}. Provenance: defaulted standard impulse front unless edited.`;
+ }
+ const warnings=[];if(m.modulesPerString!==m.modulesAlong)warnings.push(`Modules per string (${m.modulesPerString}) differs from modules along row (${m.modulesAlong}); one rank is no longer one complete string.`);if(g.strings.length>m.mpptCount*2)warnings.push(`${g.strings.length} strings exceed ${m.mpptCount} MPPTs at two strings per MPPT.`);pairs.filter(x=>x.crossBand).forEach(x=>{const a=studyString(x.strings[0],m).route.derivedLength,b=studyString(x.strings[1],m).route.derivedLength;warnings.push(`MPPT ${x.mppt}: forced cross-band pair ${x.strings[0].id}/${x.strings[1].id}; length ratio ${fmt(Math.max(a,b)/Math.max(.001,Math.min(a,b)),2)}.`);});$('warningBox').innerHTML=warnings.map(w=>`<div class="warning">${w}</div>`).join('');
+ const pairLines=pairs.map(p=>`MPPT ${String(p.mppt).padStart(2,'0')}  ${p.strings.map(x=>x.id).join(' + ')}${p.crossBand?'  [CROSS-BAND]':''}`);$('trace').textContent=[`FORMULA ARTEFACT ${P.formulaVersion}`,`TABLE: ${m.modulesAlong} along × ${m.ranksUp} ranks × ${m.faces} faces; tilt ${m.tilt}°`,`RANK PITCH = ${m.moduleLength} + ${m.clampGap} = ${fmt(g.rankPitch,3)} m; NO WALKWAY`,`BAND LENGTH = ${fmt(g.bandLength,3)} m`,`CONDUCTOR DIAMETER FROM CSA = ${fmt(st?.conductorD,3)} mm (not cable OD ${m.cableOd} mm)`,`L′ includes external acosh(D/d_conductor) plus μ0/(4π) loop internal inductance.`,`SELECTED ROUTE = near-end along-row distance + rank index × rank pitch + inverter drop = ${fmt(st?.route.derivedLength,3)} m`,`Cmodule (${m.wetState}) = ${fmt(st?.cModule*1e9,3)} nF; summed over ${m.modulesPerString} modules.`,`Z0 = ${fmt(st?.tw.z0,3)} Ω; initial incident screen I×Z0 = ${fmt(st?.wave,3)} V`,'',...pairLines].join('\n');}
+ids.forEach(id=>$(id).addEventListener('input',render));$('spacingPreset').addEventListener('change',render);$('reset').onclick=()=>location.reload();$('export').onclick=()=>{const payload={model:input(),selected_string:state.study?.s.id,derived_route_length_m:state.study?.route.derivedLength,study:state.study?{R_ohm:state.study.R,L_H:state.study.L,C_frame_F:state.study.Cframe,Z0_ohm:state.study.tw.z0,delay_s:state.study.delay}:null,reliance:'Indicative topology and route-length study basis; competent-person review required.'};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));a.download='dc-string-study-basis.json';a.click();};
+canvas.addEventListener('wheel',e=>{e.preventDefault();state.zoom=Math.max(.3,Math.min(8,state.zoom*Math.exp(-e.deltaY*.001)));render();},{passive:false});canvas.addEventListener('mousedown',e=>{const {t,g}=state.last,wx=t.wx(e.offsetX),wy=t.wy(e.offsetY);if(Math.hypot(wx-state.inverter.x,wy)<1.5)state.dragInv=true;else{const s=nearestString(wx,wy,g);if(s){state.selected=s.id;render();}else{state.panning=true;state.lastMouse={x:e.clientX,y:e.clientY};}}});window.addEventListener('mousemove',e=>{if(state.dragInv){state.inverter.y=state.last.t.wy(e.clientY-canvas.getBoundingClientRect().top);render();}else if(state.panning){state.panX+=e.clientX-state.lastMouse.x;state.panY+=e.clientY-state.lastMouse.y;state.lastMouse={x:e.clientX,y:e.clientY};render();}});window.addEventListener('mouseup',()=>{state.dragInv=false;state.panning=false;});window.addEventListener('resize',render);render();
