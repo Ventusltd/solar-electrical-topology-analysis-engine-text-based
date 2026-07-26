@@ -11,6 +11,9 @@
 
   wrap.addEventListener('pointerdown',e=>{
     if(e.target.closest('button,input,select,a'))return;
+    e.preventDefault();e.stopImmediatePropagation();
+    state.panning=false;state.dragInv=false;state.pinchStart=null;
+    if(state.pointers&&state.pointers.clear)state.pointers.clear();
     down=true;moved=false;startX=e.clientX;startY=e.clientY;startLeft=wrap.scrollLeft;startTop=wrap.scrollTop;
     wrap.classList.add('dragging');wrap.setPointerCapture?.(e.pointerId);
   },true);
@@ -25,20 +28,20 @@
 
   function finish(e){
     if(!down)return;
-    down=false;wrap.classList.remove('dragging');
+    down=false;wrap.classList.remove('dragging');state.panning=false;state.dragInv=false;
     try{wrap.releasePointerCapture?.(e.pointerId);}catch(_){ }
     if(moved){e.preventDefault();e.stopImmediatePropagation();return;}
-    const w=world(e);if(!w||!state.last)return;
+    const w=world(e);if(!w||!state.last){e.stopImmediatePropagation();return;}
     if(state.drawMode){
       if(!state.drawStart){state.drawStart=[w.x,w.y];document.getElementById('drawStatus').innerHTML='Ruler: <strong>CLICK END POINT</strong>';}
       else{addManual(state.drawStart,[w.x,w.y]);state.drawStart=null;document.getElementById('drawStatus').innerHTML='Ruler: <strong>CLICK START POINT</strong>';}
-      render();e.stopImmediatePropagation();return;
+      render();e.preventDefault();e.stopImmediatePropagation();return;
     }
     const s=nearest(w.x,w.y,state.last.g);if(s){state.selected=s.id;render();}
-    e.stopImmediatePropagation();
+    e.preventDefault();e.stopImmediatePropagation();
   }
   wrap.addEventListener('pointerup',finish,true);
-  wrap.addEventListener('pointercancel',e=>{down=false;wrap.classList.remove('dragging');},true);
+  wrap.addEventListener('pointercancel',e=>{down=false;state.panning=false;state.dragInv=false;wrap.classList.remove('dragging');e.stopImmediatePropagation();},true);
 
   wrap.addEventListener('wheel',e=>{e.stopImmediatePropagation();},{capture:true,passive:true});
 
