@@ -5,7 +5,7 @@
 <title>Solar DC String Topology Engine</title>
 <meta name="description" content="2D solar DC topology engine modelling complete string circuits: home-runs, module leads, connectors, temperature, loop geometry, inductance and capacitance.">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./navigation-buttons.css">
+<link rel="stylesheet" href="./spider-navigation.css">
 </head>
 <body>
 <header class="topbar"><div><div class="kicker">GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING</div><h1>Solar DC String Topology Engine</h1><p>Geometry-derived complete-circuit study of home-run cables, module leads, connector contacts, loop area, inductance and capacitance to earth.</p></div><div class="status"><span></span> V6 COMPLETE CIRCUIT</div></header>
@@ -24,7 +24,7 @@
 <label>Near-end allowance (m) <input id="nearAllowance" type="number" min="0" step="0.5" value="10"></label>
 <div class="provenance">Geometry and allowance: <strong>ASSUMED · EDITABLE</strong></div>
 </section>
-<section><h2>String bands</h2><p class="note">Comma-separated counts create equal-length string groups. View buttons change the drawing scale without gesture navigation.</p>
+<section><h2>String bands</h2><p class="note">Comma-separated counts create equal-length string groups. The drawing uses the proven Spider Sandbox interaction: drag the large canvas or use its scrollbars.</p>
 <label>East face bands <input id="eastBands" type="text" value="5,5,2"></label>
 <label>West face bands <input id="westBands" type="text" value="5,5,2"></label>
 <label>Modules per string <input id="modulesPerString" type="number" min="1" value="30"></label>
@@ -75,9 +75,8 @@
 <div class="button-row"><button id="reset">RESET</button><button id="export" class="primary">EXPORT STUDY JSON</button></div>
 </aside>
 <section class="workbench">
-<div class="canvas-head"><div><h2>Scalable plan · complete closed circuit</h2><p>Use the fixed view buttons. Gesture pan, pinch zoom and wheel zoom are disabled. Click a string to select it.</p></div><div class="legend"><span class="east">East face</span><span class="west">West face</span><span class="pos">Positive</span><span class="neg">Negative</span><span class="loop">Loop area</span><span class="inv">Inverter</span></div></div>
-<div class="view-controls" aria-label="Array view controls"><button type="button" data-view-zoom="1">FIT ALL</button><button type="button" data-view-zoom="1.6">STANDARD</button><button type="button" data-view-zoom="3">MODULE DETAIL</button></div>
-<div class="canvas-wrap"><canvas id="scene"></canvas><div id="zoomReadout">STANDARD</div></div>
+<div class="canvas-head"><div><h2>Scalable plan · complete closed circuit</h2><p>Spider-style large canvas: drag in any direction or use the scrollbars. Tap a string to select it. No view buttons and no pinch zoom.</p></div><div class="legend"><span class="east">East face</span><span class="west">West face</span><span class="pos">Positive</span><span class="neg">Negative</span><span class="loop">Loop area</span><span class="inv">Inverter</span></div></div>
+<div class="canvas-wrap"><canvas id="scene"></canvas><div id="zoomReadout">DRAG OR SCROLL THE LARGE CANVAS</div></div>
 <div class="section-inset"><canvas id="sectionCanvas" width="520" height="190"></canvas><div><strong>A-frame section inset</strong><p>Module slope geometry remains separate from plan projection. The electrical model accounts for external conductors and module-integrated series leads.</p></div></div>
 <div id="modelDecision" class="decision"></div><div id="warningBox" class="warnings"></div>
 <div class="selection"><h2>Selected complete circuit</h2><div id="selectedSummary">Click a string in plan.</div></div>
@@ -106,5 +105,5 @@
 </section>
 </main>
 <footer><span>Generic reproducible example · planned geometry, not as-built</span><span>Every exported value carries inputs and evidence status; no output is a warranty or design certificate.</span></footer>
-<script src="./physics.generated.js"></script><script src="./app.js"></script><script src="./navigation-buttons.js"></script>
+<script src="./physics.generated.js"></script><script src="./app.js"></script><script src="./spider-navigation.js"></script>
 </body></html>
