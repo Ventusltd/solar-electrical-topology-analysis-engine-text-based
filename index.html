@@ -24,7 +24,7 @@
 <label>Near-end allowance (m) <input id="nearAllowance" type="number" min="0" step="0.5" value="10"></label>
 <div class="provenance">Geometry and allowance: <strong>ASSUMED · EDITABLE</strong></div>
 </section>
-<section><h2>String bands</h2><p class="note">Comma-separated counts create equal-length string groups. The drawing uses the proven Spider Sandbox interaction: drag the large canvas or use its scrollbars.</p>
+<section><h2>String bands</h2><p class="note">Comma-separated counts create equal-length string groups. Drag the large drawing like the Spider Sandbox; use + and − for controlled mobile zoom.</p>
 <label>East face bands <input id="eastBands" type="text" value="5,5,2"></label>
 <label>West face bands <input id="westBands" type="text" value="5,5,2"></label>
 <label>Modules per string <input id="modulesPerString" type="number" min="1" value="30"></label>
@@ -75,8 +75,12 @@
 <div class="button-row"><button id="reset">RESET</button><button id="export" class="primary">EXPORT STUDY JSON</button></div>
 </aside>
 <section class="workbench">
-<div class="canvas-head"><div><h2>Scalable plan · complete closed circuit</h2><p>Spider-style large canvas: drag in any direction or use the scrollbars. Tap a string to select it. No view buttons and no pinch zoom.</p></div><div class="legend"><span class="east">East face</span><span class="west">West face</span><span class="pos">Positive</span><span class="neg">Negative</span><span class="loop">Loop area</span><span class="inv">Inverter</span></div></div>
-<div class="canvas-wrap"><canvas id="scene"></canvas><div id="zoomReadout">DRAG OR SCROLL THE LARGE CANVAS</div></div>
+<div class="canvas-head"><div><h2>Scalable plan · complete closed circuit</h2><p>Drag the large drawing in any direction. Use the fixed − and + controls on mobile or the mouse wheel on desktop. Zoom remains centred on the point being viewed.</p></div><div class="legend"><span class="east">East face</span><span class="west">West face</span><span class="pos">Positive</span><span class="neg">Negative</span><span class="loop">Loop area</span><span class="inv">Inverter</span></div></div>
+<div class="canvas-wrap">
+  <canvas id="scene"></canvas>
+  <div class="zoom-toolbar" aria-label="Drawing zoom controls"><button type="button" id="zoomOut" aria-label="Zoom out">−</button><button type="button" id="zoomReset" aria-label="Reset zoom"><span id="zoomPercent">100%</span></button><button type="button" id="zoomIn" aria-label="Zoom in">+</button></div>
+  <div id="zoomReadout">DRAG TO MOVE · USE − / + TO ZOOM</div>
+</div>
 <div class="section-inset"><canvas id="sectionCanvas" width="520" height="190"></canvas><div><strong>A-frame section inset</strong><p>Module slope geometry remains separate from plan projection. The electrical model accounts for external conductors and module-integrated series leads.</p></div></div>
 <div id="modelDecision" class="decision"></div><div id="warningBox" class="warnings"></div>
 <div class="selection"><h2>Selected complete circuit</h2><div id="selectedSummary">Click a string in plan.</div></div>
