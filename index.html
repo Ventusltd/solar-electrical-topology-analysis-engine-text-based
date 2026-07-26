@@ -46,22 +46,31 @@
 <label>Module Imp (A) <input id="moduleImp" type="number" step="0.01" value="17.35"></label>
 <label>βVoc (%/°C) <input id="betaVoc" type="number" step="0.01" value="-0.25"></label>
 <label>Cold cell temperature (°C) <input id="coldTemp" type="number" value="-10"></label>
+<label>System maximum voltage (V) <input id="systemMaxVoltage" type="number" value="1500"></label>
 <label>Home-run CSA (mm²) <input id="csa" type="number" step="0.1" value="6"></label>
 <label>Home-run temperature (°C) <input id="conductorTemp" type="number" value="70"></label>
 <label>Module-lead temperature (°C) <input id="leadTemp" type="number" value="75"></label>
 <label>Reference comparison (°C) <input id="referenceTemp" type="number" value="20"></label>
 <label>Connector temperature coeff. (/°C) <input id="connectorAlpha" type="number" step="0.0001" value="0.0039"></label>
 </section>
-<section><h2>Loop geometry and capacitance</h2>
+<section><h2>Differential and common-mode geometry</h2>
 <label>Cable OD (mm) <input id="cableOd" type="number" step="0.1" value="6.4"></label>
 <label>External pair spacing (mm) <input id="externalSpacing" type="number" min="0.1" step="1" value="40"></label>
 <label>Module-loop separation (mm) <input id="moduleSpacing" type="number" min="0.1" step="10" value="500"></label>
-<label>Effective εr <input id="epsilonR" type="number" step="0.1" value="2.3"></label>
-<label>Module capacitance to frame (pF) <input id="moduleCapPf" type="number" min="0" step="10" value="125"></label>
-<label>Wet multiplier <input id="wetMultiplier" type="number" min="1" step="0.1" value="3"></label>
-<label>Surface state <select id="surfaceState"><option value="dry">Dry</option><option value="wet">Wet scenario</option></select></label>
+<label>Effective line εr <input id="epsilonR" type="number" step="0.1" value="2.3"></label>
+<label>Cable height above earth (m) <input id="cableHeight" type="number" min="0.01" step="0.1" value="1.5"></label>
 <label>Disturbance rise time (µs) <input id="riseTime" type="number" min="0.001" step="0.1" value="1.2"></label>
-<div class="provenance">125 pF is retained only as a visible placeholder. It is not represented as validated module data.</div>
+<div class="provenance">Differential and common-mode quantities are calculated separately. Spacing, height and effective permittivity remain assumed until measured.</div>
+</section>
+<section><h2>Module capacitance to frame / earth</h2>
+<label>Glass relative permittivity <input id="glassEpsilon" type="number" min="1" step="0.1" value="7.5"></label>
+<label>Glass thickness (mm) <input id="glassThickness" type="number" min="0.1" step="0.1" value="2.0"></label>
+<label>Wetted face count <select id="wettedFaces"><option value="1">One</option><option value="2" selected>Two</option></select></label>
+<label>Frame/glass contact width (mm) <input id="frameContactWidth" type="number" min="0" step="1" value="10"></label>
+<label>IMD alarm threshold (kΩ) <input id="alarmThresholdKohm" type="number" min="0.1" step="10" value="100"></label>
+<label>Required response time (s) <input id="imdResponseTime" type="number" min="0.01" step="1" value="30"></label>
+<label>Inverter switching frequency (Hz) <input id="switchingFrequency" type="number" min="1" step="100" value="4000"></label>
+<div class="provenance">Wet capacitance uses full module area. Dry capacitance uses a defaulted perimeter-strip model and probably understates fringing and rear-rail coupling. Measurement should replace both where device selection is intended.</div>
 </section>
 <section><h2>Cable ruler</h2><p class="note">Draw or type additional route segments. Each segment is separately reported.</p>
 <label>Segment type <select id="manualType"><option value="surface_pair">Surface pair</option><option value="trench_pair">Trench pair</option><option value="rail_mounted_pair">Rail-mounted pair</option><option value="free_air_pair">Free-air pair</option><option value="custom">Custom</option></select></label>
@@ -76,11 +85,7 @@
 </aside>
 <section class="workbench">
 <div class="canvas-head"><div><h2>Scalable plan · complete closed circuit</h2><p>Drag the large drawing in any direction. Use the fixed − and + controls on mobile or the mouse wheel on desktop. Zoom remains centred on the point being viewed.</p></div><div class="legend"><span class="east">East face</span><span class="west">West face</span><span class="pos">Positive</span><span class="neg">Negative</span><span class="loop">Loop area</span><span class="inv">Inverter</span></div></div>
-<div class="canvas-wrap">
-  <canvas id="scene"></canvas>
-  <div class="zoom-toolbar" aria-label="Drawing zoom controls"><button type="button" id="zoomOut" aria-label="Zoom out">−</button><button type="button" id="zoomReset" aria-label="Reset zoom"><span id="zoomPercent">100%</span></button><button type="button" id="zoomIn" aria-label="Zoom in">+</button></div>
-  <div id="zoomReadout">DRAG TO MOVE · USE − / + TO ZOOM</div>
-</div>
+<div class="canvas-wrap"><canvas id="scene"></canvas><div class="zoom-toolbar" aria-label="Drawing zoom controls"><button type="button" id="zoomOut" aria-label="Zoom out">−</button><button type="button" id="zoomReset" aria-label="Reset zoom"><span id="zoomPercent">100%</span></button><button type="button" id="zoomIn" aria-label="Zoom in">+</button></div><div id="zoomReadout">DRAG TO MOVE · USE − / + TO ZOOM</div></div>
 <div class="section-inset"><canvas id="sectionCanvas" width="520" height="190"></canvas><div><strong>A-frame section inset</strong><p>Module slope geometry remains separate from plan projection. The electrical model accounts for external conductors and module-integrated series leads.</p></div></div>
 <div id="modelDecision" class="decision"></div><div id="warningBox" class="warnings"></div>
 <div class="selection"><h2>Selected complete circuit</h2><div id="selectedSummary">Click a string in plan.</div></div>
@@ -94,16 +99,23 @@
 <article><span>Voltage drop</span><strong id="voltageDrop">—</strong><small>at module Imp</small></article>
 <article><span>Power loss</span><strong id="powerLoss">—</strong><small>complete circuit I²R</small></article>
 <article><span>Loop area guide</span><strong id="loopArea">—</strong><small>plan projection</small></article>
-<article><span>Loop inductance</span><strong id="loopInductance">—</strong><small>segmented two-wire approximation</small></article>
-<article><span>Capacitance to frame</span><strong id="capacitanceEarth">—</strong><small>editable scenario</small></article>
+<article><span>Differential loop L</span><strong id="loopInductance">—</strong><small>segmented two-wire approximation</small></article>
+<article><span>Common-mode L</span><strong id="commonModeInductance">—</strong><small>both poles against earth</small></article>
+<article><span>C-earth dry / wet</span><strong id="capacitanceEarth">—</strong><small>per selected string</small></article>
+<article><span>C-earth inverter</span><strong id="inverterCapacitance">—</strong><small>all generated strings in parallel</small></article>
+<article><span>IMD time constant</span><strong id="imdTimeConstant">—</strong><small>Ralarm × C inverter</small></article>
+<article><span>Minimum detectable R</span><strong id="minimumDetectableResistance">—</strong><small>at stated response time</small></article>
+<article><span>CM impedance @ switching</span><strong id="commonModeImpedance">—</strong><small>1 / 2πfC</small></article>
+<article><span>CM resonance dry / wet</span><strong id="commonModeResonance">—</strong><small>1 / 2π√LC</small></article>
 <article><span>One-way delay</span><strong id="delay">—</strong><small id="roundTrip">—</small></article>
-<article><span>Cold string Voc</span><strong id="coldVoc">—</strong><small>module-count derived</small></article>
+<article><span>Cold string Voc</span><strong id="coldVoc">—</strong><small id="vocMargin">—</small></article>
+<article><span>Voltage breach temperature</span><strong id="breachTemperature">—</strong><small>βVoc and system maximum</small></article>
 <article><span>Total strings</span><strong id="totalStrings">—</strong><small>generated topology</small></article>
 <article><span>Array footprint</span><strong id="footprint">—</strong><small>plan projection</small></article>
 <article><span>Manual ruler total</span><strong id="manualTotal">0.00 m</strong><small>drawn + typed</small></article>
 </div>
 <details open><summary>Selected resistance and loss breakdown</summary><div id="breakdown" class="breakdown"></div></details>
-<details open><summary>All strings · complete-circuit schedule</summary><div class="table-scroll"><table><thead><tr><th>ID</th><th>Face</th><th>Band</th><th>+ external m</th><th>− external m</th><th>Module leads m</th><th>Total m</th><th>Contacts</th><th>R op Ω</th><th>ΔV V</th><th>Loss W</th><th>Area m²</th><th>L µH</th><th>C-earth nF</th><th>MPPT</th></tr></thead><tbody id="stringTable"></tbody></table></div></details>
+<details open><summary>All strings · complete-circuit schedule</summary><div class="table-scroll"><table><thead><tr><th>ID</th><th>Face</th><th>Band</th><th>+ external m</th><th>− external m</th><th>Module leads m</th><th>Total m</th><th>Contacts</th><th>R op Ω</th><th>ΔV V</th><th>Loss W</th><th>Area m²</th><th>L diff µH</th><th>L CM µH</th><th>C-earth dry/wet µF</th><th>MPPT</th></tr></thead><tbody id="stringTable"></tbody></table></div></details>
 <details open><summary>Manual cable electrical sub-table</summary><div class="table-scroll"><table><thead><tr><th>ID</th><th>Type</th><th>Length m</th><th>Spacing mm</th><th>R Ω</th><th>L µH</th><th>C nF</th><th>Z₀ Ω</th><th>Delay µs</th><th>Provenance</th></tr></thead><tbody id="manualTable"></tbody></table></div></details>
 <details open><summary>Calculation trace and evidence status</summary><pre id="trace"></pre></details>
 </section>
