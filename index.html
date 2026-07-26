@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Solar DC String Topology Engine</title>
-<meta name="description" content="Scalable 2D solar DC string topology, segmented route, RLC and travelling-wave study workbench.">
+<meta name="description" content="Scalable 2D solar DC topology, cable ruler, segmented RLC and travelling-wave workbench.">
 <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-<header class="topbar"><div><div class="kicker">GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING</div><h1>Solar DC String Topology Engine</h1><p>Scalable A-frame geometry generates every string segment, formation and electrical result.</p></div><div class="status"><span></span> SEGMENT TOPOLOGY WORKBENCH</div></header>
+<header class="topbar"><div><div class="kicker">GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING</div><h1>Solar DC String Topology Engine</h1><p>Draw or generate cable paths and obtain immediate electrical segment tables.</p></div><div class="status"><span></span> LIVE DC TOPOLOGY</div></header>
 <div class="reliance"><strong>ENGINEERING SCREENING OUTPUT</strong>This tool produces an indicative topology and route-length study basis. It does not warrant installed cable quantities, prove routing feasibility, replace a survey, complete electrical design or certify compliance. Outputs must be reviewed by a competent person before use in procurement, construction or formal engineering studies.</div>
 <main class="layout">
 <aside class="controls">
@@ -19,74 +19,61 @@
 <div class="provenance">Tilt provenance: <strong>ASSUMED · EDITABLE</strong></div>
 <label>Module width along row (m) <input id="moduleWidth" type="number" step="0.001" value="1.303"></label>
 <label>Module length up slope (m) <input id="moduleLength" type="number" step="0.001" value="2.384"></label>
-<label>Clamp gap between ranks (m) <input id="clampGap" type="number" min="0" step="0.001" value="0.020"></label>
-<label>Along-row module gap (m) <input id="alongGap" type="number" min="0" step="0.001" value="0.020"></label>
+<label>Clamp gap (m) <input id="clampGap" type="number" min="0" step="0.001" value="0.020"></label>
+<label>Along-row gap (m) <input id="alongGap" type="number" min="0" step="0.001" value="0.020"></label>
 <label>Structure drop (m) <input id="structureDrop" type="number" min="0" step="0.1" value="2.0"></label>
 </section>
-<section><h2>String bands</h2><p class="note">Comma-separated rank counts, nearest band first. Partial bands are real; no grey padding is generated.</p>
+<section><h2>String bands</h2><p class="note">Comma-separated rank counts. Partial bands are real.</p>
 <label>East face bands <input id="eastBands" type="text" value="5,5,2"></label>
 <label>West face bands <input id="westBands" type="text" value="5,5,2"></label>
 <label>Modules per string <input id="modulesPerString" type="number" min="1" value="30"></label>
 <label>MPPT count <input id="mpptCount" type="number" min="1" value="12"></label>
-<label>Strings per inverter <input id="stringsPerInverter" type="number" min="1" value="24"></label>
 </section>
-<section><h2>Segment formations</h2>
-<label>Module interconnect spacing (mm) <input id="moduleSpacing" type="number" min="0.1" step="0.1" value="8"></label>
-<div class="provenance">Provenance: <strong>ASSUMED</strong></div>
-<label>Along-rank return <select id="returnMode"><option value="alongside" selected>Alongside partner</option><option value="rank-away">One rank away</option><option value="custom">Custom separation</option></select></label>
-<label>Return separation (mm) <input id="returnSpacing" type="number" min="0.1" step="1" value="20"></label>
-<div class="provenance">Provenance: <strong id="returnProv">ASSUMED</strong></div>
-<label>Coiled surplus per module lead (m) <input id="coilLength" type="number" min="0" step="0.01" value="0.20"></label>
-<label>Coil diameter (mm) <input id="coilDiameter" type="number" min="1" step="1" value="80"></label>
-<div class="provenance">Coil values: <strong>DEFAULTED</strong></div>
-<label>Trench/surface pair spacing (mm) <input id="trenchSpacing" type="number" min="0.1" step="1" value="40"></label>
-<div class="provenance">Provenance: <strong>ASSUMED</strong></div>
+<section><h2>Cable ruler</h2><p class="note">Draw a straight cable in the plan, or type a length. Each ruler becomes a real electrical segment.</p>
+<label>Segment type <select id="manualType"><option value="surface_pair">Surface pair</option><option value="trench_pair">Trench pair</option><option value="rail_mounted_pair">Rail-mounted pair</option><option value="free_air_pair">Free-air pair</option><option value="custom">Custom</option></select></label>
+<label>Conductor separation (mm) <input id="manualSpacing" type="number" min="0.1" step="1" value="40"></label>
+<label>Typed length (m) <input id="manualLength" type="number" min="0" step="0.1" value="10"></label>
+<label>Provenance <select id="manualProvenance"><option value="measured">Measured</option><option value="assumed" selected>Assumed</option><option value="defaulted">Defaulted</option></select></label>
+<div class="button-row"><button id="drawCable" class="primary">DRAW CABLE</button><button id="addTyped">ADD TYPED</button></div>
+<div class="button-row"><button id="undoCable">UNDO</button><button id="clearCables">CLEAR</button></div>
+<div id="drawStatus" class="provenance">Ruler: <strong>READY</strong></div>
 </section>
 <section><h2>Electrical inputs</h2>
 <label>Module Vmp (V) <input id="moduleVmp" type="number" step="0.1" value="38.1"></label>
 <label>Module Voc (V) <input id="moduleVoc" type="number" step="0.1" value="45.9"></label>
 <label>Module Imp (A) <input id="moduleImp" type="number" step="0.01" value="17.35"></label>
 <label>βVoc (%/°C) <input id="betaVoc" type="number" step="0.01" value="-0.25"></label>
-<label>Cold cell temperature (°C) <input id="coldTemp" type="number" step="1" value="-10"></label>
+<label>Cold cell temperature (°C) <input id="coldTemp" type="number" value="-10"></label>
 <label>Conductor CSA (mm²) <input id="csa" type="number" step="0.1" value="6"></label>
 <label>Cable OD (mm) <input id="cableOd" type="number" step="0.1" value="6.4"></label>
-<label>Conductor temperature (°C) <input id="conductorTemp" type="number" step="1" value="70"></label>
+<label>Conductor temperature (°C) <input id="conductorTemp" type="number" value="70"></label>
 <label>Effective εr <input id="epsilonR" type="number" step="0.1" value="2.3"></label>
 <label>Disturbance rise time (µs) <input id="riseTime" type="number" min="0.001" step="0.1" value="1.2"></label>
-<div class="provenance">Rise-time provenance: <strong>DEFAULTED · 1.2/50 µs FRONT</strong></div>
-</section>
-<section><h2>Module-to-frame capacitance</h2>
-<label>State <select id="wetState"><option value="dry">Dry rear insulation</option><option value="wet" selected>Wet glass surface</option></select></label>
-<label>Dielectric thickness (mm) <input id="glassThickness" type="number" min="0.1" step="0.1" value="2.0"></label>
-<label>Relative permittivity <input id="glassEr" type="number" min="0.1" step="0.1" value="6"></label>
-<label>Wetted/effective area % <input id="wettedPct" type="number" min="0" max="100" step="1" value="100"></label>
 </section>
 <div class="button-row"><button id="reset">RESET</button><button id="export" class="primary">EXPORT STUDY JSON</button></div>
 </aside>
 <section class="workbench">
-<div class="canvas-head"><div><h2>Scalable plan readout · world metres</h2><p>Wheel to zoom. Drag to pan. Drag the inverter. Click a rank/string to inspect every conductor segment.</p></div><div class="legend"><span class="east">East face</span><span class="west">West face</span><span class="pos">PV+</span><span class="neg">PV−</span><span class="inv">Inverter</span></div></div>
+<div class="canvas-head"><div><h2>Scalable plan · world metres</h2><p>Wheel to zoom. Drag to pan. Click a string. In ruler mode, click the start and end points.</p></div><div class="legend"><span class="east">East face</span><span class="west">West face</span><span class="pos">Generated route</span><span class="neg">Manual ruler</span><span class="inv">Inverter</span></div></div>
 <div class="canvas-wrap"><canvas id="scene"></canvas><div id="zoomReadout">100%</div></div>
-<div class="section-inset"><canvas id="sectionCanvas" width="520" height="190"></canvas><div><strong>A-frame section inset</strong><p>Two mirrored five-rank portrait faces. Slope geometry drives cable length; plan projection is drawing-only.</p></div></div>
+<div class="section-inset"><canvas id="sectionCanvas" width="520" height="190"></canvas><div><strong>A-frame section inset</strong><p>Two mirrored portrait faces. Slope distance drives physics; plan projection drives the drawing.</p></div></div>
 <div id="modelDecision" class="decision"></div><div id="warningBox" class="warnings"></div>
 <div class="selection"><h2>Selected string</h2><div id="selectedSummary">Click a string in plan.</div></div>
 <div class="metrics">
-<article><span>Total strings</span><strong id="totalStrings">—</strong><small>arbitrary bands supported</small></article>
+<article><span>Total strings</span><strong id="totalStrings">—</strong><small>arbitrary bands</small></article>
 <article><span>Array footprint</span><strong id="footprint">—</strong><small>plan projection</small></article>
-<article><span>Installed conductor</span><strong id="routeLength">—</strong><small>sum of segment lengths</small></article>
-<article><span>Segment count</span><strong id="segmentCount">—</strong><small>one chain per selected string</small></article>
-<article><span>Loop resistance</span><strong id="loopResistance">—</strong><small>temperature corrected</small></article>
-<article><span>Loop inductance</span><strong id="loopInductance">—</strong><small>sum by formation</small></article>
-<article><span>Frame capacitance</span><strong id="frameCapacitance">—</strong><small>summed module-by-module</small></article>
-<article><span>First-segment Z₀</span><strong id="z0">—</strong><small>not one uniform route value</small></article>
-<article><span>Initial wave amplitude</span><strong id="waveAmplitude">—</strong><small>I × first-segment Z₀</small></article>
+<article><span>Generated conductor</span><strong id="routeLength">—</strong><small>segment-derived</small></article>
+<article><span>Manual ruler total</span><strong id="manualTotal">0.00 m</strong><small>drawn + typed</small></article>
+<article><span>Loop resistance</span><strong id="loopResistance">—</strong><small>selected string</small></article>
+<article><span>Loop inductance</span><strong id="loopInductance">—</strong><small>selected string</small></article>
 <article><span>One-way delay</span><strong id="delay">—</strong><small id="roundTrip">—</small></article>
-<article><span>Magnetic energy</span><strong id="magneticEnergy">—</strong><small>½LI²</small></article>
-<article><span>Electric energy</span><strong id="electricEnergy">—</strong><small>½CV²</small></article>
 <article><span>Cold string Voc</span><strong id="coldVoc">—</strong><small>module-count derived</small></article>
 </div>
-<details open><summary>Segment chain, MPPT allocation and formula trace</summary><pre id="trace"></pre></details>
+<details open><summary>Manual cable electrical sub-table</summary>
+<div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font:12px ui-monospace,monospace"><thead><tr><th>ID</th><th>Type</th><th>Length m</th><th>Spacing mm</th><th>R Ω</th><th>L µH</th><th>C nF</th><th>Z₀ Ω</th><th>Delay µs</th><th>Provenance</th></tr></thead><tbody id="manualTable"></tbody></table></div>
+</details>
+<details open><summary>Generated string segment chain</summary><pre id="trace"></pre></details>
 </section>
 </main>
-<footer><span>Generic reproducible example · planned geometry, not as-built</span><span>Geometry generates the segment network; the generated physics artefact evaluates each formation.</span></footer>
+<footer><span>Generic reproducible example · planned geometry, not as-built</span><span>Drawn rulers and generated geometry feed the same electrical formula artefact.</span></footer>
 <script src="./physics.generated.js"></script><script src="./app.js"></script>
 </body></html>
