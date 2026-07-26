@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Solar DC String Topology Engine</title>
-<meta name="description" content="Scalable 2D solar DC topology, cable ruler, segmented RLC and travelling-wave workbench.">
+<meta name="description" content="Scalable 2D solar DC topology, positive and negative cable routes, segmented RLC and travelling-wave workbench.">
 <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-<header class="topbar"><div><div class="kicker">GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING</div><h1>Solar DC String Topology Engine</h1><p>Draw or generate cable paths and obtain immediate electrical segment tables.</p></div><div class="status"><span></span> LIVE DC TOPOLOGY</div></header>
+<header class="topbar"><div><div class="kicker">GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING</div><h1>Solar DC String Topology Engine</h1><p>Generate or draw cable paths and obtain immediate positive, negative and loop electrical tables.</p></div><div class="status"><span></span> LIVE DC TOPOLOGY</div></header>
 <div class="reliance"><strong>ENGINEERING SCREENING OUTPUT</strong>This tool produces an indicative topology and route-length study basis. It does not warrant installed cable quantities, prove routing feasibility, replace a survey, complete electrical design or certify compliance. Outputs must be reviewed by a competent person before use in procurement, construction or formal engineering studies.</div>
 <main class="layout">
 <aside class="controls">
@@ -23,7 +23,7 @@
 <label>Along-row gap (m) <input id="alongGap" type="number" min="0" step="0.001" value="0.020"></label>
 <label>Structure drop (m) <input id="structureDrop" type="number" min="0" step="0.1" value="2.0"></label>
 </section>
-<section><h2>String bands</h2><p class="note">Comma-separated rank counts. Partial bands are real.</p>
+<section><h2>String bands</h2><p class="note">Each number is a group of equal-length strings. With 5,5,2 the first five use one row length, the next five two row lengths and the final two three row lengths.</p>
 <label>East face bands <input id="eastBands" type="text" value="5,5,2"></label>
 <label>West face bands <input id="westBands" type="text" value="5,5,2"></label>
 <label>Modules per string <input id="modulesPerString" type="number" min="1" value="30"></label>
@@ -53,7 +53,7 @@
 <div class="button-row"><button id="reset">RESET</button><button id="export" class="primary">EXPORT STUDY JSON</button></div>
 </aside>
 <section class="workbench">
-<div class="canvas-head"><div><h2>Scalable plan · world metres</h2><p>Wheel to zoom. Drag to pan. Click a string. In ruler mode, click the start and end points.</p></div><div class="legend"><span class="east">East face</span><span class="west">West face</span><span class="pos">Generated route</span><span class="neg">Manual ruler</span><span class="inv">Inverter</span></div></div>
+<div class="canvas-head"><div><h2>Scalable plan · world metres</h2><p>Black lines are DC cables. Every selected route is labelled + and −. Wheel to zoom, drag to pan and click a string.</p></div><div class="legend"><span class="east">East face</span><span class="west">West face</span><span style="color:#fff">Black cable + / −</span><span class="neg">Manual ruler</span><span class="inv">Inverter</span></div></div>
 <div class="canvas-wrap"><canvas id="scene"></canvas><div id="zoomReadout">100%</div></div>
 <div class="section-inset"><canvas id="sectionCanvas" width="520" height="190"></canvas><div><strong>A-frame section inset</strong><p>Two mirrored portrait faces. Slope distance drives physics; plan projection drives the drawing.</p></div></div>
 <div id="modelDecision" class="decision"></div><div id="warningBox" class="warnings"></div>
@@ -61,19 +61,24 @@
 <div class="metrics">
 <article><span>Total strings</span><strong id="totalStrings">—</strong><small>arbitrary bands</small></article>
 <article><span>Array footprint</span><strong id="footprint">—</strong><small>plan projection</small></article>
-<article><span>Generated conductor</span><strong id="routeLength">—</strong><small>segment-derived</small></article>
+<article><span>Positive length</span><strong id="positiveLength">—</strong><small>selected + conductor</small></article>
+<article><span>Negative length</span><strong id="negativeLength">—</strong><small>selected − conductor</small></article>
+<article><span>Total conductor</span><strong id="routeLength">—</strong><small>+ and − combined</small></article>
 <article><span>Manual ruler total</span><strong id="manualTotal">0.00 m</strong><small>drawn + typed</small></article>
 <article><span>Loop resistance</span><strong id="loopResistance">—</strong><small>selected string</small></article>
 <article><span>Loop inductance</span><strong id="loopInductance">—</strong><small>selected string</small></article>
 <article><span>One-way delay</span><strong id="delay">—</strong><small id="roundTrip">—</small></article>
 <article><span>Cold string Voc</span><strong id="coldVoc">—</strong><small>module-count derived</small></article>
 </div>
+<details open><summary>All string positive and negative lengths</summary>
+<div style="overflow:auto;max-height:520px"><table style="width:100%;border-collapse:collapse;font:12px ui-monospace,monospace;white-space:nowrap"><thead><tr><th>ID</th><th>Face</th><th>Band</th><th>Rank</th><th>+ m</th><th>− m</th><th>Total m</th><th>R Ω</th><th>L µH</th><th>MPPT</th></tr></thead><tbody id="stringTable"></tbody></table></div>
+</details>
 <details open><summary>Manual cable electrical sub-table</summary>
 <div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font:12px ui-monospace,monospace"><thead><tr><th>ID</th><th>Type</th><th>Length m</th><th>Spacing mm</th><th>R Ω</th><th>L µH</th><th>C nF</th><th>Z₀ Ω</th><th>Delay µs</th><th>Provenance</th></tr></thead><tbody id="manualTable"></tbody></table></div>
 </details>
 <details open><summary>Generated string segment chain</summary><pre id="trace"></pre></details>
 </section>
 </main>
-<footer><span>Generic reproducible example · planned geometry, not as-built</span><span>Drawn rulers and generated geometry feed the same electrical formula artefact.</span></footer>
+<footer><span>Generic reproducible example · planned geometry, not as-built</span><span>Black positive and negative cable routes are generated from the same geometry used by the electrical tables.</span></footer>
 <script src="./physics.generated.js"></script><script src="./app.js"></script>
 </body></html>
