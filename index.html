@@ -1,121 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Solar DC String Topology Engine</title>
-  <meta name="description" content="Interactive 2D solar DC string route, inductance, capacitance and propagation study workbench.">
-  <link rel="stylesheet" href="./styles.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solar DC String Topology Engine</title>
+<meta name="description" content="Plan-scale 2D solar DC string topology, route, RLC and travelling-wave study workbench.">
+<link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <header class="topbar">
-    <div>
-      <div class="kicker">GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING</div>
-      <h1>Solar DC String Topology Engine</h1>
-      <p>Move the inverter, alter the array and inspect the physical positive and negative paths that create resistance, loop inductance, capacitance, stored energy and propagation delay.</p>
-    </div>
-    <div class="status"><span></span> LIVE TIER 1 MODEL</div>
-  </header>
-
-  <div class="reliance">
-    <strong>ENGINEERING SCREENING OUTPUT</strong>
-    This tool produces an indicative topology and route-length study basis. It does not warrant installed cable quantities, prove routing feasibility, replace a survey, complete electrical design or certify compliance. Outputs must be reviewed by a competent person before use in procurement, construction or formal engineering studies.
-  </div>
-
-  <main class="layout">
-    <aside class="controls">
-      <section>
-        <h2>Array geometry</h2>
-        <label>Modules in string <input id="moduleCount" type="number" min="1" max="60" value="28"></label>
-        <label>Modules per table <input id="modulesPerTable" type="number" min="1" max="12" value="5"></label>
-        <label>Module length (m) <input id="moduleLength" type="number" min="0.2" step="0.001" value="2.384"></label>
-        <label>Module width (m) <input id="moduleWidth" type="number" min="0.2" step="0.001" value="1.303"></label>
-        <label>Inter-module gap (m) <input id="moduleGap" type="number" min="0" step="0.01" value="0.03"></label>
-        <label>Inter-table gap (m) <input id="tableGap" type="number" min="0" step="0.1" value="0.5"></label>
-        <label>Rows <input id="rowCount" type="number" min="1" max="8" value="2"></label>
-        <label>Row pitch (m) <input id="rowPitch" type="number" min="1" step="0.1" value="5.5"></label>
-      </section>
-
-      <section>
-        <h2>DC electrical inputs</h2>
-        <label>Module Vmp (V) <input id="moduleVmp" type="number" step="0.1" value="38.1"></label>
-        <label>Module Voc (V) <input id="moduleVoc" type="number" step="0.1" value="45.9"></label>
-        <label>Module Imp (A) <input id="moduleImp" type="number" step="0.01" value="17.35"></label>
-        <label>βVoc (%/°C) <input id="betaVoc" type="number" step="0.01" value="-0.25"></label>
-        <label>Cold cell temperature (°C) <input id="coldTemp" type="number" step="1" value="-10"></label>
-        <label>Conductor CSA (mm²) <input id="csa" type="number" step="1" value="6"></label>
-        <label>Cable OD (mm) <input id="cableOd" type="number" step="0.1" value="6.4"></label>
-        <label>Polarity centres (mm) <input id="spacing" type="number" step="1" value="20"></label>
-        <label>Effective εr <input id="epsilonR" type="number" step="0.1" value="2.3"></label>
-        <label>Module-frame C (nF/module) <input id="frameCap" type="number" step="1" value="100"></label>
-        <label>Conductor temperature (°C) <input id="conductorTemp" type="number" step="1" value="70"></label>
-        <label>Disturbance rise time (µs) <input id="riseTime" type="number" min="0.001" step="0.01" value="0.1"></label>
-      </section>
-
-      <section>
-        <h2>Routing</h2>
-        <label>Route mode
-          <select id="routeMode">
-            <option value="paired">Paired polarities</option>
-            <option value="separated">Separated polarities</option>
-          </select>
-        </label>
-        <label>Maintenance loop each end (m) <input id="maintenanceLoop" type="number" min="0" step="0.1" value="1"></label>
-        <div class="button-row">
-          <button id="reset">RESET</button>
-          <button id="export" class="primary">EXPORT JSON</button>
-        </div>
-      </section>
-    </aside>
-
-    <section class="workbench">
-      <div class="canvas-head">
-        <div>
-          <h2>2D electrical topology</h2>
-          <p>Drag the inverter. The positive and negative conductor routes and every derived output update immediately.</p>
-        </div>
-        <div class="legend">
-          <span class="pos">PV+</span><span class="neg">PV−</span><span class="frame">Frame</span><span class="inv">Inverter</span>
-        </div>
-      </div>
-      <div class="canvas-wrap">
-        <canvas id="scene" width="1400" height="760" aria-label="Interactive solar DC string topology"></canvas>
-        <div id="dragHint">DRAG INVERTER</div>
-      </div>
-
-      <div id="modelDecision" class="decision"></div>
-      <div id="warningBox" class="warnings"></div>
-
-      <div class="metrics">
-        <article><span>Positive conductor</span><strong id="positiveLength">—</strong><small>geometry-derived</small></article>
-        <article><span>Negative conductor</span><strong id="negativeLength">—</strong><small>geometry-derived</small></article>
-        <article><span>Total installed conductor</span><strong id="installedLength">—</strong><small>PV+ + PV−</small></article>
-        <article><span>Loop area</span><strong id="loopArea">—</strong><small>2D enclosed area</small></article>
-        <article><span>Loop resistance</span><strong id="loopResistance">—</strong><small>temperature corrected</small></article>
-        <article><span>Voltage drop</span><strong id="voltageDrop">—</strong><small id="voltageDropPct">—</small></article>
-        <article><span>DC cable loss</span><strong id="cableLoss">—</strong><small id="cableLossPct">—</small></article>
-        <article><span>Loop inductance</span><strong id="loopInductance">—</strong><small id="inductancePerM">—</small></article>
-        <article><span>Pair capacitance</span><strong id="pairCapacitance">—</strong><small id="capacitancePerM">—</small></article>
-        <article><span>Frame capacitance</span><strong id="frameCapacitance">—</strong><small>declared module basis</small></article>
-        <article><span>Characteristic impedance</span><strong id="z0">—</strong><small>lossless screening value</small></article>
-        <article><span>One-way delay</span><strong id="delay">—</strong><small id="roundTrip">—</small></article>
-        <article><span>Magnetic energy</span><strong id="magneticEnergy">—</strong><small>½LI²</small></article>
-        <article><span>Electric energy</span><strong id="electricEnergy">—</strong><small>½CV² to frame basis</small></article>
-        <article><span>String Vmp</span><strong id="stringVmp">—</strong><small id="stringPower">—</small></article>
-        <article><span>Cold string Voc</span><strong id="coldVoc">—</strong><small>temperature corrected</small></article>
-      </div>
-
-      <details open>
-        <summary>Segment and formula trace</summary>
-        <pre id="trace"></pre>
-      </details>
-    </section>
-  </main>
-
-  <footer>
-    <span>Generic reproducible example · no confidential project data</span>
-    <span>Formula basis: idealised round-conductor differential pair · planned geometry, not as-built</span>
-  </footer>
-  <script src="./app.js"></script>
-</body>
-</html>
+<header class="topbar"><div><div class="kicker">GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING</div><h1>Solar DC String Topology Engine</h1><p>Physical A-frame tables, geometry-derived string routes and selectable differential/common-mode electrical outputs.</p></div><div class="status"><span></span> DC STRING WORKBENCH</div></header>
+<div class="reliance"><strong>ENGINEERING SCREENING OUTPUT</strong>This tool produces an indicative topology and route-length study basis. It does not warrant installed cable quantities, prove routing feasibility, replace a survey, complete electrical design or certify compliance. Outputs must be reviewed by a competent person before use in procurement, construction or formal engineering studies.</div>
+<main class="layout">
+<aside class="controls">
+<section><h2>Physical table</h2>
+<label>Modules along row <input id="modulesAlong" type="number" min="1" value="30"></label>
+<label>Ranks up slope <input id="ranksUp" type="number" min="1" value="5"></label>
+<label>Faces per table <input id="faces" type="number" min="1" max="2" value="2"></label>
+<label>Tilt (degrees) <input id="tilt" type="number" min="0" max="60" step="0.1" value="10"></label>
+<label>Module width (m) <input id="moduleWidth" type="number" step="0.001" value="1.303"></label>
+<label>Module length (m) <input id="moduleLength" type="number" step="0.001" value="2.384"></label>
+<label>Clamp gap (m) <input id="clampGap" type="number" min="0" step="0.001" value="0.020"></label>
+<label>Along-row gap (m) <input id="alongGap" type="number" min="0" step="0.001" value="0.020"></label>
+<label>Drop to inverter (m) <input id="dropToInverter" type="number" min="0" step="0.1" value="2"></label>
+</section>
+<section><h2>String bands</h2><p class="note">Comma-separated rank counts ordered nearest to farthest from the inverter. Default: 5,5,2 on each face = 12 strings total.</p>
+<label>East face bands <input id="eastBands" type="text" value="5,5,2"></label>
+<label>West face bands <input id="westBands" type="text" value="5,5,2"></label>
+<label>Modules per string <input id="modulesPerString" type="number" min="1" value="30"></label>
+<label>MPPT count <input id="mpptCount" type="number" min="1" value="12"></label>
+</section>
+<section><h2>Electrical inputs</h2>
+<label>Module Vmp (V) <input id="moduleVmp" type="number" step="0.1" value="38.1"></label>
+<label>Module Voc (V) <input id="moduleVoc" type="number" step="0.1" value="45.9"></label>
+<label>Module Imp (A) <input id="moduleImp" type="number" step="0.01" value="17.35"></label>
+<label>βVoc (%/°C) <input id="betaVoc" type="number" step="0.01" value="-0.25"></label>
+<label>Cold cell temperature (°C) <input id="coldTemp" type="number" step="1" value="-10"></label>
+<label>Conductor CSA (mm²) <input id="csa" type="number" step="0.1" value="6"></label>
+<label>Cable OD (mm) <input id="cableOd" type="number" step="0.1" value="6.4"></label>
+<label>Conductor temperature (°C) <input id="conductorTemp" type="number" step="1" value="70"></label>
+<label>Effective εr <input id="epsilonR" type="number" step="0.1" value="2.3"></label>
+</section>
+<section><h2>Polarity geometry</h2>
+<label>Spacing preset <select id="spacingPreset"><option value="touching">Cables touching</option><option value="rank">One rank apart</option><option value="custom" selected>Arbitrary value</option></select></label>
+<label>Centre spacing (mm) <input id="spacing" type="number" step="1" value="20"></label>
+<div class="provenance">Provenance: <strong id="spacingProv">ASSUMED</strong></div>
+<label>Rise time (µs) <input id="riseTime" type="number" min="0.001" step="0.1" value="1.2"></label>
+<div class="provenance">Impulse front provenance: <strong>DEFAULTED · 1.2/50 µs</strong></div>
+</section>
+<section><h2>Module-to-frame capacitance</h2>
+<label>State <select id="wetState"><option value="dry">Dry rear insulation</option><option value="wet" selected>Wet glass surface</option></select></label>
+<label>Glass / dielectric (mm) <input id="glassThickness" type="number" min="0.1" step="0.1" value="2.0"></label>
+<label>Relative permittivity <input id="glassEr" type="number" min="0.1" step="0.1" value="6"></label>
+<label>Wetted/effective area % <input id="wettedPct" type="number" min="0" max="100" step="1" value="100"></label>
+</section>
+<div class="button-row"><button id="reset">RESET</button><button id="export" class="primary">EXPORT JSON</button></div>
+</aside>
+<section class="workbench">
+<div class="canvas-head"><div><h2>Plan view · metres · preserved aspect ratio</h2><p>Wheel to zoom. Drag to pan. Drag the inverter at the right-hand end. Click a string to inspect its full route.</p></div><div class="legend"><span class="east">East face</span><span class="west">West face</span><span class="pos">PV+</span><span class="neg">PV−</span><span class="inv">Inverter</span></div></div>
+<div class="canvas-wrap"><canvas id="scene"></canvas><div id="zoomReadout">100%</div></div>
+<div class="section-inset"><canvas id="sectionCanvas" width="520" height="170"></canvas><div><strong>A-frame section inset</strong><p>Two mirrored faces meet at the ridge. Five ranks lie directly beside one another up each slope; no walkway is silently inserted.</p></div></div>
+<div id="modelDecision" class="decision"></div><div id="warningBox" class="warnings"></div>
+<div class="selection"><h2>Selected string</h2><div id="selectedSummary">Click a string in plan.</div></div>
+<div class="metrics">
+<article><span>Total strings</span><strong id="totalStrings">—</strong><small>arbitrary bands supported</small></article>
+<article><span>Array footprint</span><strong id="footprint">—</strong><small>world metres</small></article>
+<article><span>Selected route</span><strong id="routeLength">—</strong><small>derived, never typed</small></article>
+<article><span>Loop resistance</span><strong id="loopResistance">—</strong><small>temperature corrected</small></article>
+<article><span>Loop inductance</span><strong id="loopInductance">—</strong><small>external + internal</small></article>
+<article><span>Frame capacitance</span><strong id="frameCapacitance">—</strong><small>summed module-by-module</small></article>
+<article><span>Surge impedance</span><strong id="z0">—</strong><small>selected spacing</small></article>
+<article><span>Initial wave amplitude</span><strong id="waveAmplitude">—</strong><small>open-end step screen</small></article>
+<article><span>One-way delay</span><strong id="delay">—</strong><small id="roundTrip">—</small></article>
+<article><span>Magnetic energy</span><strong id="magneticEnergy">—</strong><small>½LI²</small></article>
+<article><span>Electric energy</span><strong id="electricEnergy">—</strong><small>½CV²</small></article>
+<article><span>Cold string Voc</span><strong id="coldVoc">—</strong><small>30 modules default</small></article>
+</div>
+<details open><summary>MPPT allocation, route and formula trace</summary><pre id="trace"></pre></details>
+</section>
+</main>
+<footer><span>Generic reproducible example · planned geometry, not as-built</span><span>Python formula core is authoritative; browser uses the generated physics artefact.</span></footer>
+<script src="./physics.generated.js"></script><script src="./app.js"></script>
+</body></html>
