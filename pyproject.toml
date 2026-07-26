@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "solar-electrical-topology-engine"
+version = "0.2.0"
+description = "Unit-safe geometry-to-electrical study core for solar DC string topology"
+requires-python = ">=3.11"
+dependencies = ["pint>=0.24", "numpy>=1.26"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
