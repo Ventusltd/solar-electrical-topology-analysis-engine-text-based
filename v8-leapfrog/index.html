@@ -3,86 +3,191 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>V8 Leapfrog DC String Cable Schedule</title>
-<meta name="description" content="Independent V8 development workbench comparing sequential and leapfrog PV string home-run cable schedules.">
-<style>
-:root{color-scheme:dark;--bg:#05070a;--panel:#0b1118;--panel2:#101923;--line:#263747;--text:#eef7ff;--muted:#9db0c0;--cyan:#27d8ff;--amber:#ffb347;--green:#53e28b;--red:#ff6170;--purple:#bd96ff}*{box-sizing:border-box}html,body{margin:0;background:radial-gradient(circle at 70% 0,#112b3f 0,#05070a 42%);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}body{min-height:100vh}.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;padding:28px 30px;border-bottom:1px solid var(--line)}.kicker{color:var(--cyan);font:900 12px ui-monospace,monospace;letter-spacing:.17em;text-transform:uppercase}h1{margin:6px 0 8px;font-size:clamp(30px,4.5vw,52px);line-height:1.02}.top p{max-width:1000px;margin:0;color:#adc0cf;font-size:16px;line-height:1.45}.badge{white-space:nowrap;border:1px solid #205838;background:#062013;color:var(--green);padding:12px 16px;font:900 12px ui-monospace,monospace;letter-spacing:.08em}.warning{margin:16px 20px 0;padding:14px 16px;border:1px solid #845818;background:#281b05;color:#ffdca6;line-height:1.45}.layout{display:grid;grid-template-columns:390px minmax(0,1fr);gap:16px;padding:16px 20px 28px}.panel,.work{border:1px solid var(--line);background:linear-gradient(180deg,#111a25,#080d13)}.panel{padding:14px;margin-bottom:12px}.panel h2,.work h2{margin:0 0 10px;font-size:17px}.panel p{color:var(--muted);font-size:12px;line-height:1.5}.panel label{display:grid;grid-template-columns:1fr 146px;gap:10px;align-items:center;padding:6px 0;font-size:13px;color:#d8e7f4}.panel input,.panel select{width:100%;padding:8px 9px;border:1px solid #344658;background:#05090e;color:var(--text);font:800 12px ui-monospace,monospace}.note{margin-top:8px;padding:10px 11px;background:#061923;border-left:4px solid var(--cyan);color:#b9cfdd;font-size:12px;line-height:1.55}.buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}button,a.button{display:inline-flex;align-items:center;justify-content:center;text-align:center;min-height:42px;padding:10px 12px;border:1px solid #35506a;background:#111d29;color:#deecf8;text-decoration:none;font:900 12px ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}button.primary,a.primary{border-color:#0ea9c7;background:#06495a;color:#d7fbff}.work{padding:16px;min-width:0}.summary{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:10px}.summary article{border:1px solid var(--line);background:#060b10;padding:13px}.summary span{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.09em}.summary strong{display:block;margin:8px 0 3px;font:900 22px ui-monospace,monospace}.summary small{color:#8fa4b8}.green{color:var(--green)}.amber{color:var(--amber)}.cyan{color:var(--cyan)}.section{margin-top:12px;border:1px solid var(--line);background:#060a0f}.section h2{padding:12px 13px;margin:0;border-bottom:1px solid var(--line);color:var(--cyan)}.section .body{padding:13px;color:#c5d6e5;line-height:1.6;font-size:14px}.canvasBox{border:1px solid var(--line);background:#07111a;margin-top:12px;padding:12px}.canvasBox canvas{width:100%;height:390px;display:block;background:#03070b;border:1px solid #243445}.table-wrap{overflow:auto;max-height:520px}table{width:100%;border-collapse:collapse;font:12px ui-monospace,monospace}th,td{padding:9px 10px;border-bottom:1px solid #203041;text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}th{color:#b7ebff;background:#0d1823;position:sticky;top:0}tfoot th,tfoot td{background:#10202c;color:#fff}.diff{color:var(--green);font-weight:900}.bad{color:var(--red)}.formula{font:13px ui-monospace,monospace;background:#03070b;border:1px solid var(--line);padding:12px;overflow:auto;color:#d7ecff}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.tab{padding:8px 10px;border:1px solid var(--line);background:#09131d;color:#aac2d4;cursor:pointer;font:800 12px ui-monospace,monospace}.tab.active{color:#071015;background:var(--cyan);border-color:var(--cyan)}.tabpane{display:none}.tabpane.active{display:block}.foot{padding:18px 24px;border-top:1px solid var(--line);color:#8fa4b8;font-size:12px;line-height:1.5}pre{white-space:pre-wrap;margin:0;font:12px ui-monospace,monospace;color:#d7ecff}@media(max-width:1100px){.layout{grid-template-columns:1fr}.controls{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.panel{margin:0}.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){.top{display:block;padding:24px 18px}.badge{display:inline-block;margin-top:14px}.layout{padding:12px;display:block}.controls{display:block}.panel{margin-bottom:12px}.panel label{grid-template-columns:1fr 132px}.summary{grid-template-columns:1fr 1fr}.canvasBox canvas{height:330px}h1{font-size:34px}}@media(max-width:460px){.summary{grid-template-columns:1fr}.panel label{grid-template-columns:1fr}.buttons{grid-template-columns:1fr}.canvasBox canvas{height:300px}}
-</style>
+<title>V8 Leapfrog DC String Cable Comparison</title>
+<meta name="description" content="Independent V8 workbench comparing sequential and leapfrog PV string external DC cable schedules, resistance, voltage drop and loss.">
+<link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-<header class="top"><div><div class="kicker">GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING · V8 DEVELOPMENT</div><h1>Leapfrog DC String Cable Schedule</h1><p>Independent V8 workbench comparing sequential stringing against leapfrog stringing. It focuses on the external EPC-installed 6 mm² DC string cables / home-runs, then shows resistance, voltage drop and loss difference from that topology choice.</p></div><div class="badge">DEVELOPMENT · USE AT YOUR OWN RISK</div></header>
-<div class="warning"><strong>ENGINEERING SCREENING OUTPUT.</strong> V8 is a generic calculation aid. It does not prove as-built wiring, routing feasibility, cable quantities, compliance, protection coordination or procurement readiness. Every value must be checked against drawings, measured lead lengths, actual route, cable datasheets, connector evidence and competent engineering review.</div>
-<div class="layout">
-<aside class="controls">
-<section class="panel"><h2>String geometry</h2>
-<label>Modules per string <input id="modules" type="number" min="1" value="30"></label>
-<label>Module width along row (m) <input id="moduleWidth" type="number" min="0.1" step="0.001" value="1.303"></label>
-<label>Along-row module gap (m) <input id="gap" type="number" min="0" step="0.001" value="0.020"></label>
-<label>Band gap / route allowance (m) <input id="bandGap" type="number" min="0" step="0.1" value="0.0"></label>
-<div class="note">Row span is derived as modules × module width + gaps between modules. No user-entered row length is used.</div>
-</section>
-<section class="panel"><h2>String bands</h2>
-<p>Each band is a group of strings whose near terminals sit the same number of row spans away from the inverter end.</p>
-<label>East face bands <input id="eastBands" type="text" value="5,5,2"></label>
-<label>West face bands <input id="westBands" type="text" value="5,5,2"></label>
-<label>Near distance to inverter (m) <input id="distance" type="number" min="0" step="1" value="10"></label>
-<label>Scenario distances (m) <input id="scenarios" type="text" value="10,20,30"></label>
-<div class="note">Changing inverter distance raises both modes. Leapfrog saving comes from removing one full-row return conductor per string.</div>
-</section>
-<section class="panel"><h2>Cable and electrical inputs</h2>
-<label>External cable R20 (mΩ/m) <input id="r20" type="number" min="0" step="0.01" value="3.39"></label>
-<label>Cable operating temp (°C) <input id="temp" type="number" step="1" value="70"></label>
-<label>Current per string (A) <input id="current" type="number" min="0" step="0.01" value="17.35"></label>
-<label>Inverter count for fleet <input id="inverters" type="number" min="1" step="1" value="795"></label>
-<label>Currency rate per m (optional) <input id="rate" type="number" min="0" step="0.01" value="0"></label>
-<div class="note">Default external cable resistance uses a 6 mm² tinned copper PV string cable screening value. Module factory leads are not counted as EPC-installed external home-runs here.</div>
-</section>
-<section class="panel"><h2>Mode meaning</h2>
-<div class="formula">Sequential: one string terminal near, one terminal far.
-Leapfrog: both free terminals near; far end is turn-around.
-Saving per string = one row span.</div>
-<div class="buttons"><button class="primary" id="exportBtn">Export JSON</button><a class="button" href="../">Back to V6</a></div>
-</section>
-</aside>
-<main class="work">
-<div class="tabs"><button class="tab active" data-tab="tabcalc">Calculator</button><button class="tab" data-tab="tabdiagram">Diagram</button><button class="tab" data-tab="tabcommentary">Technical commentary</button></div>
-<div id="tabcalc" class="tabpane active">
-<div class="summary">
-<article><span>Row span</span><strong id="rowSpan" class="cyan">—</strong><small>derived 30-module length</small></article>
-<article><span>Strings / inverter</span><strong id="stringsInv">—</strong><small>east + west bands</small></article>
-<article><span>Saving / inverter</span><strong id="savingInv" class="green">—</strong><small>external 6 mm² avoided</small></article>
-<article><span>Saving / fleet</span><strong id="savingFleet" class="green">—</strong><small>using editable inverter count</small></article>
-<article><span>Sequential / inverter</span><strong id="seqInv" class="bad">—</strong><small>external + and − cable</small></article>
-<article><span>Leapfrog / inverter</span><strong id="leapInv">—</strong><small>external + and − cable</small></article>
-<article><span>Resistance saved</span><strong id="rSaved" class="green">—</strong><small>at operating temperature</small></article>
-<article><span>Loss saved</span><strong id="lossSaved" class="green">—</strong><small>at string current</small></article>
-</div>
-<section class="section"><h2>Band schedule · sequential versus leapfrog</h2><div class="table-wrap"><table><thead><tr><th>Face</th><th>Band</th><th>Strings</th><th>Offset m</th><th>Sequential + m</th><th>Sequential − m</th><th>Sequential total m</th><th>Leapfrog + m</th><th>Leapfrog − m</th><th>Leapfrog total m</th><th>Saving m/string</th><th>Saving m/band</th></tr></thead><tbody id="schedule"></tbody><tfoot id="scheduleFoot"></tfoot></table></div></section>
-<section class="section"><h2>Distance scenarios</h2><div class="table-wrap"><table><thead><tr><th>Inverter distance m</th><th>Sequential m/inverter</th><th>Leapfrog m/inverter</th><th>Saving m/inverter</th><th>Saving km/fleet</th><th>Loss saving kW/fleet</th></tr></thead><tbody id="scenarioTable"></tbody></table></div></section>
-<section class="section"><h2>Calculation trace</h2><div class="body"><pre id="trace"></pre></div></section>
-</div>
-<div id="tabdiagram" class="tabpane"><section class="section"><h2>Visual impact of leapfrog</h2><div class="body">Black cables show the home-run consequence. In sequential wiring one free terminal is at the far end, so a far-end return conductor is required. In leapfrog wiring both free terminals emerge at the inverter-side end; the far end is only a turn-around within the module string.</div><div class="canvasBox"><canvas id="diagram" width="1200" height="520"></canvas></div></section></div>
-<div id="tabcommentary" class="tabpane"><section class="section"><h2>Technical commentary used to build V8</h2><div class="body"><p>A thirty-module string still has one positive free terminal and one negative free terminal. Leapfrog does not change the electrical string. It changes where the two terminals appear physically.</p><p>In conventional sequential wiring, the modules are connected in physical order. One free terminal is at the inverter end and the other is at the far end. The external cable schedule therefore contains one short polarity and one polarity that is longer by about one complete row span.</p><p>In leapfrog wiring, the factory module leads skip alternate modules on the outward run and return through the skipped modules. Both free terminals emerge near the inverter-side end. The external EPC-installed 6 mm² DC string cables for the two polarities are then approximately equal for each band.</p><p>The saving is not both home-runs. It is one complete row-span return conductor per string. With a 39.67 m row span and 24 strings per inverter, that is about 952 m of external 6 mm² cable per inverter before any installation allowances.</p><p>Actual module factory-lead length, polarity order, connector location, support route, slack, drops and as-built continuity still need evidence. If long leads were supplied but left coiled under sequential wiring, those coils become real electrical segments and should be modelled separately in later V9/V10 work.</p></div></section></div>
+<header class="topbar">
+  <div>
+    <div class="kicker">GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING · V8.1</div>
+    <h1>Leapfrog DC String Cable Comparison</h1>
+    <p>Compares conventional sequential stringing with leapfrog stringing for every string, every band, one inverter and the inverter fleet. V6 and V7 remain untouched comparison workbenches.</p>
+    <div class="navlinks">
+      <a href="../">Open V6 complete-circuit engine</a>
+      <a href="../v7-development/feed-i/">Open V7 electromagnetic workbench</a>
+      <a href="./tests.html">Run V8 golden tests</a>
+      <a href="./README.md">V8 README</a>
+    </div>
+  </div>
+  <div class="status-stack">
+    <div id="runtimeStatus" class="status-badge">V8 LOADING</div>
+    <div id="selfTestStatus" class="status-badge testing">TESTS PENDING</div>
+    <div class="status-badge error">DEVELOPMENT · USE AT YOUR OWN RISK</div>
+  </div>
+</header>
+
+<div class="reliance"><strong>ENGINEERING SCREENING OUTPUT</strong>This tool does not prove as-built wiring, routing feasibility, installed cable quantities, compliance, procurement readiness or protection coordination. Inputs and outputs require project evidence and competent-person review.</div>
+
+<main class="layout">
+  <aside class="controls">
+    <section class="panel">
+      <h2>String geometry</h2>
+      <label>Modules per string <input id="modulesPerString" type="number" min="1" step="1" value="30"></label>
+      <label>Module width along row (m) <input id="moduleWidthM" type="number" min="0.001" step="0.001" value="1.303"></label>
+      <label>Along-row module gap (m) <input id="alongRowGapM" type="number" min="0" step="0.001" value="0.020"></label>
+      <label>Gap between 30-module bands (m) <input id="bandGapM" type="number" min="0" step="0.1" value="0.500"></label>
+      <div class="provenance">Row span is derived from module count, module width and gaps. <strong>No user-entered row length exists.</strong></div>
+    </section>
+
+    <section class="panel">
+      <h2>Strings and inverter distance</h2>
+      <p>Each comma-separated number is the string count in one equal-distance band.</p>
+      <label>East face bands <input id="eastBands" type="text" value="5,5,2"></label>
+      <label>West face bands <input id="westBands" type="text" value="5,5,2"></label>
+      <label>Near string terminals to inverter (m) <input id="inverterDistanceM" type="number" min="0" step="0.5" value="10"></label>
+      <label>Distance scenarios (m) <input id="scenarioDistancesM" type="text" value="10,20,30"></label>
+      <label>Sequential polarity convention <select id="polarityConvention"><option value="mirrored">Mirrored east/west · V6 convention</option><option value="positive_near_both">Positive near on both faces</option></select></label>
+      <div class="note">Distance to the inverter changes the unavoidable positive-and-negative base pair. It does not change the one-row-span return eliminated by leapfrog.</div>
+    </section>
+
+    <section class="panel">
+      <h2>External 6 mm² DC string cable</h2>
+      <label>R20 (mΩ/m) <input id="cableR20MilliOhmPerM" type="number" min="0" step="0.01" value="3.39"></label>
+      <label>Operating conductor temperature (°C) <input id="cableTemperatureC" type="number" step="1" value="70"></label>
+      <label>String current (A) <input id="stringCurrentA" type="number" min="0" step="0.01" value="17.35"></label>
+      <label>Module Vmp (V) <input id="moduleVmpV" type="number" min="0.001" step="0.1" value="38.1"></label>
+      <label>Inverter count <input id="inverterCount" type="number" min="1" step="1" value="795"></label>
+      <label>Installed cable rate (£/m, optional) <input id="installedCableRatePerM" type="number" min="0" step="0.01" value="0"></label>
+      <div class="provenance">Default R20 is a manufacturer/IEC-compatible metal-coated class-5 6 mm² value. Temperature, current and price remain editable evidence inputs.</div>
+    </section>
+
+    <section class="panel">
+      <h2>Factory module-lead feasibility screen</h2>
+      <label>Positive factory lead/module (m) <input id="positiveFactoryLeadM" type="number" min="0" step="0.01" value="0.350"></label>
+      <label>Negative factory lead/module (m) <input id="negativeFactoryLeadM" type="number" min="0" step="0.01" value="0.280"></label>
+      <label>Measured leapfrog connector span (m) <input id="measuredLeapfrogSpanM" type="number" min="0" step="0.01" value="0"></label>
+      <label>Lead evidence <select id="leadEvidence"><option value="MANUFACTURER_STANDARD_NOT_AS_BUILT">Manufacturer standard · not as-built</option><option value="MANUFACTURER_CUSTOM_DECLARED">Manufacturer custom declared</option><option value="MEASURED_ON_SITE">Measured on site</option><option value="ASSUMED_FROM_PHOTOGRAPH">Assumed from photograph</option><option value="UNKNOWN">Unknown</option></select></label>
+      <div class="note">No leapfrog feasibility verdict is issued until the routed connector-to-connector span is entered. Bend radius, support, slack and connector orientation remain separate checks.</div>
+    </section>
+
+    <section class="panel">
+      <h2>Actions</h2>
+      <div class="button-row"><button id="resetBtn">Reset defaults</button><button id="exportBtn" class="primary">Export study JSON</button></div>
+      <div class="button-row"><button id="copyBtn"><span id="copyStatus">Copy summary</span></button><a class="button" href="./tests.html">Open tests</a></div>
+    </section>
+  </aside>
+
+  <section class="workbench">
+    <div id="runtimeError" class="runtime-error"></div>
+    <div class="tabs">
+      <button class="tab active" data-tab="calculatorTab">Cable comparison</button>
+      <button class="tab" data-tab="diagramTab">Leapfrog diagram</button>
+      <button class="tab" data-tab="stringsTab">All strings</button>
+      <button class="tab" data-tab="commentaryTab">Technical commentary</button>
+      <button class="tab" data-tab="comparisonTab">V6 / V7 / V8</button>
+    </div>
+
+    <div id="calculatorTab" class="tabpane active">
+      <div class="metrics">
+        <article><span>Derived row span</span><strong id="metricRowSpan" class="cyan">—</strong><small>one 30-module row</small></article>
+        <article><span>Strings / inverter</span><strong id="metricStrings">—</strong><small>east plus west</small></article>
+        <article><span>Sequential external cable</span><strong id="metricSequential" class="red">—</strong><small>per inverter</small></article>
+        <article><span>Leapfrog external cable</span><strong id="metricLeapfrog">—</strong><small>per inverter</small></article>
+        <article><span>External cable eliminated</span><strong id="metricSavingInverter" class="green">—</strong><small>per inverter</small></article>
+        <article><span>Fleet cable eliminated</span><strong id="metricSavingFleet" class="green">—</strong><small>editable inverter count</small></article>
+        <article><span>Resistance reduction</span><strong id="metricResistanceSaving" class="green">—</strong><small>per string, not a series sum across inverter</small></article>
+        <article><span>Voltage-drop reduction</span><strong id="metricVoltageSaving" class="green">—</strong><small>per string at entered current</small></article>
+        <article><span>Loss reduction / inverter</span><strong id="metricLossSaving" class="green">—</strong><small>sum across strings at entered current</small></article>
+        <article><span>Loss reduction / fleet</span><strong id="metricFleetLossSaving" class="green">—</strong><small>instantaneous at entered current</small></article>
+        <article><span>Installed cost difference</span><strong id="metricCostSaving" class="amber">—</strong><small>only when £/m is entered</small></article>
+      </div>
+
+      <div class="decomposition">
+        <article class="compare-card leapfrog"><span>Unavoidable base pair</span><strong id="decompBasePair">—</strong><small>Both modes retain + and − cable from the common string end to the inverter.</small></article>
+        <article class="compare-card sequential"><span>Sequential additional return</span><strong id="decompSequentialReturn">—</strong><small>One full row span per string because the second free terminal is at the far end.</small></article>
+        <article class="compare-card difference"><span>Leapfrog additional return</span><strong id="decompLeapfrogReturn">—</strong><small>Both free terminals emerge at the near end, so this extra EPC return is removed.</small></article>
+        <article class="compare-card sequential"><span>Sequential total</span><strong id="decompSequentialTotal">—</strong><small>Base pair plus row returns.</small></article>
+        <article class="compare-card leapfrog"><span>Leapfrog total</span><strong id="decompLeapfrogTotal">—</strong><small>Base pair only in this external-cable comparison.</small></article>
+        <article class="compare-card difference"><span>Difference</span><strong id="decompDifference">—</strong><small>External 6 mm² cable, not factory module leads.</small></article>
+      </div>
+
+      <section class="section">
+        <h2>Module-lead evidence gate</h2>
+        <div class="section-body">
+          <div class="lead-box">
+            <article><span>Positive lead</span><strong id="leadPositive">—</strong></article>
+            <article><span>Negative lead</span><strong id="leadNegative">—</strong></article>
+            <article><span>Combined available</span><strong id="leadCombined">—</strong></article>
+            <article><span>Measured required span</span><strong id="leadRequired">—</strong></article>
+          </div>
+          <p><strong id="leadStatus" class="amber">UNRESOLVED</strong> — <span id="leadMessage">Waiting for calculation.</span></p>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Band schedule · sequential versus leapfrog</h2>
+        <div class="table-wrap"><table><thead><tr><th>Face</th><th>Band</th><th>Strings</th><th>Near route m</th><th>Seq + m</th><th>Seq − m</th><th>Seq band total m</th><th>Leap + m</th><th>Leap − m</th><th>Leap band total m</th><th>Saving m</th></tr></thead><tbody id="bandSchedule"></tbody><tfoot id="bandScheduleFoot"></tfoot></table></div>
+      </section>
+
+      <section class="section">
+        <h2>10 / 20 / 30 metre inverter-distance scenarios</h2>
+        <div class="table-wrap"><table><thead><tr><th>Distance m</th><th>Unavoidable base pair m/inv</th><th>Additional return m/inv</th><th>Sequential m/inv</th><th>Leapfrog m/inv</th><th>Saving m/inv</th><th>Saving km/fleet</th><th>Loss saving kW/inv</th></tr></thead><tbody id="scenarioSchedule"></tbody></table></div>
+      </section>
+
+      <section class="section"><h2>Calculation trace</h2><div class="section-body"><pre id="calculationTrace" class="trace"></pre></div></section>
+    </div>
+
+    <div id="diagramTab" class="tabpane">
+      <section class="section">
+        <h2>Why leapfrog removes the far-end EPC return</h2>
+        <div class="section-body"><p>The string still has one positive and one negative free terminal. Sequential wiring places them at opposite physical ends. Leapfrog changes the module connection order so both emerge at the inverter-side end. Black lines are conductors; the dashed red path is the external return removed by leapfrog.</p></div>
+        <div class="diagram-wrap"><svg id="topologyDiagram" role="img" aria-label="Sequential and leapfrog string wiring comparison"></svg></div>
+      </section>
+    </div>
+
+    <div id="stringsTab" class="tabpane">
+      <section class="section">
+        <h2>All generated strings</h2>
+        <div class="section-body"><p>Every string is shown separately so the positive and negative cable schedule is auditable. V8 mirrors the sequential positive/negative orientation between east and west by default, while cable totals remain unchanged.</p></div>
+        <div class="table-wrap"><table><thead><tr><th>#</th><th>Polarity IDs</th><th>Face</th><th>Band</th><th>Near m</th><th>Seq + m</th><th>Seq − m</th><th>Leap + m</th><th>Leap − m</th><th>Cable saved m</th><th>ΔR Ω/string</th><th>ΔV V/string</th><th>ΔP W/string</th></tr></thead><tbody id="stringSchedule"></tbody></table></div>
+      </section>
+    </div>
+
+    <div id="commentaryTab" class="tabpane">
+      <section class="section">
+        <h2>Technical commentary governing the calculation</h2>
+        <div class="section-body">
+          <p>A 30-module string always has one free positive terminal and one free negative terminal. Leapfrog does not change the series voltage, current, module count, connector count or MPPT allocation. It changes the physical position of the free terminals.</p>
+          <p>With conventional sequential wiring, one terminal is at the near end and the other is one complete row span farther away. The EPC therefore installs an unavoidable positive-and-negative base pair to the near end plus one additional row-length return conductor for every string.</p>
+          <p>With leapfrog wiring, longer factory-fitted module leads connect alternate modules on the outward path and the skipped modules on the return path. Both free terminals emerge at the same physical end. The unavoidable base pair remains, but the additional row-length external return becomes zero.</p>
+          <p>The cable saving per string is therefore the derived row span. It is independent of whether the inverter is 10 m, 20 m or 30 m from the near terminals, because distance adds equally to the two modes. This tool calls the removed conductor the “additional EPC row return” to avoid implying that all external string cable disappears.</p>
+          <p>V8 reports resistance and voltage-drop reduction per string. It does not add the resistance reductions of parallel strings and present them as one inverter resistance. Total power-loss reduction may be summed across strings because each string contributes its own I²R reduction.</p>
+          <p>The external cable comparison does not assume that leapfrog is physically feasible. Factory lead lengths, connector positions, routed skip distance, bend radius, support and slack must be checked. Standard catalogue leads may differ from custom leads actually delivered.</p>
+          <p>This schedule excludes factory module-lead conductor from the EPC-installed 6 mm² cable quantity. A later complete-circuit comparison may add module leads and connectors, but the two length classes must remain separate.</p>
+        </div>
+      </section>
+    </div>
+
+    <div id="comparisonTab" class="tabpane">
+      <section class="section">
+        <h2>What was retained from V6 and V7</h2>
+        <div class="section-body">
+          <div class="comparison-grid">
+            <article><h3>V6</h3><p id="v6Comparison"></p></article>
+            <article><h3>V7</h3><p id="v7Comparison"></p></article>
+            <article><h3>V8</h3><p id="v8Comparison"></p></article>
+          </div>
+          <p>V6 and V7 are not altered by this V8 repair. V8 is the dedicated schedule comparator and can later export route objects into the complete-circuit and electromagnetic solvers.</p>
+          <textarea id="plainSummary" rows="12" readonly style="width:100%;margin-top:12px;background:#03070b;color:#d7ecff;border:1px solid #263747;padding:10px;font:12px/1.55 ui-monospace,monospace"></textarea>
+        </div>
+      </section>
+    </div>
+  </section>
 </main>
-</div>
-<footer class="foot">V8 is isolated in its own folder. V6 and V7 remain comparison versions. Public manufacturer defaults are helpful, but this page is not a substitute for measured lead lengths, as-built string tracing or competent review.</footer>
-<script>
-'use strict';
-const $=id=>document.getElementById(id);const ids=['modules','moduleWidth','gap','bandGap','eastBands','westBands','distance','scenarios','r20','temp','current','inverters','rate'];
-const fmt=(v,d=2)=>Number.isFinite(v)?v.toLocaleString('en-GB',{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
-function parseBands(id){const arr=$(id).value.split(',').map(x=>Math.max(0,Math.round(Number(x.trim())))).filter(x=>x>0);return arr.length?arr:[0];}
-function parseNumbers(id){return $(id).value.split(',').map(x=>Number(x.trim())).filter(x=>Number.isFinite(x)&&x>=0);}
-function inputs(){return{modules:Math.max(1,Math.round(Number($('modules').value))),moduleWidth:Math.max(.001,Number($('moduleWidth').value)),gap:Math.max(0,Number($('gap').value)),bandGap:Math.max(0,Number($('bandGap').value)),eastBands:parseBands('eastBands'),westBands:parseBands('westBands'),distance:Math.max(0,Number($('distance').value)),scenarios:parseNumbers('scenarios'),r20:Math.max(0,Number($('r20').value)),temp:Number($('temp').value),current:Math.max(0,Number($('current').value)),inverters:Math.max(1,Math.round(Number($('inverters').value))),rate:Math.max(0,Number($('rate').value))};}
-function rowSpan(m){return m.modules*m.moduleWidth+(m.modules-1)*m.gap;}
-function rowsFor(m,D=m.distance){const R=rowSpan(m),faces=[['E',m.eastBands],['W',m.westBands]],rows=[];for(const [face,bands] of faces){bands.forEach((count,i)=>{const off=i*(R+m.bandGap),near=D+off,far=near+R;const seqP=near,seqN=far,leapP=near,leapN=near;rows.push({face,band:i+1,count,offset:off,seqP,seqN,seqTotal:(seqP+seqN)*count,leapP,leapN,leapTotal:(leapP+leapN)*count,savingPerString:R,savingBand:R*count});});}return rows;}
-function totals(m,D=m.distance){const rows=rowsFor(m,D);const strings=rows.reduce((a,r)=>a+r.count,0);const seq=rows.reduce((a,r)=>a+r.seqTotal,0);const leap=rows.reduce((a,r)=>a+r.leapTotal,0);const saved=seq-leap;const rOpPerM=m.r20/1000*(1+0.00393*(m.temp-20));const rSaved=saved*rOpPerM;const lossSaved=m.current*m.current*rSaved;return{rows,strings,seq,leap,saved,rOpPerM,rSaved,lossSaved,costSaved:saved*m.rate};}
-function drawDiagram(m,t){const c=$('diagram'),ctx=c.getContext('2d'),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);ctx.fillStyle='#03070b';ctx.fillRect(0,0,W,H);const R=rowSpan(m),D=m.distance;const modules=Math.min(m.modules,30);function cable(points,w=4){ctx.save();ctx.lineJoin='round';ctx.lineCap='round';ctx.strokeStyle='rgba(238,247,255,.75)';ctx.lineWidth=w+2;ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.strokeStyle='#000';ctx.lineWidth=w;ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.restore();}
-function moduleRow(y,title,leap){const x0=180,w=25,h=52,g=7;ctx.fillStyle='#dff7ff';ctx.font='800 20px ui-monospace,monospace';ctx.fillText(title,30,y+32);ctx.fillStyle='#ffb347';ctx.fillRect(78,y+8,42,110);ctx.fillStyle='#ffdca6';ctx.font='700 15px ui-monospace,monospace';ctx.fillText('INVERTER',42,y);for(let i=0;i<modules;i++){const x=x0+i*(w+g);ctx.fillStyle=i%2?'#12344a':'#16485e';ctx.fillRect(x,y,w,h);ctx.strokeStyle='#65dbff';ctx.strokeRect(x,y,w,h);ctx.fillStyle='#000';ctx.fillRect(x+w/2-3,y+12,6,5);}ctx.fillStyle='#fff';ctx.font='800 16px ui-monospace,monospace';if(leap){cable([[120,y+25],[x0-30,y+25],[x0,y+25]],4);cable([[120,y+55],[x0-30,y+55],[x0+w+g,y+55]],4);ctx.fillText('+',132,y+29);ctx.fillText('−',132,y+59);for(let i=0;i<modules-2;i+=2){const x=x0+i*(w+g)+w/2;const x2=x0+(i+2)*(w+g)+w/2;cable([[x,y+15],[x2,y+15]],2);}for(let i=1;i<modules-2;i+=2){const x=x0+i*(w+g)+w/2;const x2=x0+(i+2)*(w+g)+w/2;cable([[x,y+48],[x2,y+48]],2);}const xf=x0+(modules-2)*(w+g)+w/2,xf2=x0+(modules-1)*(w+g)+w/2;cable([[xf,y+15],[xf2,y+48]],2);ctx.fillStyle='#53e28b';ctx.fillText('Both free terminals at inverter end',x0,y+92);}else{cable([[120,y+25],[x0,y+25]],4);const far=x0+(modules-1)*(w+g)+w/2;cable([[far,y+55],[far,y+100],[120,y+100]],4);ctx.fillStyle='#fff';ctx.fillText('+',132,y+29);ctx.fillText('−',far+10,y+60);ctx.fillStyle='#ff6170';ctx.fillText('Far-end return required ≈ one row span',x0,y+122);} }
-moduleRow(70,'Sequential',false);moduleRow(310,'Leapfrog',true);ctx.fillStyle='#adc0cf';ctx.font='800 17px ui-monospace,monospace';ctx.fillText(`Current inputs: row span ${fmt(R,2)} m, inverter distance ${fmt(D,1)} m, saving ${fmt(t.saved,1)} m/inverter`,30,500);}
-function render(){const m=inputs(),R=rowSpan(m),t=totals(m);$('rowSpan').textContent=fmt(R,2)+' m';$('stringsInv').textContent=String(t.strings);$('savingInv').textContent=fmt(t.saved/1000,3)+' km';$('savingFleet').textContent=fmt(t.saved*m.inverters/1000,1)+' km';$('seqInv').textContent=fmt(t.seq/1000,3)+' km';$('leapInv').textContent=fmt(t.leap/1000,3)+' km';$('rSaved').textContent=fmt(t.rSaved,3)+' Ω';$('lossSaved').textContent=fmt(t.lossSaved/1000,3)+' kW';$('schedule').innerHTML=t.rows.map(r=>`<tr><td>${r.face}</td><td>${r.band}</td><td>${r.count}</td><td>${fmt(r.offset,2)}</td><td>${fmt(r.seqP,2)}</td><td>${fmt(r.seqN,2)}</td><td>${fmt(r.seqTotal,2)}</td><td>${fmt(r.leapP,2)}</td><td>${fmt(r.leapN,2)}</td><td>${fmt(r.leapTotal,2)}</td><td class="diff">${fmt(r.savingPerString,2)}</td><td class="diff">${fmt(r.savingBand,2)}</td></tr>`).join('');$('scheduleFoot').innerHTML=`<tr><th colspan="6">Per inverter totals</th><td>${fmt(t.seq,2)}</td><td colspan="2"></td><td>${fmt(t.leap,2)}</td><td class="diff">${fmt(R,2)}</td><td class="diff">${fmt(t.saved,2)}</td></tr>`;const sc=m.scenarios.length?m.scenarios:[m.distance];$('scenarioTable').innerHTML=sc.map(D=>{const q=totals(m,D);return `<tr><td>${fmt(D,1)}</td><td>${fmt(q.seq,1)}</td><td>${fmt(q.leap,1)}</td><td class="diff">${fmt(q.saved,1)}</td><td class="diff">${fmt(q.saved*m.inverters/1000,1)}</td><td class="diff">${fmt(q.lossSaved*m.inverters/1000,2)}</td></tr>`}).join('');$('trace').textContent=[`Formula ID: external-cable-leapfrog-v8-2026-07-27`,`Row span R = modules × width + (modules − 1) × gap = ${m.modules} × ${m.moduleWidth} + ${m.modules-1} × ${m.gap} = ${fmt(R,3)} m`,`Band offset O = band_index × (R + band_gap)`,`Sequential per string = 2(D + O) + R`,`Leapfrog per string = 2(D + O)`,`Saving per string = R = ${fmt(R,3)} m`,`Strings per inverter = ${t.strings}`,`Saving per inverter = ${fmt(t.saved,3)} m`,`Saving across ${m.inverters} inverters = ${fmt(t.saved*m.inverters/1000,3)} km`,`Operating R per metre = ${fmt(t.rOpPerM*1000,5)} mΩ/m at ${fmt(m.temp,1)} °C`,`Resistance saved per inverter = ${fmt(t.rSaved,5)} Ω`,`Loss saved per inverter at ${fmt(m.current,2)} A = ${fmt(t.lossSaved,2)} W`,`Optional cost saving per inverter = ${m.rate>0?fmt(t.costSaved,2):'not priced'}`].join('\n');drawDiagram(m,t);}
-ids.forEach(id=>$(id).addEventListener('input',render));document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tabpane').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.tab).classList.add('active');render();}));
-$('exportBtn').addEventListener('click',()=>{const m=inputs(),t=totals(m),payload={schema:'v8-leapfrog-external-dc-string-cable-schedule',reliance:'Indicative screening only. Not as-built, procurement, design approval or compliance certificate.',inputs:m,row_span_m:rowSpan(m),strings_per_inverter:t.strings,sequential_external_cable_m_per_inverter:t.seq,leapfrog_external_cable_m_per_inverter:t.leap,saving_m_per_inverter:t.saved,saving_km_fleet:t.saved*m.inverters/1000,rows:t.rows};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));a.download='v8-leapfrog-cable-schedule.json';a.click();});
-render();
-</script>
+
+<footer class="footer">V8.1 is an independent public development build. The pre-fix V8 is preserved by blob and commit reference under the restore-point folder. V6 and V7 remain separately available.</footer>
+<script src="./model.js"></script>
+<script src="./app.js"></script>
 </body>
 </html>
