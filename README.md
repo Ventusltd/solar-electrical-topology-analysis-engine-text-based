@@ -63,6 +63,58 @@ The engine then derives the electrical model:
 7. Add a simple browser dashboard.
 8. Add JSON, CSV and text report export.
 
+## Independent V7 electromagnetic build
+
+The working root engine is frozen as the stable comparison reference. The earlier V7 page remains available under `/v7-development/`. New FEED I executable work is isolated under `/v7-development/feed-i/`; it must not import, overwrite or modify the root application.
+
+The detailed plans are:
+
+- [`v7-development/comparisons/BUILD_PLAN_FEEDS_I_II.md`](v7-development/comparisons/BUILD_PLAN_FEEDS_I_II.md)
+- [`v7-development/comparisons/FEED_I_VS_FEED_II.md`](v7-development/comparisons/FEED_I_VS_FEED_II.md)
+- [`v7-development/COMPARISON.md`](v7-development/COMPARISON.md)
+
+### FEED I foundation
+
+FEED I establishes the calculation discipline:
+
+- dimensional and unit safety;
+- evidence and epistemic status on every input and output;
+- closed-form two-wire differential parameters for long straight route sections;
+- separate low-frequency and high-frequency inductance;
+- separate differential and common-mode networks;
+- event rise-time versus propagation-delay classification;
+- capacitance aggregation by module, string, MPPT and inverter;
+- explicit validation gates for glass-glass module capacitance, water-film participation, inverter termination and irregular coils.
+
+### FEED II extension
+
+FEED II extends the model into topology, environment, frequency response and asset practice:
+
+- sequential, leapfrog, mirrored and custom wiring patterns;
+- loop-area and induced-voltage comparison from generated geometry;
+- module-lead feasibility as a procurement input, not a standards limit;
+- cell, encapsulant, glass, water film, frame, rail, pile, soil and remote-earth layer stack;
+- salt, humidity and contamination as electrical state variables;
+- module `Rs–Rp–Cp`, cell/interconnect inductance, bypass-diode and junction-box parasitics;
+- standards classification separating normative duties from application guidance and research hypotheses;
+- string-segment, connector and module-level asset identities;
+- EMC and measurement hooks without claiming a PV-specific emission limit.
+
+### Governing corrections
+
+The build is governed by the following corrections:
+
+1. Capacitance aggregation is unit-safe. Per-kW nanofarads multiplied by hundreds of kilowatts produce microfarads, not nanofarads.
+2. In an RC-sheet model, participating distance increases with conductivity and decreases with frequency.
+3. Faster sub-microsecond events increase the need for distributed modelling.
+4. Common-DC-link coupling is frequency dependent and cannot be reduced to a binary all-strings-paralleled rule.
+5. Dry capacitance remains as the floor when the surface is wet: `Ctotal(f) = Cdry(f) + Cfilm(f, conductivity)`.
+6. No fixed full-area wet capacitance is treated as measured for the selected glass-glass bifacial module.
+7. Differential module capacitance and module-to-earth common-mode capacitance are never merged.
+8. The 0.5 m² loop-area figure is not represented as a PV-standard numerical limit.
+9. A complete utility string is treated as a distributed network where event bandwidth and route delay require it, not assigned one universal resonance.
+10. Every standards statement records whether it is normative, guidance, first-principles engineering, research or measurement-dependent.
+
 ## Next standards-led studies
 
 The next changes shall be studied as explicit engineering work packages rather than silently introduced as constants.
@@ -190,4 +242,4 @@ No confidential project drawings, photographs, site identifiers or commercially 
 
 ## Status
 
-Active development. The browser is an engineering workbench for topology, complete-circuit resistance, voltage drop, differential and common-mode inductance, capacitance to earth, insulation-monitoring screening and transient-study preparation.
+Active development. The working root engine remains the stable reference. The independent FEED I workbench has been launched under `/v7-development/feed-i/` to establish unit-safe, evidence-labelled electromagnetic foundations before FEED II topology and environmental extensions are merged.
