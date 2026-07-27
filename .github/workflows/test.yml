@@ -1,4 +1,4 @@
-name: Physics tests
+name: Physics and topology tests
 
 on:
   push:
@@ -13,10 +13,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: pip
-      - run: python -m pip install --upgrade pip
-      - run: pip install -e '.[test]'
-      - run: pytest -q
+
+      - name: Install package and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e '.[test]'
+
+      - name: Enforce reviewable source width
+        run: python scripts/check_line_lengths.py
+
+      - name: Run physics, cartridge and Parquet tests
+        run: pytest -q
+
+      - name: Build deterministic topology fixture
+        run: |
+          python scripts/build_topology_store.py \
+            --fixture \
+            --output data/topology/ci-fixture
