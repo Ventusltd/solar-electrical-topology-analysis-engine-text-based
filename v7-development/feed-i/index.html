@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>V7 FEED I Electromagnetic Workbench</title>
+<style>
+:root{color-scheme:dark;--bg:#05070a;--panel:#0b1118;--line:#263747;--text:#ecf7ff;--muted:#8fa4b8;--cyan:#27d8ff;--amber:#ffb347;--green:#48e28d;--red:#ff626d}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 75% 0,#10263a 0,#05070a 40%);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}header{padding:22px 24px;border-bottom:1px solid var(--line)}h1{margin:4px 0 6px;font-size:clamp(26px,4vw,44px)}.kicker{color:var(--cyan);font:800 12px ui-monospace,monospace;letter-spacing:.15em}.warning{margin:14px 18px;padding:12px 14px;border:1px solid #784a1b;background:#281805;color:#ffd8a2}.layout{display:grid;grid-template-columns:390px minmax(0,1fr);gap:14px;padding:14px 18px 28px}.panel,.work{border:1px solid var(--line);background:linear-gradient(180deg,#101823,#080d13)}.panel{padding:13px;margin-bottom:10px}.panel h2,.work h2{margin:0 0 9px;font-size:16px}.panel label{display:grid;grid-template-columns:1fr 145px;gap:10px;align-items:center;padding:5px 0;font-size:12px}.panel input,.panel select{width:100%;padding:7px 8px;background:#05090e;border:1px solid #344658;color:var(--text);font:700 12px ui-monospace,monospace}.note{margin-top:7px;padding:8px 9px;background:#071923;border-left:3px solid var(--cyan);color:#aac2d4;font-size:10px;line-height:1.45}.work{padding:14px;min-width:0}.status{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:8px}.status article{padding:11px;border:1px solid var(--line);background:#060b10}.status span{display:block;color:var(--muted);font-size:10px;text-transform:uppercase}.status strong{display:block;margin-top:7px;font:800 17px ui-monospace,monospace}.good{color:var(--green)}.warn{color:var(--amber)}.bad{color:var(--red)}.section{margin-top:10px;border:1px solid var(--line);background:#060a0f}.section h2{padding:11px 12px;margin:0;border-bottom:1px solid var(--line);color:var(--cyan)}table{width:100%;border-collapse:collapse;font:11px ui-monospace,monospace}th,td{padding:8px 10px;border-bottom:1px solid #203041;text-align:right}th:first-child,td:first-child{text-align:left}th{color:#aee7fb;background:#0c1621}.gate{padding:12px;line-height:1.55;font-size:12px}.gate strong{color:var(--amber)}.links{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.links a{color:var(--cyan);border:1px solid var(--line);padding:8px 10px;text-decoration:none;font-size:12px}.evidence{font:700 10px ui-monospace,monospace;color:var(--amber)}@media(max-width:1050px){.layout{grid-template-columns:1fr}.controls{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.panel{margin:0}}@media(max-width:700px){.layout{padding:10px}.controls{grid-template-columns:1fr}.status{grid-template-columns:repeat(2,1fr)}.panel label{grid-template-columns:1fr 130px}}@media(max-width:420px){.status{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="kicker">GLOBALGRID2050 · V7 FEED I · INDEPENDENT BUILD</div><h1>Electromagnetic Foundations Workbench</h1><p>Unit-safe, evidence-labelled screening of a two-conductor PV string route. The working root engine and earlier V7 page remain unchanged.</p></header>
+<div class="warning"><strong>RESEARCH BUILD.</strong> This increment does not claim measured glass-glass capacitance, validated water-film participation, full PEEC, OEM inverter impedance or standards compliance.</div>
+<div class="layout">
+<aside class="controls">
+<section class="panel"><h2>Route geometry</h2>
+<label>Route length (m)<input id="length" type="number" value="120" step="1"></label>
+<label>Conductor CSA (mm²)<input id="csa" type="number" value="6" step="0.1"></label>
+<label>Centre spacing (mm)<input id="spacing" type="number" value="40" step="1"></label>
+<label>Effective relative permittivity<input id="er" type="number" value="1.3" step="0.1"></label>
+<label>Geometry evidence<select id="geometryStatus"><option>MEASURED</option><option>OEM_DECLARED</option><option selected>ASSUMED</option><option>UNKNOWN</option></select></label>
+<div class="note">The inductance geometry uses conductor diameter derived from CSA, not cable outside diameter.</div></section>
+<section class="panel"><h2>Event classification</h2>
+<label>Event rise time (µs)<input id="rise" type="number" value="1.2" step="0.01"></label>
+<label>Event type<select id="event"><option>INVERTER_SWITCHING_EDGE</option><option>LIGHTNING_SURGE_FRONT</option><option>ARC_RESTRIKE</option><option>DIAGNOSTIC_PULSE</option><option>STEADY_DC</option></select></label>
+<label>Lumped threshold (× delay)<input id="lumpedRatio" type="number" value="10" step="1"></label>
+<label>Distributed threshold (× delay)<input id="distributedRatio" type="number" value="2" step="0.5"></label>
+<div class="note">Faster events cannot become more lumped. Thresholds are configurable screening boundaries, not physical discontinuities.</div></section>
+<section class="panel"><h2>Capacitance aggregation</h2>
+<label>Literature C (nF/kWp)<input id="capPerKwp" type="number" value="85" step="1"></label>
+<label>Module power (kWp)<input id="moduleKwp" type="number" value="0.660" step="0.001"></label>
+<label>Modules / string<input id="modules" type="number" value="30" step="1"></label>
+<label>Strings / MPPT<input id="stringsMppt" type="number" value="2" step="1"></label>
+<label>Strings / inverter<input id="stringsInv" type="number" value="24" step="1"></label>
+<label>Capacitance evidence<select id="capStatus"><option>MEASURED</option><option>OEM_DECLARED</option><option selected>LITERATURE_MODEL</option><option>FIRST_PRINCIPLES_DERIVED</option><option>ASSUMED</option><option>UNKNOWN</option></select></label>
+<div class="note">This is an explicitly labelled literature-screening input. It is not a measured value for the selected module construction.</div></section>
+<section class="panel"><h2>Common-mode research gate</h2>
+<label>Film conductivity (S/m)<input id="conductivity" type="number" value="0.005" step="0.001"></label>
+<label>Frequency (Hz)<input id="frequency" type="number" value="4000" step="100"></label>
+<label>Film-model status<select id="filmStatus"><option selected>FINITE_ELEMENT_REQUIRED</option><option>LITERATURE_MODEL</option><option>MEASURED</option><option>UNKNOWN</option></select></label>
+<div class="note">Only the qualitative scaling √(conductivity/frequency) is shown. No quantitative film capacitance is calculated until an accepted geometry constant or measurement is supplied.</div></section>
+</aside>
+<main class="work">
+<div class="status">
+<article><span>Model class</span><strong id="modelClass">—</strong></article>
+<article><span>One-way delay</span><strong id="delay">—</strong></article>
+<article><span>Differential Z₀</span><strong id="z0">—</strong></article>
+<article><span>Inverter C screen</span><strong id="invCap">—</strong></article>
+</div>
+<section class="section"><h2>Differential two-wire parameters</h2><table><tbody id="diffTable"></tbody></table></section>
+<section class="section"><h2>Unit-safe capacitance aggregation</h2><table><thead><tr><th>Boundary</th><th>Power basis</th><th>Capacitance</th><th>Evidence</th></tr></thead><tbody id="capTable"></tbody></table></section>
+<section class="section"><h2>Event decision trace</h2><table><tbody id="eventTable"></tbody></table></section>
+<section class="section"><h2>Common-mode and water-film gate</h2><div class="gate" id="gate"></div></section>
+<section class="section"><h2>FEED I / FEED II build status</h2><div class="gate"><strong>Implemented in this launch:</strong> unit discipline, evidence status, two-wire differential parameters, low/high-frequency inductance split, capacitance aggregation and event classification.<br><br><strong>Held for FEED II or validation:</strong> generated sequential/leapfrog geometry, multi-layer cell-to-earth stack, salt/humidity state model, module Rs–Rp–Cp and bypass-diode network, common-mode inverter termination, PEEC coil reference and measurement-backed film participation.</div></section>
+<div class="links"><a href="../">Earlier V7 reference</a><a href="../../">Working root engine</a><a href="../comparisons/BUILD_PLAN_FEEDS_I_II.md">Build plan</a><a href="../comparisons/FEED_I_VS_FEED_II.md">Feed comparison</a></div>
+</main>
+</div>
+<script>
+'use strict';
+const MU0=4*Math.PI*1e-7, EPS0=8.8541878128e-12;
+const ids=['length','csa','spacing','er','rise','lumpedRatio','distributedRatio','capPerKwp','moduleKwp','modules','stringsMppt','stringsInv','conductivity','frequency','geometryStatus','capStatus','filmStatus','event'];
+const el=id=>document.getElementById(id); const n=id=>Number(el(id).value);
+function fmt(v,u,d=3){return Number.isFinite(v)?v.toFixed(d)+' '+u:'—'}
+function row(a,b,c=''){return `<tr><td>${a}</td><td>${b}</td><td>${c}</td></tr>`}
+function calculate(){
+ const length=n('length'), area=n('csa'), spacing=n('spacing')/1000, er=n('er');
+ const diameter=Math.sqrt(4*area/Math.PI)/1000;
+ if(!(spacing>diameter&&length>0&&area>0&&er>=1)){el('modelClass').textContent='INVALID INPUT';return}
+ const g=Math.acosh(spacing/diameter);
+ const lExt=MU0/Math.PI*g;
+ const lInt=MU0/(4*Math.PI);
+ const lLow=lExt+lInt;
+ const lHigh=lExt;
+ const cDiff=Math.PI*EPS0*er/g;
+ const velocity=1/Math.sqrt(lHigh*cDiff);
+ const z0=Math.sqrt(lHigh/cDiff);
+ const delay=length/velocity;
+ const rise=n('rise')*1e-6;
+ const ratio=rise/delay;
+ let cls='TRANSITIONAL',klass='warn';
+ if(ratio>n('lumpedRatio')){cls='LUMPED';klass='good'} else if(ratio<=n('distributedRatio')){cls='DISTRIBUTED';klass='bad'}
+ el('modelClass').textContent=cls;el('modelClass').className=klass;
+ el('delay').textContent=fmt(delay*1e6,'µs',3);el('z0').textContent=fmt(z0,'Ω',2);
+ el('diffTable').innerHTML=
+  row('Conductor diameter',fmt(diameter*1000,'mm',3),'FIRST_PRINCIPLES_DERIVED')+
+  row('Geometry acosh term',g.toFixed(5),el('geometryStatus').value)+
+  row('External L′',fmt(lExt*1e6,'µH/m',4),'FIRST_PRINCIPLES_DERIVED')+
+  row('Internal loop L′ at low frequency',fmt(lInt*1e6,'µH/m',4),'FIRST_PRINCIPLES_DERIVED')+
+  row('Total low-frequency L',fmt(lLow*length*1e6,'µH',2),'SCREENING')+
+  row('Total high-frequency L',fmt(lHigh*length*1e6,'µH',2),'SCREENING')+
+  row('Differential C′',fmt(cDiff*1e12,'pF/m',2),'FIRST_PRINCIPLES_DERIVED')+
+  row('Differential route C',fmt(cDiff*length*1e9,'nF',3),'SCREENING')+
+  row('Propagation velocity',fmt(velocity/1e6,'Mm/s',2),'SCREENING')+
+  row('Characteristic impedance',fmt(z0,'Ω',2),'SCREENING');
+ const cpk=n('capPerKwp')*1e-9, moduleP=n('moduleKwp'), mods=n('modules'), sm=n('stringsMppt'), si=n('stringsInv');
+ const cModule=cpk*moduleP, cString=cModule*mods, cMppt=cString*sm, cInv=cString*si;
+ el('invCap').textContent=cInv>=1e-6?fmt(cInv*1e6,'µF',2):fmt(cInv*1e9,'nF',2);
+ const status=el('capStatus').value;
+ el('capTable').innerHTML=`<tr><td>Module</td><td>${moduleP.toFixed(3)} kWp</td><td>${fmt(cModule*1e9,'nF',2)}</td><td class="evidence">${status}</td></tr>`+
+ `<tr><td>String</td><td>${(moduleP*mods).toFixed(2)} kWp</td><td>${fmt(cString*1e6,'µF',3)}</td><td class="evidence">${status}</td></tr>`+
+ `<tr><td>MPPT</td><td>${(moduleP*mods*sm).toFixed(2)} kWp</td><td>${fmt(cMppt*1e6,'µF',3)}</td><td class="evidence">${status}</td></tr>`+
+ `<tr><td>Inverter</td><td>${(moduleP*mods*si).toFixed(2)} kWp</td><td>${fmt(cInv*1e6,'µF',3)}</td><td class="evidence">${status}</td></tr>`;
+ el('eventTable').innerHTML=row('Event',el('event').value,'USER_SELECTED')+row('Rise time',fmt(rise*1e6,'µs',3),'USER_INPUT')+row('One-way delay',fmt(delay*1e6,'µs',3),'DERIVED')+row('Rise-time / delay ratio',ratio.toFixed(3),'DERIVED')+row('Classification',cls,'CONFIGURABLE_SCREEN');
+ const scale=Math.sqrt(Math.max(n('conductivity'),0)/Math.max(n('frequency'),1));
+ el('gate').innerHTML=`<strong>${el('filmStatus').value}</strong><br>Qualitative RC-sheet participation index: <code>√(σ/f) = ${scale.toExponential(4)}</code> in unnormalised units.<br>Increasing conductivity increases this index; increasing frequency decreases it. The build deliberately does not convert this index into participating width or capacitance because the geometry constant, boundary conditions and validation dataset are unresolved.<br><br>Required before activation: measured or simulated module geometry, film thickness, conductivity, frame-bond boundary, dielectric stack, frequency sweep and convergence test for <code>Ctotal(f)=Cdry(f)+Cfilm(f,σ)</code>.`;
+}
+ids.forEach(id=>el(id).addEventListener('input',calculate));calculate();
+</script>
+</body></html>
