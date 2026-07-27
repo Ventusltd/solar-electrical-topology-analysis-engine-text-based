@@ -9,57 +9,52 @@ Schema version: `topology_segments_v1`
 
 Every topology cartridge emits the same ordered conductor-segment table.
 Sequential, leapfrog, mirrored, balanced-return and custom cartridges may create
-different paths, but downstream calculations consume segments only.
+different paths, but every downstream calculation consumes segments only.
 
 No resistance, inductance, capacitance, loop-area, propagation or aggregation
 function may branch on the topology name. If a calculation asks whether a string
 is leapfrog, the cartridge boundary is wrong.
 
-## Product
+## Product and authoritative output
 
-Ordered conductor-segment store for photovoltaic direct-current string
+Product: ordered conductor-segment store for photovoltaic direct-current string
 topologies.
 
-## Authoritative output
-
-`segments.parquet`
+Authoritative table: `segments.parquet`
 
 Fleet data is built in Python, written as zstd-compressed Parquet and queried with
 DuckDB. The browser may consume small aggregates or one selected string. It is
 not the authoritative fleet store.
 
-## Grain
+## Grain and key
 
-One row represents one physical conductor segment, for one string, under one
-topology, in one model run.
+Grain: one row per physical conductor segment, per string, per topology
+cartridge, per model run.
 
-A segment may have zero spatial displacement and positive conductor length. A
-coiled surplus lead is the defining example.
-
-## Key
-
-The logical key is:
+Logical key:
 
 `topology + string_id + segment_index`
 
 The production row also carries `run_id`, `inverter_id`, `mppt_id` and a stable
-`segment_id` for snapshot and fleet auditability.
+`segment_id`. `segment_index` begins at one and is contiguous within every
+string and topology.
 
-`segment_index` begins at one and is contiguous within each topology/string.
+A segment may have zero spatial displacement and positive conductor length. A
+coiled surplus lead is the defining example.
 
 ## Hive partitioning
 
-The current segment store is partitioned by:
+The current fleet store is partitioned by:
 
 - `topology`
 - `band`
 
 Two initial cartridges across three bands create six useful partitions. Five
-future cartridges across three bands create fifteen. Do not partition by inverter
-or string: that would create thousands of small files. `inverter_id` remains a
-queryable column.
+future cartridges across three bands create fifteen. Do not partition by
+inverter or string because that would create thousands of small files.
+`inverter_id` remains a queryable column.
 
-Expected physical paths are:
+Expected paths include:
 
 `data/topology/current/segments/topology=sequential/band=1/data_0.parquet`
 
@@ -105,7 +100,7 @@ All coordinate and length values are stored in metres.
 | `displacement_m` | double | Geometric start-to-end displacement. |
 | `conductor_length_m` | double | Actual conductor represented by the row. |
 
-`displacement_m` and `conductor_length_m` are intentionally separate. Route
+`displacement_m` and `conductor_length_m` are deliberately separate. Route
 summaries use displacement. Resistance and conductor-energy calculations use
 conductor length.
 
@@ -116,6 +111,13 @@ conductor length.
 | `separation_mm` | double | Centre spacing to the returning conductor. |
 | `formation` | string | Controlled conductor formation. |
 | `installation_class` | string | Controlled installation environment. |
+| `loop_parameter_weight` | double | Row share of one two-wire loop model. |
+| `effective_epsilon_r` | double | Effective dielectric value for that model. |
+
+`loop_parameter_weight` is between zero and one. A positive and negative
+home-run row normally carry 0.5 each so the pair is counted once. A row with
+unresolved return geometry carries zero and a warning; it must not silently
+enter the closed-form two-wire sum.
 
 Initial formations are:
 
@@ -145,6 +147,10 @@ finished-cable resistance. Those are independent declared or measured fields.
 | `coil_turns` | double or null | Coil turns where modelled. |
 | `coil_diameter_mm` | double or null | Coil diameter where modelled. |
 | `connector_count` | integer | Series contacts attributed to the row. |
+| `connector_resistance_ohm_each` | double | Resistance per contact before temperature correction. |
+
+Connector resistance belongs to the row that owns the contacts. A global
+connector multiplier is not an authoritative substitute.
 
 ## Evidence and feasibility fields
 
@@ -152,7 +158,7 @@ finished-cable resistance. Those are independent declared or measured fields.
 |---|---|---|
 | `provenance` | string | Origin of the row's governing evidence. |
 | `source_reference` | string | Generic evidence identifier. |
-| `user_override` | boolean | Whether a generated/declared value changed. |
+| `user_override` | boolean | Whether a generated or declared value changed. |
 | `feasibility_status` | string | Cartridge feasibility result. |
 | `saving_available` | boolean | Whether savings may be presented. |
 | `warnings` | string | Deterministic warning-code list. |
@@ -164,8 +170,9 @@ Allowed provenance values are:
 - `assumed`
 - `defaulted`
 
-Provenance describes origin. It does not describe whether a standard requires a
-value or whether a field solver is needed. Those belong to separate result fields.
+Provenance describes where a value came from. It does not describe whether a
+standard requires it or whether a field solver is needed. Those are separate
+method-status fields in later result schemas.
 
 ## Controlled segment types
 
@@ -233,7 +240,7 @@ Future cartridges are:
 
 ## Cross-cartridge invariants
 
-For identical module and fleet inputs, every cartridge must preserve:
+For identical module and fleet inputs, every cartridge preserves:
 
 - module count;
 - string-voltage basis;
@@ -252,12 +259,13 @@ The following data laws are hard failures:
 4. Discontinuous electrical node chains.
 5. Negative conductor lengths.
 6. Invalid provenance values.
-7. Final route lengths not reproduced by segment sums.
-8. User-supplied final route lengths.
-9. Factory-lead mismatch between cartridges.
-10. Connector mismatch without explicit extension segments.
-11. Savings emitted for an infeasible leapfrog cartridge.
-12. Nondeterministic file hashes from identical inputs.
+7. Invalid loop weights or connector resistance.
+8. Final route lengths not reproduced by segment sums.
+9. User-supplied final route lengths.
+10. Factory-lead mismatch between cartridges.
+11. Connector mismatch without explicit extension segments.
+12. Savings emitted for an infeasible leapfrog cartridge.
+13. Nondeterministic file hashes from identical inputs.
 
 ## Conductor-envelope validation
 
@@ -287,6 +295,11 @@ Characteristic impedance and propagation velocity use external inductance only.
 Internal inductance remains available separately for low-frequency energy and
 lumped `L di/dt` work.
 
+The current cartridge store deliberately excludes unresolved factory-lead and
+single-pole return geometry from closed-form pair L/C totals. Those rows still
+carry real conductor length and resistance. Their inductance, pickup area and
+mutual coupling require measured geometry or a validated higher-order model.
+
 ## Manifest contract
 
 Every topology manifest contains:
@@ -309,7 +322,7 @@ Every topology manifest contains:
 
 Deterministic manifests exclude uncontrolled wall-clock timestamps.
 
-## Aggregates
+## Aggregates and browser slices
 
 The build writes:
 
@@ -318,6 +331,11 @@ The build writes:
 - `data/topology/current/aggregates/inverters.parquet`
 - `data/topology/current/aggregates/site.parquet`
 - `data/topology/current/aggregates/comparison.parquet`
+- `data/topology/current/browser/site-summary.json`
+- `data/topology/current/browser/selected-string.json`
+
+The JSON files are small presentation artefacts generated from the Parquet truth
+store. They are not a second calculation implementation.
 
 ## Test classification
 
