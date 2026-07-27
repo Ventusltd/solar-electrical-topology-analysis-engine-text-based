@@ -1,163 +1,175 @@
 # Topology Segment Data Contract
 
-Status: binding schema draft for the topology-cartridge and
-Parquet/DuckDB migration.
+Status: binding contract for topology cartridges, shared physics and the
+Parquet/DuckDB fleet store.
 
 Schema version: `topology_segments_v1`
 
 ## Purpose
 
-This contract defines the common output of every topology cartridge.
-Sequential, leapfrog, mirrored, balanced-return and custom cartridges may
-generate different physical paths, but they must all emit the same segment
-grain and required fields.
+Every topology cartridge emits the same ordered conductor-segment table.
+Sequential, leapfrog, mirrored, balanced-return and custom cartridges may create
+different paths, but downstream calculations consume segments only.
 
-No downstream electrical calculation may inspect the topology name to
-decide how to calculate resistance, inductance, capacitance, loop area,
-propagation delay or aggregation. The topology is resolved entirely by the
-segments emitted under this contract.
+No resistance, inductance, capacitance, loop-area, propagation or aggregation
+function may branch on the topology name. If a calculation asks whether a string
+is leapfrog, the cartridge boundary is wrong.
+
+## Product
+
+Ordered conductor-segment store for photovoltaic direct-current string
+topologies.
+
+## Authoritative output
+
+`segments.parquet`
+
+Fleet data is built in Python, written as zstd-compressed Parquet and queried with
+DuckDB. The browser may consume small aggregates or one selected string. It is
+not the authoritative fleet store.
 
 ## Grain
 
-One row represents one physical conductor segment, for one string, under
-one topology, in one model run.
+One row represents one physical conductor segment, for one string, under one
+topology, in one model run.
 
-A segment may have zero spatial displacement and positive conductor length.
-A coiled surplus lead is the defining example.
+A segment may have zero spatial displacement and positive conductor length. A
+coiled surplus lead is the defining example.
 
-## Primary key
+## Key
 
-The minimum primary key is:
+The logical key is:
 
-`run_id + topology_id + inverter_id + string_id + segment_index`
+`topology + string_id + segment_index`
 
-Every component of the key is required and non-empty.
+The production row also carries `run_id`, `inverter_id`, `mppt_id` and a stable
+`segment_id` for snapshot and fleet auditability.
 
-`segment_index` begins at zero and is contiguous within each string and
-topology.
+`segment_index` begins at one and is contiguous within each topology/string.
 
-`segment_id` is the stable textual representation of the key and must be
-unique within the dataset.
+## Hive partitioning
+
+The current segment store is partitioned by:
+
+- `topology`
+- `band`
+
+Two initial cartridges across three bands create six useful partitions. Five
+future cartridges across three bands create fifteen. Do not partition by inverter
+or string: that would create thousands of small files. `inverter_id` remains a
+queryable column.
+
+Expected physical paths are:
+
+`data/topology/current/segments/topology=sequential/band=1/data_0.parquet`
+
+`data/topology/current/segments/topology=leapfrog/band=1/data_0.parquet`
 
 ## Required identity fields
 
 | Field | Type | Meaning |
 |---|---|---|
-| `run_id` | string | Deterministic identifier for the complete build input. |
-| `schema_version` | string | This contract version. |
-| `topology_id` | string | Cartridge name, for example `sequential` or `leapfrog`. |
-| `topology_version` | string | Cartridge semantic version. |
-| `inverter_id` | string | Stable inverter identifier. |
-| `mppt_id` | string | Stable MPPT identifier. |
-| `string_id` | string | Stable string identifier. |
-| `segment_index` | integer | Ordered zero-based position in the string path. |
-| `segment_id` | string | Stable unique segment identifier. |
+| `run_id` | string | Deterministic identifier for canonical inputs. |
+| `schema_version` | string | Segment-contract version. |
+| `topology` | string | Cartridge name and partition key. |
+| `band` | integer | One-based distance band and partition key. |
+| `cartridge_version` | string | Cartridge semantic version. |
+| `inverter_id` | integer | One-based fleet inverter identifier. |
+| `mppt_id` | integer | One-based tracker-input identifier. |
+| `string_id` | string | Stable string identifier within a topology. |
+| `segment_index` | integer | One-based ordered position in the circuit. |
+| `segment_id` | string | Stable topology/string/index identifier. |
 
-## Required topology and electrical-role fields
+## Required electrical-role fields
 
 | Field | Type | Meaning |
 |---|---|---|
 | `segment_type` | string | Controlled segment type. |
-| `polarity` | string | `positive`, `negative`, `series_interconnect`, `frame`, or `earth`. |
+| `polarity` | string | `positive`, `negative`, `series` or `none`. |
 | `from_node_id` | string | Electrical start node. |
 | `to_node_id` | string | Electrical end node. |
-| `series_order` | integer | Position in the complete closed-circuit sequence. |
-| `module_id` | string or null | Module associated with the segment where applicable. |
-| `connector_from_id` | string or null | Connector at the segment start. |
-| `connector_to_id` | string or null | Connector at the segment end. |
+| `module_id` | string or null | Associated module where applicable. |
 
 ## Required geometry fields
 
-All distances are stored in metres.
+All coordinate and length values are stored in metres.
 
 | Field | Type | Meaning |
 |---|---|---|
-| `start_x_m` | double | World-coordinate start x. |
-| `start_y_m` | double | World-coordinate start y. |
-| `start_z_m` | double | World-coordinate start z. |
-| `end_x_m` | double | World-coordinate end x. |
-| `end_y_m` | double | World-coordinate end y. |
-| `end_z_m` | double | World-coordinate end z. |
-| `displacement_m` | double | Straight displacement between coordinates. |
-| `conductor_length_m` | double | Actual conductor length represented by the row. |
-| `plan_length_m` | double | Horizontal plan projection. |
-| `slope_length_m` | double | Distance along the structure or cable support. |
-| `loop_area_contribution_m2` | double | Signed local contribution to the differential loop polygon. |
+| `from_x` | double | Start x in slope/world coordinates. |
+| `from_y` | double | Start y in slope/world coordinates. |
+| `from_z` | double | Start z in slope/world coordinates. |
+| `to_x` | double | End x in slope/world coordinates. |
+| `to_y` | double | End y in slope/world coordinates. |
+| `to_z` | double | End z in slope/world coordinates. |
+| `displacement_m` | double | Geometric start-to-end displacement. |
+| `conductor_length_m` | double | Actual conductor represented by the row. |
 
-`conductor_length_m` is always generated by geometry, declared product lead
-length or an explicit zero-displacement coil model. It is never a free
-user-entered route total.
+`displacement_m` and `conductor_length_m` are intentionally separate. Route
+summaries use displacement. Resistance and conductor-energy calculations use
+conductor length.
 
 ## Required formation fields
 
 | Field | Type | Meaning |
 |---|---|---|
-| `formation_type` | string | Controlled formation classification. |
-| `paired_with_segment_id` | string or null | Matching return segment where defined. |
-| `conductor_separation_m` | double or null | Centre-to-centre conductor separation. |
-| `height_above_reference_m` | double or null | Height above frame, rail, ground or selected plane. |
+| `separation_mm` | double | Centre spacing to the returning conductor. |
+| `formation` | string | Controlled conductor formation. |
 | `installation_class` | string | Controlled installation environment. |
-| `support_type` | string | Module rail, frame, tray, trench, duct, free air or other controlled value. |
+
+Initial formations are:
+
+- `touching_pair`
+- `spaced_pair`
+- `single_pole`
+- `bundled`
 
 ## Required conductor fields
 
 | Field | Type | Meaning |
 |---|---|---|
-| `conductor_product_id` | string | Controlled cable or factory-lead product identifier. |
-| `nominal_csa_mm2` | double | Nominal conductor cross-section. |
-| `conductor_diameter_mm` | double or null | Actual conductor-envelope diameter. |
-| `cable_od_mm` | double or null | Complete cable outside diameter. |
-| `material` | string | Conductor material and plating class. |
-| `r20_ohm_per_m` | double | Declared or measured 20 °C conductor resistance. |
-| `temperature_c` | double | Segment operating-temperature assumption. |
+| `conductor_product_id` | string | Controlled generic product identifier. |
+| `conductor_csa_mm2` | double | Nominal identifying size only. |
+| `conductor_diameter_mm` | double | Declared stranded envelope diameter. |
+| `cable_od_mm` | double | Declared complete cable outside diameter. |
+| `r20_ohm_per_m` | double | Declared finished-cable resistance at 20 C. |
+| `temperature_c` | double | Segment operating temperature. |
 
-Cable outside diameter and conductor diameter are separate fields and may
-never substitute for one another.
+Nominal cross-sectional area must never be used to invent conductor diameter or
+finished-cable resistance. Those are independent declared or measured fields.
 
-## Required evidence fields
+## Coil and connector fields
 
 | Field | Type | Meaning |
 |---|---|---|
-| `segment_provenance` | string | Overall row provenance. |
-| `length_provenance` | string | Origin of conductor length. |
-| `separation_provenance` | string | Origin of conductor separation. |
-| `formation_provenance` | string | Origin of formation classification. |
-| `source_reference` | string | Datasheet, drawing, measurement, assumption or model reference. |
-| `user_override` | boolean | Whether a user changed a generated or declared field. |
-| `confidence_state` | string | Controlled confidence label. |
-| `warnings` | string | Pipe-delimited warning identifiers. |
+| `coil_turns` | double or null | Coil turns where modelled. |
+| `coil_diameter_mm` | double or null | Coil diameter where modelled. |
+| `connector_count` | integer | Series contacts attributed to the row. |
 
-## Provenance vocabulary
+## Evidence and feasibility fields
 
-The initial allowed provenance values are:
+| Field | Type | Meaning |
+|---|---|---|
+| `provenance` | string | Origin of the row's governing evidence. |
+| `source_reference` | string | Generic evidence identifier. |
+| `user_override` | boolean | Whether a generated/declared value changed. |
+| `feasibility_status` | string | Cartridge feasibility result. |
+| `saving_available` | boolean | Whether savings may be presented. |
+| `warnings` | string | Deterministic warning-code list. |
+
+Allowed provenance values are:
 
 - `measured`
-- `surveyed`
-- `drawing_derived`
-- `manufacturer`
+- `oem_declared`
 - `assumed`
 - `defaulted`
-- `fitted`
-- `user_overridden`
-- `derived_geometry`
-- `unresolved`
 
-Provenance describes origin. It does not describe whether a standard
-requires a value or whether a finite-element method is needed. Those are
-separate method and obligation fields in later derived result tables.
-
-## Required assurance fields
-
-| Field | Type | Meaning |
-|---|---|---|
-| `method_version` | string | Geometry-builder method version. |
-| `input_hash` | string | Hash of canonicalised input data. |
-| `cartridge_hash` | string | Hash of cartridge name, version and source. |
-| `generated_by` | string | Builder implementation identifier. |
+Provenance describes origin. It does not describe whether a standard requires a
+value or whether a field solver is needed. Those belong to separate result fields.
 
 ## Controlled segment types
 
-The initial segment types are:
+Initial segment types are:
 
 - `module_factory_positive_lead`
 - `module_factory_negative_lead`
@@ -174,11 +186,11 @@ The initial segment types are:
 - `inverter_approach`
 - `termination_allowance`
 
-New segment types require a contract revision and fixtures.
+New segment types require a schema revision and fixtures.
 
 ## Installation classes
 
-The initial installation classes are:
+Initial classes are:
 
 - `under_module`
 - `frame_adjacent`
@@ -194,11 +206,90 @@ The initial installation classes are:
 - `enclosure_entry`
 - `unknown`
 
-`unknown` is permitted only with an explicit warning and reduced confidence.
+`unknown` is permitted only with an explicit warning.
 
-## Cartridge manifest contract
+## Cartridge interface
 
-Every cartridge output includes a manifest with:
+Every cartridge exposes:
+
+1. `name`
+2. `version`
+3. `feasibility(inputs)`
+4. `build_segments(inputs, string_definition)`
+5. `manifest(inputs, segments)`
+
+Cartridges emit segments and no electrical totals.
+
+Initial cartridges are:
+
+- `sequential`
+- `leapfrog`
+
+Future cartridges are:
+
+- `mirrored`
+- `balanced_return`
+- `custom`
+
+## Cross-cartridge invariants
+
+For identical module and fleet inputs, every cartridge must preserve:
+
+- module count;
+- string-voltage basis;
+- factory positive-lead conductor total;
+- factory negative-lead conductor total;
+- ordinary module connector count;
+- conductor material and declared product values.
+
+Only topology-dependent external and explicit extension segments may differ.
+
+The following data laws are hard failures:
+
+1. Null or empty key fields.
+2. Duplicate logical keys.
+3. Non-contiguous segment indices.
+4. Discontinuous electrical node chains.
+5. Negative conductor lengths.
+6. Invalid provenance values.
+7. Final route lengths not reproduced by segment sums.
+8. User-supplied final route lengths.
+9. Factory-lead mismatch between cartridges.
+10. Connector mismatch without explicit extension segments.
+11. Savings emitted for an infeasible leapfrog cartridge.
+12. Nondeterministic file hashes from identical inputs.
+
+## Conductor-envelope validation
+
+The nominal envelope fill is:
+
+`fill = nominal_csa / (pi * declared_diameter^2 / 4)`
+
+It must lie between 70% and 95%. A value outside that range indicates a likely
+units mistake or incompatible datasheet input.
+
+## Physics boundary
+
+Shared physics may derive segment or aggregate results for:
+
+- operating resistance;
+- voltage-drop contribution;
+- I-squared-R loss contribution;
+- external differential inductance;
+- low-frequency internal inductance;
+- differential capacitance;
+- common-mode capacitance estimate;
+- loop-area contribution;
+- propagation-delay contribution;
+- evidence and validity flags.
+
+Characteristic impedance and propagation velocity use external inductance only.
+Internal inductance remains available separately for low-frequency energy and
+lumped `L di/dt` work.
+
+## Manifest contract
+
+Every topology manifest contains:
 
 - `schema_version`
 - `cartridge_name`
@@ -206,109 +297,48 @@ Every cartridge output includes a manifest with:
 - `method_version`
 - `source_commit`
 - `input_hash`
-- `cartridge_hash`
 - `segment_row_count`
 - `distinct_string_count`
 - `first_segment_key`
 - `last_segment_key`
+- `parquet_files`
 - `parquet_sha256`
 - `feasibility_status`
 - `warning_count`
 - `data_law_result`
 
 Deterministic manifests exclude uncontrolled wall-clock timestamps.
-Operational timestamps belong in a separate audit receipt.
 
-## Physical Parquet layout
+## Aggregates
 
-Current outputs:
-
-`data/topology/current/segments/`
-
-Recommended Hive partitions:
-
-`provenance=derived/topology=<name>/inverter_id=<id>/data_0.parquet`
-
-Snapshots:
-
-`data/topology/snapshots/year=YYYY/month=MM/week=WW/...`
-
-Aggregate outputs:
+The build writes:
 
 - `data/topology/current/aggregates/strings.parquet`
 - `data/topology/current/aggregates/mppts.parquet`
 - `data/topology/current/aggregates/inverters.parquet`
 - `data/topology/current/aggregates/site.parquet`
+- `data/topology/current/aggregates/comparison.parquet`
 
-Files use Parquet with zstd compression.
+## Test classification
 
-## Cross-cartridge invariants
+Every check is classified as one of:
 
-For the same module and project inputs, sequential and leapfrog cartridges
-must have identical:
+- **Invariant:** a law that holds for every valid input.
+- **Canary:** one settled worked example with a declared tolerance.
+- **Floor:** a growing quantity that may rise but must not fall below a baseline.
 
-- module count;
-- string voltage basis;
-- factory positive lead conductor total;
-- factory negative lead conductor total;
-- ordinary module connector count;
-- module conductor product and resistance data.
+Segment rows, Parquet file count, store size, string count and inverter count are
+floors, not permanent snapshot equalities.
 
-Only topology-dependent external segments and explicit extension segments
-may differ.
+## Overwrite and determinism law
 
-The following query-level invariants must pass:
+A rebuild rewrites each complete touched topology partition. It never appends
+blindly. Rows are sorted before DuckDB `COPY`, output uses zstd compression, and
+the complete build is produced twice in temporary directories. Relative paths and
+SHA-256 hashes must be byte-identical.
 
-1. Factory module-lead conductor sum is equal between cartridges.
-2. Connector count is equal unless an extension cartridge explicitly adds interfaces.
-3. Segment keys are unique.
-4. Segment indices are contiguous within each string.
-5. `from_node_id` and `to_node_id` form a continuous electrical path.
-6. String conductor total equals the sum of segment conductor lengths.
-7. No user input directly supplies a derived route total.
-8. Leapfrog savings are unavailable when feasibility fails.
+## Versioning obligation
 
-## Derived physics boundary
-
-Cartridges do not calculate electrical totals. They emit segments.
-
-Shared physics consumes the segment table and may add derived columns or
-separate result tables for:
-
-- operating resistance;
-- voltage-drop contribution;
-- I²R loss contribution;
-- external differential inductance;
-- low-frequency internal inductance;
-- differential capacitance;
-- common-mode capacitance estimate;
-- loop-area contribution;
-- propagation-delay contribution;
-- validity and evidence flags.
-
-If a physics function asks whether a topology is leapfrog or sequential,
-the architecture violates this contract.
-
-## Data law
-
-A build passes only when all of the following are zero or true as
-appropriate:
-
-- null or empty primary-key fields;
-- duplicate primary keys;
-- non-contiguous segment indices;
-- route discontinuities;
-- negative conductor lengths;
-- invalid provenance values;
-- dangling node endpoints;
-- manifest row-count mismatch;
-- segment-to-string aggregate mismatch;
-- string-to-MPPT aggregate mismatch;
-- MPPT-to-inverter aggregate mismatch;
-- inverter-to-site aggregate mismatch;
-- cross-cartridge factory-lead mismatch;
-- savings emitted for an infeasible leapfrog cartridge;
-- nondeterministic output hashes from identical inputs.
-
-A green workflow is not proof unless this data law passes and an independent
-auditor reproduces the headline values from committed Parquet.
+Any browser, report or asset register consuming this contract creates a public
+interface obligation. Breaking field changes require a schema-version increment,
+a decision-log entry and an explicit migration note.
