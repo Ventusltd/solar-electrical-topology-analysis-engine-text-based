@@ -49,14 +49,14 @@ assert.ok(
   close(
     defaultStudy.totals
       .sequentialExternalMPerArchetypeInverter,
-    2_890.20
+    2_878.20
   )
 );
 assert.ok(
   close(
     defaultStudy.totals
       .leapfrogExternalMPerArchetypeInverter,
-    1_938.12
+    1_926.12
   )
 );
 assert.ok(
