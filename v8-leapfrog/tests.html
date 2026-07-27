@@ -1,37 +1,84 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>V8 Leapfrog Golden Tests</title>
-<link rel="stylesheet" href="./styles.css">
-<style>
-body{padding:20px}.test-shell{max-width:1100px;margin:0 auto}.test-head{margin-bottom:14px}.test-head h1{font-size:34px}.test-result{margin-top:12px;border:1px solid var(--line);background:#060a0f}.test-result table{font-size:13px}.pass{color:var(--green);font-weight:900}.fail{color:var(--red);font-weight:900}.summary-line{padding:12px;border:1px solid var(--line);background:#071923;font:900 14px ui-monospace,monospace}.summary-line.pass{border-color:#205838;background:#062014}.summary-line.fail{border-color:#7b2730;background:#2a0b0f}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>V8 Leapfrog Golden Tests</title>
+  <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-<main class="test-shell">
-<header class="test-head"><div class="kicker">GLOBALGRID2050 · V8 TEST FIXTURE</div><h1>Leapfrog Cable Model Golden Tests</h1><p>These tests protect the default 30-module, 24-string comparison against accidental changes.</p><div class="navlinks"><a href="./">Return to V8</a><a href="../">V6</a><a href="../v7-development/feed-i/">V7 FEED I</a></div></header>
-<div id="summary" class="summary-line">Running tests…</div>
-<section class="test-result"><table><thead><tr><th>Test</th><th>Status</th><th>Actual</th><th>Expected</th></tr></thead><tbody id="results"></tbody></table></section>
-</main>
-<script src="./model.js"></script>
-<script>
-'use strict';
-(function(){
-  const model=window.V8LeapfrogModel;
-  const summary=document.getElementById('summary');
-  const results=document.getElementById('results');
-  try{
-    const run=model.runGoldenTests();
-    summary.textContent=`${run.passed}/${run.total} tests passed · model ${run.version}`;
-    summary.className=`summary-line ${run.allPassed?'pass':'fail'}`;
-    results.innerHTML=run.tests.map(test=>`<tr><td>${test.name}</td><td class="${test.pass?'pass':'fail'}">${test.pass?'PASS':'FAIL'}</td><td>${String(test.actual)}</td><td>${String(test.expected)}</td></tr>`).join('');
-  }catch(error){
-    summary.textContent=`TEST RUNTIME ERROR: ${error.message}`;
-    summary.className='summary-line fail';
-  }
-})();
-</script>
+  <main class="test-shell">
+    <header class="test-head">
+      <div class="kicker">
+        GLOBALGRID2050 · V8 TEST FIXTURE
+      </div>
+      <h1>Leapfrog Cable Model Golden Tests</h1>
+      <p>
+        These tests protect the 30-module archetype, lead-feasibility
+        gate and actual-site-string aggregation against accidental change.
+      </p>
+      <div class="navlinks">
+        <a href="./">Return to V8</a>
+        <a href="../">V6</a>
+        <a href="../v7-development/feed-i/">V7 FEED I</a>
+      </div>
+    </header>
+
+    <div id="summary" class="summary-line">
+      Running tests…
+    </div>
+
+    <section class="test-result">
+      <table>
+        <thead>
+          <tr>
+            <th>Test</th>
+            <th>Status</th>
+            <th>Actual</th>
+            <th>Expected</th>
+          </tr>
+        </thead>
+        <tbody id="results"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="./model.js"></script>
+  <script>
+    'use strict';
+
+    (function runBrowserTests() {
+      const model = window.V8LeapfrogModel;
+      const summary = document.getElementById('summary');
+      const results = document.getElementById('results');
+
+      try {
+        const run = model.runGoldenTests();
+
+        summary.textContent =
+          `${run.passed}/${run.total} tests passed · ` +
+          `model ${run.version}`;
+        summary.className =
+          `summary-line ${run.allPassed ? 'pass' : 'fail'}`;
+
+        results.innerHTML = run.tests
+          .map((test) => `
+            <tr>
+              <td>${test.name}</td>
+              <td class="${test.pass ? 'pass' : 'fail'}">
+                ${test.pass ? 'PASS' : 'FAIL'}
+              </td>
+              <td>${String(test.actual)}</td>
+              <td>${String(test.expected)}</td>
+            </tr>
+          `)
+          .join('');
+      } catch (error) {
+        summary.textContent =
+          `TEST RUNTIME ERROR: ${error.message}`;
+        summary.className = 'summary-line fail';
+      }
+    })();
+  </script>
 </body>
 </html>
