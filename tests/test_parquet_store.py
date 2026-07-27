@@ -4,7 +4,7 @@ import math
 import duckdb
 import pytest
 
-from solar_topology.parquet_store import (
+from solar_topology.fleet_store import (
     build_deterministic_store,
     build_store,
 )
