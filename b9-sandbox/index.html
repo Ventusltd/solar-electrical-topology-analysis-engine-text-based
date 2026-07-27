@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>B9 Multi-Array Electrical Sandbox — Technician Summary</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:light dark}
+    body{margin:0;background:#11151a;color:#e8edf2}
+    main{max-width:1100px;margin:0 auto;padding:32px 20px 64px}
+    h1{font-size:clamp(1.8rem,4vw,3.2rem);margin:.2em 0}.status{display:inline-block;padding:6px 10px;border:1px solid #718096;border-radius:999px;font-size:.82rem}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:24px}
+    section{border:1px solid #35404b;border-radius:12px;padding:18px;background:#171d23}
+    h2{font-size:1rem;text-transform:uppercase;letter-spacing:.08em;color:#a9c2d8;margin-top:0}
+    dl{display:grid;grid-template-columns:minmax(120px,1fr) 1.5fr;gap:8px 12px;margin:0}dt{color:#9aa8b5}dd{margin:0;font-variant-numeric:tabular-nums}
+    .empty{color:#82909d}.views{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0}.views button{padding:10px 16px;border-radius:8px;border:1px solid #526170;background:#202832;color:inherit}.views button[disabled]{opacity:.55}
+    footer{margin-top:28px;color:#92a0ad;font-size:.9rem;line-height:1.5}
+    code{background:#0d1117;padding:.15em .35em;border-radius:4px}
+  </style>
+</head>
+<body>
+<main>
+  <span class="status">B9 public development placeholder</span>
+  <h1>Multi-Array Electrical Sandbox</h1>
+  <p>Technician summary shell only. B9 is independent and does not modify V6, V7 or V8.</p>
+
+  <nav class="views" aria-label="Planned views">
+    <button disabled>Plan view</button>
+    <button disabled>Side view</button>
+    <button disabled>Circuit view</button>
+  </nav>
+
+  <div class="grid">
+    <section><h2>Physical array</h2><dl><dt>Cartridge</dt><dd class="empty">Not loaded</dd><dt>Orientation</dt><dd class="empty">Not loaded</dd><dt>Modules</dt><dd class="empty">—</dd><dt>Faces</dt><dd class="empty">—</dd></dl></section>
+    <section><h2>Electrical topology</h2><dl><dt>Pattern</dt><dd class="empty">Not loaded</dd><dt>String order</dt><dd class="empty">Not derived</dd><dt>Free terminals</dt><dd class="empty">Not derived</dd><dt>MPPT</dt><dd class="empty">Not assigned</dd></dl></section>
+    <section><h2>Cable and copper</h2><dl><dt>Positive length</dt><dd class="empty">—</dd><dt>Negative length</dt><dd class="empty">—</dd><dt>Commercial Cu</dt><dd class="empty">CSA × km × 9.6</dd><dt>Physical Cu</dt><dd class="empty">Measurement required</dd></dl></section>
+    <section><h2>Electrical studies</h2><dl><dt>Resistance</dt><dd class="empty">Not run</dd><dt>Loop area</dt><dd class="empty">Not run</dd><dt>Inductance</dt><dd class="empty">Not run</dd><dt>Capacitance</dt><dd class="empty">Not run</dd></dl></section>
+    <section><h2>Distributed behaviour</h2><dl><dt>Propagation delay</dt><dd class="empty">Not run</dd><dt>Characteristic impedance</dt><dd class="empty">Not run</dd><dt>Model class</dt><dd class="empty">Undetermined</dd><dt>Termination</dt><dd class="empty">Unknown</dd></dl></section>
+    <section><h2>Technician warnings</h2><p class="empty">No scene exists. Required future checks include module-lead feasibility, connector compatibility, coils, route environment, conductor spacing, height above earth, insulation-monitoring boundary and missing measurements.</p></section>
+  </div>
+
+  <footer>
+    Planned data path: <code>objects → geometry → terminals/connectivity → ordered segments → studies → Parquet/DuckDB/GeoJSON</code>.<br>
+    Public boundary: no confidential project information, employer requirements, as-built drawings, NDA material or proprietary calibration.
+  </footer>
+</main>
+</body>
+</html>
