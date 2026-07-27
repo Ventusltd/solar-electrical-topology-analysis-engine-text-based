@@ -63,6 +63,12 @@ The engine then derives the electrical model:
 7. Add a simple browser dashboard.
 8. Add JSON, CSV and text report export.
 
+## Current public workbenches
+
+- Root V6 complete-circuit workbench: [`index.html`](index.html)
+- Independent V7 electromagnetic FEED I workbench: [`v7-development/feed-i/`](v7-development/feed-i/)
+- Independent V8 leapfrog cable-schedule workbench: [`v8-leapfrog/`](v8-leapfrog/)
+
 ## Independent V7 electromagnetic build
 
 The working root engine is frozen as the stable comparison reference. The earlier V7 page remains available under `/v7-development/`. New FEED I executable work is isolated under `/v7-development/feed-i/`; it must not import, overwrite or modify the root application.
@@ -72,6 +78,7 @@ The detailed plans are:
 - [`v7-development/comparisons/BUILD_PLAN_FEEDS_I_II.md`](v7-development/comparisons/BUILD_PLAN_FEEDS_I_II.md)
 - [`v7-development/comparisons/FEED_I_VS_FEED_II.md`](v7-development/comparisons/FEED_I_VS_FEED_II.md)
 - [`v7-development/COMPARISON.md`](v7-development/COMPARISON.md)
+- [`technical-commentary/leapfrog-v6-v7-notes.md`](technical-commentary/leapfrog-v6-v7-notes.md)
 
 ### FEED I foundation
 
@@ -100,6 +107,38 @@ FEED II extends the model into topology, environment, frequency response and ass
 - string-segment, connector and module-level asset identities;
 - EMC and measurement hooks without claiming a PV-specific emission limit.
 
+## Independent V8 leapfrog cable-schedule build
+
+V8 is a new independent workbench under [`v8-leapfrog/`](v8-leapfrog/). It does not modify V6 or V7. It isolates the cable-schedule consequence of leapfrog wiring before deeper electromagnetic calculations are merged back into any later core model.
+
+The V8 question is deliberately narrow:
+
+What is the external EPC-installed DC string cable difference between a conventional sequential 30-module string and a leapfrog 30-module string?
+
+The governing rule is:
+
+- sequential wiring places the two free string terminals at opposite physical ends of the row;
+- leapfrog wiring brings both free terminals to the inverter-side end of the row;
+- saving per string is approximately one full row span of external 6 mm² cable;
+- inverter distance affects both modes, so it does not change the per-string saving;
+- leapfrog does not remove both home-runs, it removes the extra far-end return conductor.
+
+V8 adds:
+
+- editable inverter distance;
+- editable distance scenarios such as 10 m, 20 m and 30 m;
+- east and west band lists;
+- derived row span from module width and inter-module gap;
+- sequential cable schedule;
+- leapfrog cable schedule;
+- comparison box showing external cable, resistance, voltage drop and loss difference;
+- diagram showing why the free positive and negative terminals are no longer one row span apart;
+- JSON export.
+
+Default manufacturer inputs are treated as editable hypotheses. The Trina module geometry, factory cable data, SG350HX input configuration, Studer cable resistance and Stäubli connector data are useful starting points, but final values require measured lead lengths, actual connector family, actual route, as-built string sequence and competent-person review.
+
+A restore point was created before this build at [`restore_points/2026-07-27-v8-leapfrog/`](restore_points/2026-07-27-v8-leapfrog/).
+
 ### Governing corrections
 
 The build is governed by the following corrections:
@@ -114,6 +153,8 @@ The build is governed by the following corrections:
 8. The 0.5 m² loop-area figure is not represented as a PV-standard numerical limit.
 9. A complete utility string is treated as a distributed network where event bandwidth and route delay require it, not assigned one universal resonance.
 10. Every standards statement records whether it is normative, guidance, first-principles engineering, research or measurement-dependent.
+11. Leapfrog and sequential stringing must be separate topology states because the external cable schedule and differential loop area are different.
+12. External EPC-installed DC string cable and factory-fitted module leads must remain separate length classes.
 
 ## Next standards-led studies
 
@@ -237,9 +278,3 @@ Every calculated output shall carry its inputs, method, provenance, uncertainty 
 ## Boundaries
 
 This repository is a calculation and research tool. It does not provide a project-specific design approval, protection coordination study, compliance verdict or engineering warranty.
-
-No confidential project drawings, photographs, site identifiers or commercially restricted source material are to be stored in this repository. Examples must remain generic and reproducible from declared inputs.
-
-## Status
-
-Active development. The working root engine remains the stable reference. The independent FEED I workbench has been launched under `/v7-development/feed-i/` to establish unit-safe, evidence-labelled electromagnetic foundations before FEED II topology and environmental extensions are merged.
