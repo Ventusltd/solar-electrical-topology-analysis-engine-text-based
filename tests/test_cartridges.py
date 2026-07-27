@@ -66,7 +66,7 @@ def test_default_row_span_canary_is_39_67_metres():
 
 
 def test_fleet_distribution_uses_actual_string_count():
-    counts = string_counts_per_inverter(18_918, 795)
+    counts = string_counts_per_inverter(18_918, 795, 24)
     assert len(counts) == 795
     assert sum(counts) == 18_918
     assert counts.count(24) == 633
@@ -83,6 +83,22 @@ def test_archetype_and_full_fleet_are_headless_and_deterministic():
     assert len(first) == 18_918
     assert first[0].string_id == "INV0001-E-B1-R01"
     assert first[-1].inverter_id == 795
+
+
+def test_arbitrary_odd_and_asymmetric_band_lists_are_supported():
+    inputs = TopologyInputs(
+        east_bands=(4, 3, 2),
+        west_bands=(5, 3, 1),
+        inverter_count=2,
+        total_site_string_count=35,
+    )
+    definitions = archetype_strings(inputs)
+    fleet = tuple(fleet_string_definitions(inputs))
+
+    assert inputs.archetype_string_count == 18
+    assert len(definitions) == 18
+    assert len(fleet) == 35
+    assert max(definition.band for definition in definitions) == 3
 
 
 def test_leapfrog_order_returns_to_the_near_end():
@@ -146,6 +162,59 @@ def test_cartridges_emit_one_shared_segment_contract():
     assert not any(
         row.segment_type == "external_sequential_row_return"
         for row in leapfrog
+    )
+    assert sum(
+        row.segment_type == "string_turnaround"
+        for row in leapfrog
+    ) == 1
+
+
+def test_pair_physics_is_weighted_once_not_once_per_conductor():
+    inputs = TopologyInputs(
+        inverter_count=1,
+        total_site_string_count=24,
+    )
+    definition = archetype_strings(inputs)[0]
+    rows = LeapfrogCartridge().build_segments(inputs, definition)
+    external = [
+        row
+        for row in rows
+        if row.segment_type in {
+            "external_positive_home_run",
+            "external_negative_home_run",
+        }
+    ]
+    factory = [
+        row
+        for row in rows
+        if row.segment_type in {
+            "module_factory_positive_lead",
+            "module_factory_negative_lead",
+        }
+    ]
+
+    assert len(external) == 2
+    assert sum(row.loop_parameter_weight for row in external) == 1.0
+    assert all(row.loop_parameter_weight == 0.5 for row in external)
+    assert all(row.loop_parameter_weight == 0.0 for row in factory)
+    assert all(row.formation == "single_pole" for row in factory)
+
+
+def test_connector_resistance_is_carried_by_connector_rows():
+    inputs = TopologyInputs(
+        inverter_count=1,
+        total_site_string_count=24,
+        connector_contact_ohm=0.00035,
+    )
+    definition = archetype_strings(inputs)[0]
+    rows = LeapfrogCartridge().build_segments(inputs, definition)
+    connector_rows = [row for row in rows if row.connector_count]
+
+    assert connector_rows
+    assert connector_count(rows) == 62
+    assert all(
+        row.connector_resistance_ohm_each == pytest.approx(0.00035)
+        for row in connector_rows
     )
 
 
