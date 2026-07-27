@@ -9,13 +9,13 @@ import json
 from pathlib import Path
 import shutil
 import tempfile
-from typing import Iterable
 
 from .cartridges import INITIAL_CARTRIDGES, build_fleet_segments
 from .segments import SegmentRow, TopologyInputs, canonical_input_hash
 
 
 SEGMENT_COLUMNS = tuple(field.name for field in fields(SegmentRow))
+NULL_TOKEN = "__NULL__"
 
 SEGMENT_SCHEMA_SQL = """
 CREATE TABLE segments (
@@ -52,9 +52,11 @@ CREATE TABLE segments (
     r20_ohm_per_m DOUBLE,
     temperature_c DOUBLE,
     effective_epsilon_r DOUBLE,
+    loop_parameter_weight DOUBLE,
     coil_turns DOUBLE,
     coil_diameter_mm DOUBLE,
     connector_count INTEGER,
+    connector_resistance_ohm_each DOUBLE,
     provenance VARCHAR,
     source_reference VARCHAR,
     user_override BOOLEAN,
@@ -92,6 +94,13 @@ def _sql_path(path: Path) -> str:
     return path.resolve().as_posix().replace("'", "''")
 
 
+def _csv_record(segment: SegmentRow) -> dict:
+    return {
+        key: NULL_TOKEN if value is None else value
+        for key, value in segment.as_dict().items()
+    }
+
+
 def _write_segment_csv(
     inputs: TopologyInputs,
     path: Path,
@@ -107,7 +116,7 @@ def _write_segment_csv(
         )
         writer.writeheader()
         for segment in build_fleet_segments(inputs):
-            writer.writerow(segment.as_dict())
+            writer.writerow(_csv_record(segment))
             row_count += 1
 
     return row_count
@@ -194,6 +203,23 @@ def _run_data_law(connection) -> dict[str, int]:
                OR conductor_length_m < 0
             """,
         ),
+        "invalid_loop_weights": _scalar(
+            connection,
+            """
+            SELECT count(*)
+            FROM segments
+            WHERE loop_parameter_weight < 0
+               OR loop_parameter_weight > 1
+            """,
+        ),
+        "invalid_connector_resistance": _scalar(
+            connection,
+            """
+            SELECT count(*)
+            FROM segments
+            WHERE connector_resistance_ohm_each < 0
+            """,
+        ),
         "invalid_provenance": _scalar(
             connection,
             """
@@ -205,6 +231,29 @@ def _run_data_law(connection) -> dict[str, int]:
                 'assumed',
                 'defaulted'
             )
+            """,
+        ),
+        "invalid_envelope_fill": _scalar(
+            connection,
+            """
+            SELECT count(*)
+            FROM segments
+            WHERE conductor_csa_mm2
+                    / (pi() * conductor_diameter_mm
+                        * conductor_diameter_mm / 4) < 0.70
+               OR conductor_csa_mm2
+                    / (pi() * conductor_diameter_mm
+                        * conductor_diameter_mm / 4) > 0.95
+            """,
+        ),
+        "invalid_pair_geometry": _scalar(
+            connection,
+            f"""
+            SELECT count(*)
+            FROM segments
+            WHERE loop_parameter_weight > 0
+              AND formation IN ({PAIR_FORMATIONS})
+              AND separation_mm <= conductor_diameter_mm
             """,
         ),
         "factory_lead_mismatch": _scalar(
@@ -290,12 +339,7 @@ def _run_data_law(connection) -> dict[str, int]:
     return checks
 
 
-def _create_segment_results(connection, inputs: TopologyInputs) -> None:
-    contact_factor = 1 + 0.00393 * (
-        inputs.factory_lead_temperature_c - 20
-    )
-    contact_ohm = inputs.connector_contact_ohm * contact_factor
-
+def _create_segment_results(connection) -> None:
     connection.execute(
         "CREATE OR REPLACE MACRO acosh(x) "
         "AS ln(x + sqrt(x * x - 1))"
@@ -307,7 +351,8 @@ def _create_segment_results(connection, inputs: TopologyInputs) -> None:
             SELECT
                 *,
                 CASE
-                    WHEN formation IN ({PAIR_FORMATIONS})
+                    WHEN loop_parameter_weight > 0
+                     AND formation IN ({PAIR_FORMATIONS})
                      AND separation_mm > conductor_diameter_mm
                     THEN acosh(
                         separation_mm / conductor_diameter_mm
@@ -321,7 +366,9 @@ def _create_segment_results(connection, inputs: TopologyInputs) -> None:
                 conductor_length_m
                     * r20_ohm_per_m
                     * (1 + 0.00393 * (temperature_c - 20))
-                    + connector_count * {contact_ohm}
+                    + connector_count
+                    * connector_resistance_ohm_each
+                    * (1 + 0.00393 * (temperature_c - 20))
                     AS operating_resistance_ohm,
                 CASE
                     WHEN geometry_term IS NOT NULL
@@ -340,12 +387,15 @@ def _create_segment_results(connection, inputs: TopologyInputs) -> None:
         )
         SELECT
             *,
-            external_l_h_per_m * conductor_length_m
-                AS external_l_h,
-            internal_l_h_per_m * conductor_length_m
-                AS internal_l_h,
-            differential_c_f_per_m * conductor_length_m
-                AS differential_c_f,
+            external_l_h_per_m
+                * conductor_length_m
+                * loop_parameter_weight AS external_l_h,
+            internal_l_h_per_m
+                * conductor_length_m
+                * loop_parameter_weight AS internal_l_h,
+            differential_c_f_per_m
+                * conductor_length_m
+                * loop_parameter_weight AS differential_c_f,
             CASE
                 WHEN external_l_h_per_m IS NOT NULL
                 THEN sqrt(
@@ -381,7 +431,6 @@ def _copy_query(
                 FORMAT parquet,
                 COMPRESSION zstd,
                 PARTITION_BY (topology, band),
-                OVERWRITE_OR_IGNORE true,
                 FILENAME_PATTERN 'data_{{i}}'
             )
             """
@@ -430,9 +479,9 @@ def _write_aggregates(connection, root: Path) -> None:
             sum(displacement_m) AS route_displacement_m,
             sum(conductor_length_m) AS conductor_length_m,
             sum(operating_resistance_ohm) AS resistance_ohm,
-            sum(external_l_h) AS external_l_h,
-            sum(internal_l_h) AS internal_l_h,
-            sum(differential_c_f) AS differential_c_f,
+            sum(coalesce(external_l_h, 0)) AS external_l_h,
+            sum(coalesce(internal_l_h, 0)) AS internal_l_h,
+            sum(coalesce(differential_c_f, 0)) AS differential_c_f,
             sum(connector_count) AS connector_count,
             sum(
                 CASE
@@ -565,15 +614,67 @@ def _write_aggregates(connection, root: Path) -> None:
             END AS available_saving_m,
             leapfrog.saving_available
         FROM site_aggregates AS sequential
-        JOIN site_aggregates AS leapfrog
-          ON sequential.topology = 'sequential'
-         AND leapfrog.topology = 'leapfrog'
+        CROSS JOIN site_aggregates AS leapfrog
+        WHERE sequential.topology = 'sequential'
+          AND leapfrog.topology = 'leapfrog'
         """
     )
     _copy_query(
         connection,
         "SELECT * FROM comparison_aggregate",
         aggregate_root / "comparison.parquet",
+    )
+
+
+def _write_browser_slices(connection, root: Path) -> None:
+    browser_root = root / "browser"
+    browser_root.mkdir(parents=True, exist_ok=True)
+
+    site_rows = connection.execute(
+        """
+        SELECT *
+        FROM site_aggregates
+        ORDER BY topology
+        """
+    ).fetchdf().to_dict("records")
+    comparison_rows = connection.execute(
+        "SELECT * FROM comparison_aggregate"
+    ).fetchdf().to_dict("records")
+    summary = {
+        "schema_version": "topology_segments_v1",
+        "site": site_rows,
+        "comparison": comparison_rows,
+    }
+    (browser_root / "site-summary.json").write_text(
+        json.dumps(summary, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+    string_id = _scalar(
+        connection,
+        "SELECT min(string_id) FROM segments",
+    )
+    selected = connection.execute(
+        """
+        SELECT *
+        FROM segment_results
+        WHERE string_id = ?
+        ORDER BY topology, segment_index
+        """,
+        [string_id],
+    ).fetchdf().to_dict("records")
+    (browser_root / "selected-string.json").write_text(
+        json.dumps(
+            {
+                "schema_version": "topology_segments_v1",
+                "string_id": string_id,
+                "segments": selected,
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+        encoding="utf-8",
     )
 
 
@@ -694,7 +795,7 @@ def build_store(
                     FORMAT csv,
                     HEADER true,
                     DELIMITER ',',
-                    NULLSTR ''
+                    NULLSTR '{NULL_TOKEN}'
                 )
                 """
             )
@@ -708,7 +809,7 @@ def build_store(
                 )
 
             data_law = _run_data_law(connection)
-            _create_segment_results(connection, inputs)
+            _create_segment_results(connection)
             _copy_query(
                 connection,
                 """
@@ -725,6 +826,7 @@ def build_store(
                 partitioned=True,
             )
             _write_aggregates(connection, output_root)
+            _write_browser_slices(connection, output_root)
             _write_manifests(
                 connection,
                 output_root,
@@ -754,7 +856,7 @@ def build_deterministic_store(
     output_root: Path,
     source_commit: str = "unknown",
 ) -> dict:
-    """Build twice, compare hashes and publish only byte-identical output."""
+    """Build twice, compare hashes and publish byte-identical output."""
 
     output_root = Path(output_root)
     with tempfile.TemporaryDirectory(
@@ -764,7 +866,7 @@ def build_deterministic_store(
         first = temporary_root / "first"
         second = temporary_root / "second"
         first_summary = build_store(inputs, first, source_commit)
-        second_summary = build_store(inputs, second, source_commit)
+        build_store(inputs, second, source_commit)
         first_hashes = _file_hashes(first)
         second_hashes = _file_hashes(second)
 
