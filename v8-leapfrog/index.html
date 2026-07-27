@@ -1,193 +1,654 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>V8 Leapfrog DC String Cable Comparison</title>
-<meta name="description" content="Independent V8 workbench comparing sequential and leapfrog PV string external DC cable schedules, resistance, voltage drop and loss.">
-<link rel="stylesheet" href="./styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>V8 Leapfrog DC String Cable Comparison</title>
+  <meta
+    name="description"
+    content="V8 comparison of sequential and leapfrog PV string cable schedules."
+  >
+  <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-<header class="topbar">
-  <div>
-    <div class="kicker">GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING · V8.1</div>
-    <h1>Leapfrog DC String Cable Comparison</h1>
-    <p>Compares conventional sequential stringing with leapfrog stringing for every string, every band, one inverter and the inverter fleet. V6 and V7 remain untouched comparison workbenches.</p>
-    <div class="navlinks">
-      <a href="../">Open V6 complete-circuit engine</a>
-      <a href="../v7-development/feed-i/">Open V7 electromagnetic workbench</a>
-      <a href="./tests.html">Run V8 golden tests</a>
-      <a href="./README.md">V8 README</a>
+  <header class="topbar">
+    <div>
+      <div class="kicker">
+        GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING · V8.2
+      </div>
+      <h1>Leapfrog DC String Cable Comparison</h1>
+      <p>
+        Compares conventional sequential stringing with leapfrog stringing
+        for every archetype string and for the actual site string count.
+        V6 and V7 remain untouched comparison workbenches.
+      </p>
+      <div class="navlinks">
+        <a href="../">Open V6 complete-circuit engine</a>
+        <a href="../v7-development/feed-i/">
+          Open V7 electromagnetic workbench
+        </a>
+        <a href="./tests.html">Run V8 golden tests</a>
+        <a href="../BUILD_RECOVERY_INSTRUCTIONS_CHATGPT.md">
+          Recovery instructions
+        </a>
+      </div>
     </div>
-  </div>
-  <div class="status-stack">
-    <div id="runtimeStatus" class="status-badge">V8 LOADING</div>
-    <div id="selfTestStatus" class="status-badge testing">TESTS PENDING</div>
-    <div class="status-badge error">DEVELOPMENT · USE AT YOUR OWN RISK</div>
-  </div>
-</header>
-
-<div class="reliance"><strong>ENGINEERING SCREENING OUTPUT</strong>This tool does not prove as-built wiring, routing feasibility, installed cable quantities, compliance, procurement readiness or protection coordination. Inputs and outputs require project evidence and competent-person review.</div>
-
-<main class="layout">
-  <aside class="controls">
-    <section class="panel">
-      <h2>String geometry</h2>
-      <label>Modules per string <input id="modulesPerString" type="number" min="1" step="1" value="30"></label>
-      <label>Module width along row (m) <input id="moduleWidthM" type="number" min="0.001" step="0.001" value="1.303"></label>
-      <label>Along-row module gap (m) <input id="alongRowGapM" type="number" min="0" step="0.001" value="0.020"></label>
-      <label>Gap between 30-module bands (m) <input id="bandGapM" type="number" min="0" step="0.1" value="0.500"></label>
-      <div class="provenance">Row span is derived from module count, module width and gaps. <strong>No user-entered row length exists.</strong></div>
-    </section>
-
-    <section class="panel">
-      <h2>Strings and inverter distance</h2>
-      <p>Each comma-separated number is the string count in one equal-distance band.</p>
-      <label>East face bands <input id="eastBands" type="text" value="5,5,2"></label>
-      <label>West face bands <input id="westBands" type="text" value="5,5,2"></label>
-      <label>Near string terminals to inverter (m) <input id="inverterDistanceM" type="number" min="0" step="0.5" value="10"></label>
-      <label>Distance scenarios (m) <input id="scenarioDistancesM" type="text" value="10,20,30"></label>
-      <label>Sequential polarity convention <select id="polarityConvention"><option value="mirrored">Mirrored east/west · V6 convention</option><option value="positive_near_both">Positive near on both faces</option></select></label>
-      <div class="note">Distance to the inverter changes the unavoidable positive-and-negative base pair. It does not change the one-row-span return eliminated by leapfrog.</div>
-    </section>
-
-    <section class="panel">
-      <h2>External 6 mm² DC string cable</h2>
-      <label>R20 (mΩ/m) <input id="cableR20MilliOhmPerM" type="number" min="0" step="0.01" value="3.39"></label>
-      <label>Operating conductor temperature (°C) <input id="cableTemperatureC" type="number" step="1" value="70"></label>
-      <label>String current (A) <input id="stringCurrentA" type="number" min="0" step="0.01" value="17.35"></label>
-      <label>Module Vmp (V) <input id="moduleVmpV" type="number" min="0.001" step="0.1" value="38.1"></label>
-      <label>Inverter count <input id="inverterCount" type="number" min="1" step="1" value="795"></label>
-      <label>Installed cable rate (£/m, optional) <input id="installedCableRatePerM" type="number" min="0" step="0.01" value="0"></label>
-      <div class="provenance">Default R20 is a manufacturer/IEC-compatible metal-coated class-5 6 mm² value. Temperature, current and price remain editable evidence inputs.</div>
-    </section>
-
-    <section class="panel">
-      <h2>Factory module-lead feasibility screen</h2>
-      <label>Positive factory lead/module (m) <input id="positiveFactoryLeadM" type="number" min="0" step="0.01" value="0.350"></label>
-      <label>Negative factory lead/module (m) <input id="negativeFactoryLeadM" type="number" min="0" step="0.01" value="0.280"></label>
-      <label>Measured leapfrog connector span (m) <input id="measuredLeapfrogSpanM" type="number" min="0" step="0.01" value="0"></label>
-      <label>Lead evidence <select id="leadEvidence"><option value="MANUFACTURER_STANDARD_NOT_AS_BUILT">Manufacturer standard · not as-built</option><option value="MANUFACTURER_CUSTOM_DECLARED">Manufacturer custom declared</option><option value="MEASURED_ON_SITE">Measured on site</option><option value="ASSUMED_FROM_PHOTOGRAPH">Assumed from photograph</option><option value="UNKNOWN">Unknown</option></select></label>
-      <div class="note">No leapfrog feasibility verdict is issued until the routed connector-to-connector span is entered. Bend radius, support, slack and connector orientation remain separate checks.</div>
-    </section>
-
-    <section class="panel">
-      <h2>Actions</h2>
-      <div class="button-row"><button id="resetBtn">Reset defaults</button><button id="exportBtn" class="primary">Export study JSON</button></div>
-      <div class="button-row"><button id="copyBtn"><span id="copyStatus">Copy summary</span></button><a class="button" href="./tests.html">Open tests</a></div>
-    </section>
-  </aside>
-
-  <section class="workbench">
-    <div id="runtimeError" class="runtime-error"></div>
-    <div class="tabs">
-      <button class="tab active" data-tab="calculatorTab">Cable comparison</button>
-      <button class="tab" data-tab="diagramTab">Leapfrog diagram</button>
-      <button class="tab" data-tab="stringsTab">All strings</button>
-      <button class="tab" data-tab="commentaryTab">Technical commentary</button>
-      <button class="tab" data-tab="comparisonTab">V6 / V7 / V8</button>
+    <div class="status-stack">
+      <div id="runtimeStatus" class="status-badge">V8 LOADING</div>
+      <div id="selfTestStatus" class="status-badge testing">
+        TESTS PENDING
+      </div>
+      <div class="status-badge error">
+        DEVELOPMENT · USE AT YOUR OWN RISK
+      </div>
     </div>
+  </header>
 
-    <div id="calculatorTab" class="tabpane active">
-      <div class="metrics">
-        <article><span>Derived row span</span><strong id="metricRowSpan" class="cyan">—</strong><small>one 30-module row</small></article>
-        <article><span>Strings / inverter</span><strong id="metricStrings">—</strong><small>east plus west</small></article>
-        <article><span>Sequential external cable</span><strong id="metricSequential" class="red">—</strong><small>per inverter</small></article>
-        <article><span>Leapfrog external cable</span><strong id="metricLeapfrog">—</strong><small>per inverter</small></article>
-        <article><span>External cable eliminated</span><strong id="metricSavingInverter" class="green">—</strong><small>per inverter</small></article>
-        <article><span>Fleet cable eliminated</span><strong id="metricSavingFleet" class="green">—</strong><small>editable inverter count</small></article>
-        <article><span>Resistance reduction</span><strong id="metricResistanceSaving" class="green">—</strong><small>per string, not a series sum across inverter</small></article>
-        <article><span>Voltage-drop reduction</span><strong id="metricVoltageSaving" class="green">—</strong><small>per string at entered current</small></article>
-        <article><span>Loss reduction / inverter</span><strong id="metricLossSaving" class="green">—</strong><small>sum across strings at entered current</small></article>
-        <article><span>Loss reduction / fleet</span><strong id="metricFleetLossSaving" class="green">—</strong><small>instantaneous at entered current</small></article>
-        <article><span>Installed cost difference</span><strong id="metricCostSaving" class="amber">—</strong><small>only when £/m is entered</small></article>
+  <div class="reliance">
+    <strong>ENGINEERING SCREENING OUTPUT</strong>
+    This tool does not prove as-built wiring, routing feasibility,
+    installed cable quantities, compliance, procurement readiness or
+    protection coordination. Inputs and outputs require project evidence
+    and competent-person review.
+  </div>
+
+  <main class="layout">
+    <aside class="controls">
+      <section class="panel">
+        <h2>String geometry</h2>
+        <label>
+          Modules per string
+          <input
+            id="modulesPerString"
+            type="number"
+            min="1"
+            step="1"
+            value="30"
+          >
+        </label>
+        <label>
+          Module width along row (m)
+          <input
+            id="moduleWidthM"
+            type="number"
+            min="0.001"
+            step="0.001"
+            value="1.303"
+          >
+        </label>
+        <label>
+          Along-row module gap (m)
+          <input
+            id="alongRowGapM"
+            type="number"
+            min="0"
+            step="0.001"
+            value="0.020"
+          >
+        </label>
+        <label>
+          Gap between 30-module bands (m)
+          <input
+            id="bandGapM"
+            type="number"
+            min="0"
+            step="0.1"
+            value="0.500"
+          >
+        </label>
+        <div class="provenance">
+          Row span is derived from module count, module width and gaps.
+          <strong>No user-entered row length exists.</strong>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Strings and inverter distance</h2>
+        <p>
+          Each comma-separated number is the string count in one
+          equal-distance archetype band.
+        </p>
+        <label>
+          East face bands
+          <input id="eastBands" type="text" value="5,5,2">
+        </label>
+        <label>
+          West face bands
+          <input id="westBands" type="text" value="5,5,2">
+        </label>
+        <label>
+          Near string terminals to inverter (m)
+          <input
+            id="inverterDistanceM"
+            type="number"
+            min="0"
+            step="0.5"
+            value="10"
+          >
+        </label>
+        <label>
+          Distance scenarios (m)
+          <input id="scenarioDistancesM" type="text" value="10,20,30">
+        </label>
+        <label>
+          Sequential polarity convention
+          <select id="polarityConvention">
+            <option value="mirrored">
+              Mirrored east/west · V6 convention
+            </option>
+            <option value="positive_near_both">
+              Positive near on both faces
+            </option>
+          </select>
+        </label>
+        <div class="note">
+          Inverter distance changes the unavoidable positive-and-negative
+          base pair. It does not change the one-row-span return eliminated
+          by feasible leapfrog wiring.
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>External 6 mm² DC string cable</h2>
+        <label>
+          R20 (mΩ/m)
+          <input
+            id="cableR20MilliOhmPerM"
+            type="number"
+            min="0"
+            step="0.01"
+            value="3.39"
+          >
+        </label>
+        <label>
+          Operating conductor temperature (°C)
+          <input
+            id="cableTemperatureC"
+            type="number"
+            step="1"
+            value="70"
+          >
+        </label>
+        <label>
+          String current (A)
+          <input
+            id="stringCurrentA"
+            type="number"
+            min="0"
+            step="0.01"
+            value="17.35"
+          >
+        </label>
+        <label>
+          Module Vmp (V)
+          <input
+            id="moduleVmpV"
+            type="number"
+            min="0.001"
+            step="0.1"
+            value="38.1"
+          >
+        </label>
+        <label>
+          Inverter count
+          <input
+            id="inverterCount"
+            type="number"
+            min="1"
+            step="1"
+            value="795"
+          >
+        </label>
+        <label>
+          Actual total site strings
+          <input
+            id="totalSiteStringCount"
+            type="number"
+            min="1"
+            step="1"
+            value="18918"
+          >
+        </label>
+        <label>
+          Installed cable rate (£/m, optional)
+          <input
+            id="installedCableRatePerM"
+            type="number"
+            min="0"
+            step="0.01"
+            value="0"
+          >
+        </label>
+        <div class="provenance">
+          Fleet saving is calculated from actual total site strings, not
+          by assuming every inverter carries the 24-string archetype.
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Factory module-lead feasibility</h2>
+        <label>
+          Positive factory lead/module (m)
+          <input
+            id="positiveFactoryLeadM"
+            type="number"
+            min="0"
+            step="0.01"
+            value="0.350"
+          >
+        </label>
+        <label>
+          Negative factory lead/module (m)
+          <input
+            id="negativeFactoryLeadM"
+            type="number"
+            min="0"
+            step="0.01"
+            value="0.280"
+          >
+        </label>
+        <label>
+          Measured routed leapfrog span (m)
+          <input
+            id="measuredLeapfrogSpanM"
+            type="number"
+            min="0"
+            step="0.01"
+            value="0"
+          >
+        </label>
+        <label>
+          Lead evidence
+          <select id="leadEvidence">
+            <option value="MANUFACTURER_STANDARD_NOT_AS_BUILT">
+              Manufacturer standard · not as-built
+            </option>
+            <option value="MANUFACTURER_CUSTOM_DECLARED">
+              Manufacturer custom declared
+            </option>
+            <option value="MEASURED_ON_SITE">
+              Measured on site
+            </option>
+            <option value="ASSUMED_FROM_PHOTOGRAPH">
+              Assumed from photograph
+            </option>
+            <option value="UNKNOWN">Unknown</option>
+          </select>
+        </label>
+        <div class="note">
+          Without a measured override, required leapfrog reach is two
+          module pitches. Savings are unavailable when the lead-length
+          screen fails.
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Actions</h2>
+        <div class="button-row">
+          <button id="resetBtn">Reset defaults</button>
+          <button id="exportBtn" class="primary">
+            Export study JSON
+          </button>
+        </div>
+        <div class="button-row">
+          <button id="copyBtn">
+            <span id="copyStatus">Copy summary</span>
+          </button>
+          <a class="button" href="./tests.html">Open tests</a>
+        </div>
+      </section>
+    </aside>
+
+    <section class="workbench">
+      <div id="runtimeError" class="runtime-error"></div>
+      <div id="feasibilityBanner" class="reliance"></div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="calculatorTab">
+          Cable comparison
+        </button>
+        <button class="tab" data-tab="diagramTab">
+          Leapfrog diagram
+        </button>
+        <button class="tab" data-tab="stringsTab">
+          All strings
+        </button>
+        <button class="tab" data-tab="commentaryTab">
+          Technical commentary
+        </button>
+        <button class="tab" data-tab="comparisonTab">
+          V6 / V7 / V8
+        </button>
       </div>
 
-      <div class="decomposition">
-        <article class="compare-card leapfrog"><span>Unavoidable base pair</span><strong id="decompBasePair">—</strong><small>Both modes retain + and − cable from the common string end to the inverter.</small></article>
-        <article class="compare-card sequential"><span>Sequential additional return</span><strong id="decompSequentialReturn">—</strong><small>One full row span per string because the second free terminal is at the far end.</small></article>
-        <article class="compare-card difference"><span>Leapfrog additional return</span><strong id="decompLeapfrogReturn">—</strong><small>Both free terminals emerge at the near end, so this extra EPC return is removed.</small></article>
-        <article class="compare-card sequential"><span>Sequential total</span><strong id="decompSequentialTotal">—</strong><small>Base pair plus row returns.</small></article>
-        <article class="compare-card leapfrog"><span>Leapfrog total</span><strong id="decompLeapfrogTotal">—</strong><small>Base pair only in this external-cable comparison.</small></article>
-        <article class="compare-card difference"><span>Difference</span><strong id="decompDifference">—</strong><small>External 6 mm² cable, not factory module leads.</small></article>
+      <div id="calculatorTab" class="tabpane active">
+        <div class="metrics">
+          <article>
+            <span>Module pitch</span>
+            <strong id="metricModulePitch" class="cyan">—</strong>
+            <small>used for the lead reach screen</small>
+          </article>
+          <article>
+            <span>Derived row span</span>
+            <strong id="metricRowSpan" class="cyan">—</strong>
+            <small>one 30-module row</small>
+          </article>
+          <article>
+            <span>Archetype strings / inverter</span>
+            <strong id="metricStrings">—</strong>
+            <small>east plus west drawing</small>
+          </article>
+          <article>
+            <span>Actual site strings</span>
+            <strong id="metricSiteStrings">—</strong>
+            <small id="metricAverageStrings">—</small>
+          </article>
+          <article>
+            <span>Sequential external cable</span>
+            <strong id="metricSequential" class="red">—</strong>
+            <small>per archetype inverter</small>
+          </article>
+          <article>
+            <span>Leapfrog external cable</span>
+            <strong id="metricLeapfrog">—</strong>
+            <small>theoretical per archetype inverter</small>
+          </article>
+          <article>
+            <span>Available cable saving / archetype</span>
+            <strong id="metricSavingInverter" class="green">—</strong>
+            <small>gated by module-lead reach</small>
+          </article>
+          <article>
+            <span>Available site cable saving</span>
+            <strong id="metricSavingFleet" class="green">—</strong>
+            <small>row span × actual site strings</small>
+          </article>
+          <article>
+            <span>Available resistance reduction</span>
+            <strong id="metricResistanceSaving" class="green">—</strong>
+            <small>per string</small>
+          </article>
+          <article>
+            <span>Available voltage-drop reduction</span>
+            <strong id="metricVoltageSaving" class="green">—</strong>
+            <small>per string at entered current</small>
+          </article>
+          <article>
+            <span>Available loss reduction / archetype</span>
+            <strong id="metricLossSaving" class="green">—</strong>
+            <small>sum across 24 strings</small>
+          </article>
+          <article>
+            <span>Available loss reduction / site</span>
+            <strong id="metricFleetLossSaving" class="green">—</strong>
+            <small>sum across actual site strings</small>
+          </article>
+          <article>
+            <span>Available installed cost difference</span>
+            <strong id="metricCostSaving" class="amber">—</strong>
+            <small>only when £/m is entered and feasible</small>
+          </article>
+        </div>
+
+        <div class="decomposition">
+          <article class="compare-card leapfrog">
+            <span>Unavoidable base pair</span>
+            <strong id="decompBasePair">—</strong>
+            <small>
+              Both modes retain + and − cable from the common string end.
+            </small>
+          </article>
+          <article class="compare-card sequential">
+            <span>Sequential additional return</span>
+            <strong id="decompSequentialReturn">—</strong>
+            <small>One full row span per archetype string.</small>
+          </article>
+          <article class="compare-card difference">
+            <span>Leapfrog additional return</span>
+            <strong id="decompLeapfrogReturn">—</strong>
+            <small>Zero only when the lead screen passes.</small>
+          </article>
+          <article class="compare-card sequential">
+            <span>Sequential total</span>
+            <strong id="decompSequentialTotal">—</strong>
+            <small>Base pair plus row returns.</small>
+          </article>
+          <article class="compare-card leapfrog">
+            <span>Leapfrog total</span>
+            <strong id="decompLeapfrogTotal">—</strong>
+            <small>Theoretical base-pair total.</small>
+          </article>
+          <article class="compare-card difference">
+            <span>Available difference</span>
+            <strong id="decompDifference">—</strong>
+            <small>Unavailable where leapfrog fails.</small>
+          </article>
+        </div>
+
+        <section class="section">
+          <h2>Module-lead evidence gate</h2>
+          <div class="section-body">
+            <div class="lead-box">
+              <article>
+                <span>Positive lead</span>
+                <strong id="leadPositive">—</strong>
+              </article>
+              <article>
+                <span>Negative lead</span>
+                <strong id="leadNegative">—</strong>
+              </article>
+              <article>
+                <span>Combined available</span>
+                <strong id="leadCombined">—</strong>
+              </article>
+              <article>
+                <span>Required reach</span>
+                <strong id="leadRequired">—</strong>
+              </article>
+              <article>
+                <span>Reach basis</span>
+                <strong id="leadBasis">—</strong>
+              </article>
+              <article>
+                <span>Margin</span>
+                <strong id="leadMargin">—</strong>
+              </article>
+              <article>
+                <span>Extension required</span>
+                <strong id="leadExtension">—</strong>
+              </article>
+            </div>
+            <p>
+              <strong id="leadStatus" class="amber">UNRESOLVED</strong>
+              — <span id="leadMessage">Waiting for calculation.</span>
+            </p>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Band schedule · sequential versus leapfrog</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Face</th>
+                  <th>Band</th>
+                  <th>Strings</th>
+                  <th>Near route m</th>
+                  <th>Seq + m</th>
+                  <th>Seq − m</th>
+                  <th>Seq total m</th>
+                  <th>Leap + m</th>
+                  <th>Leap − m</th>
+                  <th>Leap total m</th>
+                  <th>Theoretical difference m</th>
+                  <th>Available difference m</th>
+                </tr>
+              </thead>
+              <tbody id="bandSchedule"></tbody>
+              <tfoot id="bandScheduleFoot"></tfoot>
+            </table>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>10 / 20 / 30 metre inverter-distance scenarios</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Distance m</th>
+                  <th>Base pair m/archetype</th>
+                  <th>Sequential m/archetype</th>
+                  <th>Leapfrog m/archetype</th>
+                  <th>Theoretical difference m</th>
+                  <th>Available difference m</th>
+                  <th>Available site saving km</th>
+                  <th>Available loss saving kW/archetype</th>
+                </tr>
+              </thead>
+              <tbody id="scenarioSchedule"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Calculation trace</h2>
+          <div class="section-body">
+            <pre id="calculationTrace" class="trace"></pre>
+          </div>
+        </section>
       </div>
 
-      <section class="section">
-        <h2>Module-lead evidence gate</h2>
-        <div class="section-body">
-          <div class="lead-box">
-            <article><span>Positive lead</span><strong id="leadPositive">—</strong></article>
-            <article><span>Negative lead</span><strong id="leadNegative">—</strong></article>
-            <article><span>Combined available</span><strong id="leadCombined">—</strong></article>
-            <article><span>Measured required span</span><strong id="leadRequired">—</strong></article>
+      <div id="diagramTab" class="tabpane">
+        <section class="section">
+          <h2>Why leapfrog removes the far-end EPC return</h2>
+          <div class="section-body">
+            <p>
+              Sequential wiring places the two free string terminals at
+              opposite physical ends. Leapfrog brings both to the
+              inverter-side end. The diagram is a topology explanation;
+              feasibility is controlled separately by the lead gate.
+            </p>
           </div>
-          <p><strong id="leadStatus" class="amber">UNRESOLVED</strong> — <span id="leadMessage">Waiting for calculation.</span></p>
-        </div>
-      </section>
-
-      <section class="section">
-        <h2>Band schedule · sequential versus leapfrog</h2>
-        <div class="table-wrap"><table><thead><tr><th>Face</th><th>Band</th><th>Strings</th><th>Near route m</th><th>Seq + m</th><th>Seq − m</th><th>Seq band total m</th><th>Leap + m</th><th>Leap − m</th><th>Leap band total m</th><th>Saving m</th></tr></thead><tbody id="bandSchedule"></tbody><tfoot id="bandScheduleFoot"></tfoot></table></div>
-      </section>
-
-      <section class="section">
-        <h2>10 / 20 / 30 metre inverter-distance scenarios</h2>
-        <div class="table-wrap"><table><thead><tr><th>Distance m</th><th>Unavoidable base pair m/inv</th><th>Additional return m/inv</th><th>Sequential m/inv</th><th>Leapfrog m/inv</th><th>Saving m/inv</th><th>Saving km/fleet</th><th>Loss saving kW/inv</th></tr></thead><tbody id="scenarioSchedule"></tbody></table></div>
-      </section>
-
-      <section class="section"><h2>Calculation trace</h2><div class="section-body"><pre id="calculationTrace" class="trace"></pre></div></section>
-    </div>
-
-    <div id="diagramTab" class="tabpane">
-      <section class="section">
-        <h2>Why leapfrog removes the far-end EPC return</h2>
-        <div class="section-body"><p>The string still has one positive and one negative free terminal. Sequential wiring places them at opposite physical ends. Leapfrog changes the module connection order so both emerge at the inverter-side end. Black lines are conductors; the dashed red path is the external return removed by leapfrog.</p></div>
-        <div class="diagram-wrap"><svg id="topologyDiagram" role="img" aria-label="Sequential and leapfrog string wiring comparison"></svg></div>
-      </section>
-    </div>
-
-    <div id="stringsTab" class="tabpane">
-      <section class="section">
-        <h2>All generated strings</h2>
-        <div class="section-body"><p>Every string is shown separately so the positive and negative cable schedule is auditable. V8 mirrors the sequential positive/negative orientation between east and west by default, while cable totals remain unchanged.</p></div>
-        <div class="table-wrap"><table><thead><tr><th>#</th><th>Polarity IDs</th><th>Face</th><th>Band</th><th>Near m</th><th>Seq + m</th><th>Seq − m</th><th>Leap + m</th><th>Leap − m</th><th>Cable saved m</th><th>ΔR Ω/string</th><th>ΔV V/string</th><th>ΔP W/string</th></tr></thead><tbody id="stringSchedule"></tbody></table></div>
-      </section>
-    </div>
-
-    <div id="commentaryTab" class="tabpane">
-      <section class="section">
-        <h2>Technical commentary governing the calculation</h2>
-        <div class="section-body">
-          <p>A 30-module string always has one free positive terminal and one free negative terminal. Leapfrog does not change the series voltage, current, module count, connector count or MPPT allocation. It changes the physical position of the free terminals.</p>
-          <p>With conventional sequential wiring, one terminal is at the near end and the other is one complete row span farther away. The EPC therefore installs an unavoidable positive-and-negative base pair to the near end plus one additional row-length return conductor for every string.</p>
-          <p>With leapfrog wiring, longer factory-fitted module leads connect alternate modules on the outward path and the skipped modules on the return path. Both free terminals emerge at the same physical end. The unavoidable base pair remains, but the additional row-length external return becomes zero.</p>
-          <p>The cable saving per string is therefore the derived row span. It is independent of whether the inverter is 10 m, 20 m or 30 m from the near terminals, because distance adds equally to the two modes. This tool calls the removed conductor the “additional EPC row return” to avoid implying that all external string cable disappears.</p>
-          <p>V8 reports resistance and voltage-drop reduction per string. It does not add the resistance reductions of parallel strings and present them as one inverter resistance. Total power-loss reduction may be summed across strings because each string contributes its own I²R reduction.</p>
-          <p>The external cable comparison does not assume that leapfrog is physically feasible. Factory lead lengths, connector positions, routed skip distance, bend radius, support and slack must be checked. Standard catalogue leads may differ from custom leads actually delivered.</p>
-          <p>This schedule excludes factory module-lead conductor from the EPC-installed 6 mm² cable quantity. A later complete-circuit comparison may add module leads and connectors, but the two length classes must remain separate.</p>
-        </div>
-      </section>
-    </div>
-
-    <div id="comparisonTab" class="tabpane">
-      <section class="section">
-        <h2>What was retained from V6 and V7</h2>
-        <div class="section-body">
-          <div class="comparison-grid">
-            <article><h3>V6</h3><p id="v6Comparison"></p></article>
-            <article><h3>V7</h3><p id="v7Comparison"></p></article>
-            <article><h3>V8</h3><p id="v8Comparison"></p></article>
+          <div class="diagram-wrap">
+            <svg
+              id="topologyDiagram"
+              role="img"
+              aria-label="Sequential and leapfrog string wiring comparison"
+            ></svg>
           </div>
-          <p>V6 and V7 are not altered by this V8 repair. V8 is the dedicated schedule comparator and can later export route objects into the complete-circuit and electromagnetic solvers.</p>
-          <textarea id="plainSummary" rows="12" readonly style="width:100%;margin-top:12px;background:#03070b;color:#d7ecff;border:1px solid #263747;padding:10px;font:12px/1.55 ui-monospace,monospace"></textarea>
-        </div>
-      </section>
-    </div>
-  </section>
-</main>
+        </section>
+      </div>
 
-<footer class="footer">V8.1 is an independent public development build. The pre-fix V8 is preserved by blob and commit reference under the restore-point folder. V6 and V7 remain separately available.</footer>
-<script src="./model.js"></script>
-<script src="./app.js"></script>
+      <div id="stringsTab" class="tabpane">
+        <section class="section">
+          <h2>All generated archetype strings</h2>
+          <div class="section-body">
+            <p>
+              Every string is listed separately so positive and negative
+              external cable lengths remain auditable.
+            </p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Polarity IDs</th>
+                  <th>Face</th>
+                  <th>Band</th>
+                  <th>Near m</th>
+                  <th>Seq + m</th>
+                  <th>Seq − m</th>
+                  <th>Leap + m</th>
+                  <th>Leap − m</th>
+                  <th>Theoretical save m</th>
+                  <th>Available save m</th>
+                  <th>Available ΔR Ω</th>
+                  <th>Available ΔV V</th>
+                  <th>Available ΔP W</th>
+                </tr>
+              </thead>
+              <tbody id="stringSchedule"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <div id="commentaryTab" class="tabpane">
+        <section class="section">
+          <h2>Technical commentary governing V8.2</h2>
+          <div class="section-body">
+            <p>
+              A string always has one free positive terminal and one free
+              negative terminal. Leapfrog changes their physical location,
+              not the string voltage, current, module count or MPPT duty.
+            </p>
+            <p>
+              Sequential wiring requires an unavoidable base pair plus one
+              additional row-length return conductor per string. Feasible
+              leapfrog wiring retains the base pair and removes the row
+              return.
+            </p>
+            <p>
+              Factory module leads are in circuit under both topologies.
+              They are not saved copper. Only external EPC-installed cable
+              differs unless extension leads are required.
+            </p>
+            <p>
+              The lead screen uses two module pitches unless measured route
+              evidence is entered. When it fails, V8 refuses to report the
+              theoretical cable difference as an available saving.
+            </p>
+            <p>
+              Site totals use actual total string count. The 24-string
+              inverter remains an archetype and is not multiplied blindly
+              by inverter count.
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <div id="comparisonTab" class="tabpane">
+        <section class="section">
+          <h2>V6 / V7 / V8 responsibilities</h2>
+          <div class="section-body">
+            <div class="comparison-grid">
+              <article>
+                <h3>V6</h3>
+                <p id="v6Comparison"></p>
+              </article>
+              <article>
+                <h3>V7</h3>
+                <p id="v7Comparison"></p>
+              </article>
+              <article>
+                <h3>V8</h3>
+                <p id="v8Comparison"></p>
+              </article>
+            </div>
+            <textarea
+              id="plainSummary"
+              rows="14"
+              readonly
+              style="width:100%;margin-top:12px;background:#03070b;
+              color:#d7ecff;border:1px solid #263747;padding:10px;
+              font:12px/1.55 ui-monospace,monospace"
+            ></textarea>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    V8.2 is an independent development build. V6 and V7 remain separately
+    available. The fleet Parquet/DuckDB cartridge migration is governed by
+    the recovery instructions and is not yet claimed as complete.
+  </footer>
+
+  <script src="./model.js"></script>
+  <script src="./app.js"></script>
 </body>
 </html>
