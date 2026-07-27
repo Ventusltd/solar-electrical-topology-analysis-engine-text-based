@@ -8,7 +8,7 @@ import json
 import os
 from pathlib import Path
 
-from solar_topology.parquet_store import build_deterministic_store
+from solar_topology.fleet_store import build_deterministic_store
 from solar_topology.segments import TopologyInputs
 
 
