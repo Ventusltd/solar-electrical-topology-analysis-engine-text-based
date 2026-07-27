@@ -6,11 +6,13 @@ on:
     paths:
       - 'v8-leapfrog/**'
       - 'tests/v8-model.test.js'
+      - 'tests/check_v8_source_width.py'
       - '.github/workflows/v8-tests.yml'
   pull_request:
     paths:
       - 'v8-leapfrog/**'
       - 'tests/v8-model.test.js'
+      - 'tests/check_v8_source_width.py'
       - '.github/workflows/v8-tests.yml'
 
 permissions:
@@ -19,14 +21,26 @@ permissions:
 jobs:
   test-v8:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Enforce readable source width
+        run: python tests/check_v8_source_width.py
+
       - name: Syntax check model
         run: node --check v8-leapfrog/model.js
+
       - name: Syntax check browser application
         run: node --check v8-leapfrog/app.js
+
       - name: Run V8 regression tests
         run: node tests/v8-model.test.js
