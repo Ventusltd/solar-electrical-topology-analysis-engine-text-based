@@ -4,10 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "solar-electrical-topology-engine"
-version = "0.2.0"
-description = "Unit-safe geometry-to-electrical study core for solar DC string topology"
+version = "0.3.0"
+description = "Unit-safe segment and Parquet core for solar DC string topology"
 requires-python = ">=3.11"
-dependencies = ["pint>=0.24", "numpy>=1.26"]
+dependencies = [
+    "duckdb>=1.4,<2",
+    "numpy>=1.26",
+    "pint>=0.24",
+]
 
 [project.optional-dependencies]
 test = ["pytest>=8"]
