@@ -86,6 +86,10 @@ class TopologyInputs:
         slope_pitch = self.module_length_m + self.clamp_gap_m
         return slope_pitch * math.cos(math.radians(self.tilt_deg))
 
+    @property
+    def archetype_string_count(self) -> int:
+        return sum(self.east_bands) + sum(self.west_bands)
+
     def validate(self) -> None:
         if self.modules_per_string < 1:
             raise ValueError("modules_per_string must be positive")
@@ -99,14 +103,19 @@ class TopologyInputs:
             raise ValueError("inverter_count must be positive")
         if self.total_site_string_count < 1:
             raise ValueError("total_site_string_count must be positive")
-        if self.total_site_string_count > self.inverter_count * 24:
-            raise ValueError(
-                "total_site_string_count exceeds the 24-string archetype capacity"
-            )
         if any(value < 1 for value in self.east_bands + self.west_bands):
             raise ValueError("band counts must be positive")
+        if self.archetype_string_count < 1:
+            raise ValueError("at least one string band is required")
+        capacity = self.inverter_count * self.archetype_string_count
+        if self.total_site_string_count > capacity:
+            raise ValueError(
+                "total_site_string_count exceeds archetype capacity"
+            )
         if self.effective_epsilon_r <= 0:
             raise ValueError("effective_epsilon_r must be positive")
+        if self.connector_contact_ohm < 0:
+            raise ValueError("connector_contact_ohm cannot be negative")
         self.external_conductor.validate()
         self.factory_lead_conductor.validate()
 
@@ -165,9 +174,11 @@ class SegmentRow:
     r20_ohm_per_m: float
     temperature_c: float
     effective_epsilon_r: float
+    loop_parameter_weight: float
     coil_turns: float | None
     coil_diameter_mm: float | None
     connector_count: int
+    connector_resistance_ohm_each: float
     provenance: str
     source_reference: str
     user_override: bool
@@ -202,8 +213,14 @@ class SegmentRow:
             raise ValueError("band, inverter_id and mppt_id must be positive")
         if self.displacement_m < 0 or self.conductor_length_m < 0:
             raise ValueError("segment lengths cannot be negative")
+        if not 0 <= self.loop_parameter_weight <= 1:
+            raise ValueError("loop_parameter_weight must be between 0 and 1")
         if self.connector_count < 0:
             raise ValueError("connector_count cannot be negative")
+        if self.connector_resistance_ohm_each < 0:
+            raise ValueError(
+                "connector_resistance_ohm_each cannot be negative"
+            )
         if self.provenance not in ALLOWED_PROVENANCE:
             raise ValueError(f"Invalid provenance: {self.provenance}")
         if self.conductor_diameter_mm <= 0:
@@ -243,7 +260,9 @@ class SegmentBuilder:
         conductor: ConductorSpec,
         temperature_c: float,
         effective_epsilon_r: float,
+        loop_parameter_weight: float = 0.0,
         connector_count: int = 0,
+        connector_resistance_ohm_each: float = 0.0,
         module_id: str | None = None,
         coil_turns: float | None = None,
         coil_diameter_mm: float | None = None,
@@ -295,9 +314,13 @@ class SegmentBuilder:
             r20_ohm_per_m=conductor.r20_ohm_per_m,
             temperature_c=temperature_c,
             effective_epsilon_r=effective_epsilon_r,
+            loop_parameter_weight=loop_parameter_weight,
             coil_turns=coil_turns,
             coil_diameter_mm=coil_diameter_mm,
             connector_count=connector_count,
+            connector_resistance_ohm_each=(
+                connector_resistance_ohm_each
+            ),
             provenance=provenance,
             source_reference=source_reference,
             user_override=user_override,
@@ -321,7 +344,9 @@ def canonical_input_hash(inputs: TopologyInputs) -> str:
     return hashlib.sha256(canonical).hexdigest()
 
 
-def archetype_strings(inputs: TopologyInputs) -> tuple[StringDefinition, ...]:
+def archetype_strings(
+    inputs: TopologyInputs,
+) -> tuple[StringDefinition, ...]:
     inputs.validate()
     definitions: list[StringDefinition] = []
     inverter_x = -inputs.inverter_distance_m
@@ -358,20 +383,20 @@ def archetype_strings(inputs: TopologyInputs) -> tuple[StringDefinition, ...]:
                 )
                 local_number += 1
 
-    if len(definitions) != 24:
-        raise ValueError(
-            "The current fleet distributor requires a 24-string archetype"
-        )
+    if not definitions:
+        raise ValueError("At least one archetype string is required")
     return tuple(definitions)
 
 
 def string_counts_per_inverter(
     total_string_count: int,
     inverter_count: int,
-    maximum_strings: int = 24,
+    maximum_strings: int,
 ) -> tuple[int, ...]:
     if inverter_count < 1 or total_string_count < 1:
         raise ValueError("string and inverter counts must be positive")
+    if maximum_strings < 1:
+        raise ValueError("maximum_strings must be positive")
     if total_string_count > inverter_count * maximum_strings:
         raise ValueError("string count exceeds inverter archetype capacity")
 
@@ -397,6 +422,7 @@ def fleet_string_definitions(
     counts = string_counts_per_inverter(
         inputs.total_site_string_count,
         inputs.inverter_count,
+        len(templates),
     )
 
     for inverter_id, count in enumerate(counts, start=1):
