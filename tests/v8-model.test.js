@@ -1,27 +1,158 @@
 'use strict';
+
 const assert = require('node:assert/strict');
 const model = require('../v8-leapfrog/model.js');
 
-const tests = model.runGoldenTests();
-assert.equal(tests.allPassed, true, JSON.stringify(tests.tests, null, 2));
+function close(actual, expected, tolerance = 1e-9) {
+  return Math.abs(actual - expected) <= tolerance;
+}
 
-const study = model.calculate(model.DEFAULTS);
-assert.equal(study.totals.stringsPerInverter, 24);
-assert.ok(Math.abs(study.geometry.rowSpanM - 39.67) < 1e-9);
-assert.ok(Math.abs(study.totals.sequentialExternalM - 2878.2) < 1e-9);
-assert.ok(Math.abs(study.totals.leapfrogExternalM - 1926.12) < 1e-9);
-assert.ok(Math.abs(study.totals.externalCableSavingM - 952.08) < 1e-9);
-assert.ok(Math.abs(study.totals.fleetExternalCableSavingKm - 756.9036) < 1e-9);
+const golden = model.runGoldenTests();
 
-const at30m = model.calculate({ ...model.DEFAULTS, inverterDistanceM: 30 });
-assert.ok(Math.abs(at30m.totals.externalCableSavingM - study.totals.externalCableSavingM) < 1e-9);
-assert.ok(at30m.totals.leapfrogExternalM > study.totals.leapfrogExternalM);
+assert.equal(
+  golden.allPassed,
+  true,
+  JSON.stringify(golden.tests, null, 2)
+);
 
-const west = study.strings.find((item) => item.face === 'W');
+const defaultStudy = model.calculate(model.DEFAULTS);
+
+assert.equal(
+  defaultStudy.totals.stringsPerArchetypeInverter,
+  24
+);
+assert.equal(
+  defaultStudy.totals.totalSiteStringCount,
+  18_918
+);
+assert.ok(
+  close(defaultStudy.geometry.modulePitchM, 1.323)
+);
+assert.ok(
+  close(defaultStudy.geometry.rowSpanM, 39.67)
+);
+assert.ok(
+  close(
+    defaultStudy.geometry.requiredLeapfrogReachM,
+    2.646
+  )
+);
+assert.equal(
+  defaultStudy.feasibility.feasible,
+  false
+);
+assert.equal(
+  defaultStudy.totals.availableSiteSavingKm,
+  null
+);
+assert.ok(
+  close(
+    defaultStudy.totals
+      .sequentialExternalMPerArchetypeInverter,
+    2_890.20
+  )
+);
+assert.ok(
+  close(
+    defaultStudy.totals
+      .leapfrogExternalMPerArchetypeInverter,
+    1_938.12
+  )
+);
+assert.ok(
+  close(
+    defaultStudy.totals
+      .theoreticalSavingMPerArchetypeInverter,
+    952.08
+  )
+);
+assert.ok(
+  close(
+    defaultStudy.totals.theoreticalSiteSavingKm,
+    750.47706
+  )
+);
+
+const feasibleStudy = model.calculate({
+  ...model.DEFAULTS,
+  positiveFactoryLeadM: 1.4,
+  negativeFactoryLeadM: 1.4,
+  leadEvidence: 'MANUFACTURER_CUSTOM_DECLARED'
+});
+
+assert.equal(
+  feasibleStudy.feasibility.feasible,
+  true
+);
+assert.ok(
+  close(
+    feasibleStudy.totals.availableSiteSavingKm,
+    750.47706
+  )
+);
+
+const shortLeadStudy = model.calculate({
+  ...model.DEFAULTS,
+  positiveFactoryLeadM: 1.2,
+  negativeFactoryLeadM: 1.2
+});
+
+assert.equal(
+  shortLeadStudy.feasibility.feasible,
+  false
+);
+assert.ok(
+  close(shortLeadStudy.feasibility.marginM, -0.246)
+);
+assert.ok(
+  close(
+    shortLeadStudy.feasibility.extensionRequiredM,
+    0.246
+  )
+);
+
+const distance30Study = model.calculate({
+  ...model.DEFAULTS,
+  inverterDistanceM: 30
+});
+
+assert.ok(
+  close(
+    distance30Study.totals
+      .theoreticalSavingMPerArchetypeInverter,
+    defaultStudy.totals
+      .theoreticalSavingMPerArchetypeInverter
+  )
+);
+assert.ok(
+  distance30Study.totals
+    .leapfrogExternalMPerArchetypeInverter >
+  defaultStudy.totals
+    .leapfrogExternalMPerArchetypeInverter
+);
+
+const west = defaultStudy.strings.find(
+  (item) => item.face === 'W'
+);
+
 assert.ok(west);
-assert.equal(west.sequential.positiveM, west.farRouteM);
-assert.equal(west.sequential.negativeM, west.nearRouteM);
-assert.equal(west.leapfrog.positiveM, west.nearRouteM);
-assert.equal(west.leapfrog.negativeM, west.nearRouteM);
+assert.equal(
+  west.sequential.positiveM,
+  west.farRouteM
+);
+assert.equal(
+  west.sequential.negativeM,
+  west.nearRouteM
+);
+assert.equal(
+  west.leapfrog.positiveM,
+  west.nearRouteM
+);
+assert.equal(
+  west.leapfrog.negativeM,
+  west.nearRouteM
+);
 
-console.log(`V8 regression tests passed: ${tests.passed}/${tests.total}`);
+console.log(
+  `V8 regression tests passed: ${golden.passed}/${golden.total}`
+);
