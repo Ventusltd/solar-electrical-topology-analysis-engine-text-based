@@ -2,13 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Solar DC String Topology Engine</title>
-<meta name="description" content="2D solar DC topology engine modelling complete string circuits: home-runs, module leads, connectors, temperature, loop geometry, inductance and capacitance.">
+<title>Solar DC String Topology Engine V6</title>
+<meta name="description" content="2D solar DC topology engine modelling sequential and leapfrog string circuits, home-run cables, module leads, connectors, temperature, loop geometry, inductance and capacitance.">
 <link rel="stylesheet" href="./styles.css">
 <link rel="stylesheet" href="./spider-navigation.css">
+<style>
+  .topology-explainer{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(220px,.7fr);gap:16px;align-items:center}
+  .topology-explainer canvas{width:100%;height:auto;display:block;background:#03070b;border:1px solid #263747}
+  .topology-mode-note{padding:12px;border-left:4px solid #27d8ff;background:#071923;color:#cdefff}
+  @media(max-width:800px){.topology-explainer{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-<header class="topbar"><div><div class="kicker">GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING</div><h1>Solar DC String Topology Engine</h1><p>Geometry-derived complete-circuit study of home-run cables, module leads, connector contacts, loop area, inductance and capacitance to earth.</p></div><div class="status"><span></span> V6 COMPLETE CIRCUIT</div></header>
+<header class="topbar"><div><div class="kicker">GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING</div><h1>Solar DC String Topology Engine</h1><p>Geometry-derived complete-circuit study of home-run cables, module leads, connector contacts, loop area, inductance and capacitance to earth.</p></div><div class="status"><span></span> V6 · SEQUENTIAL / LEAPFROG</div></header>
 <div class="reliance"><strong>ENGINEERING SCREENING OUTPUT</strong>The Ventus values are treated as editable hypotheses, not validated constants. Results remain indicative until geometry, module leads, connector resistance, cable data, capacitance and installation conditions are confirmed from project evidence and reviewed by a competent person.</div>
 <main class="layout">
 <aside class="controls">
@@ -21,14 +27,17 @@
 <label>Module length up slope (m) <input id="moduleLength" type="number" step="0.001" value="2.384"></label>
 <label>Clamp gap (m) <input id="clampGap" type="number" min="0" step="0.001" value="0.020"></label>
 <label>Along-row gap (m) <input id="alongGap" type="number" min="0" step="0.001" value="0.020"></label>
-<label>Near-end allowance (m) <input id="nearAllowance" type="number" min="0" step="0.5" value="10"></label>
-<div class="provenance">Geometry and allowance: <strong>ASSUMED · EDITABLE</strong></div>
+<label>Distance from inverter to nearest string terminals (m) <input id="nearAllowance" type="number" min="0" step="0.5" value="10"></label>
+<div class="provenance">Geometry and inverter distance: <strong>ASSUMED · EDITABLE</strong></div>
 </section>
-<section><h2>String bands</h2><p class="note">Comma-separated counts create equal-length string groups. Drag the large drawing like the Spider Sandbox; use + and − for controlled mobile zoom.</p>
+<section><h2>String bands and wiring topology</h2><p class="note">Comma-separated counts create equal-length string groups. Leapfrog brings both free string terminals to the inverter-side end; sequential leaves one terminal at the far end.</p>
 <label>East face bands <input id="eastBands" type="text" value="5,5,2"></label>
 <label>West face bands <input id="westBands" type="text" value="5,5,2"></label>
 <label>Modules per string <input id="modulesPerString" type="number" min="1" value="30"></label>
 <label>MPPT count <input id="mpptCount" type="number" min="1" value="12"></label>
+<label>Wiring mode <select id="wiringMode"><option value="sequential" selected>Sequential · opposite physical ends</option><option value="leapfrog">Leapfrog · both terminals near</option></select></label>
+<label>Leapfrog residual path separation (mm) <input id="leapfrogSpacing" type="number" min="3" step="1" value="40"></label>
+<div class="provenance">Leapfrog path separation: <strong>ASSUMED UNTIL ROUTE IS MEASURED</strong></div>
 </section>
 <section><h2>Complete series circuit</h2>
 <label>Positive lead/module (m) <input id="positiveLead" type="number" min="0" step="0.01" value="0.35"></label>
@@ -56,7 +65,7 @@
 <section><h2>Differential and common-mode geometry</h2>
 <label>Cable OD (mm) <input id="cableOd" type="number" step="0.1" value="6.4"></label>
 <label>External pair spacing (mm) <input id="externalSpacing" type="number" min="0.1" step="1" value="40"></label>
-<label>Module-loop separation (mm) <input id="moduleSpacing" type="number" min="0.1" step="10" value="500"></label>
+<label>Sequential module-loop separation (mm) <input id="moduleSpacing" type="number" min="0.1" step="10" value="500"></label>
 <label>Effective line εr <input id="epsilonR" type="number" step="0.1" value="2.3"></label>
 <label>Cable height above earth (m) <input id="cableHeight" type="number" min="0.01" step="0.1" value="1.5"></label>
 <label>Disturbance rise time (µs) <input id="riseTime" type="number" min="0.001" step="0.1" value="1.2"></label>
@@ -84,9 +93,10 @@
 <div class="button-row"><button id="reset">RESET</button><button id="export" class="primary">EXPORT STUDY JSON</button></div>
 </aside>
 <section class="workbench">
-<div class="canvas-head"><div><h2>Scalable plan · complete closed circuit</h2><p>Drag the large drawing in any direction. Use the fixed − and + controls on mobile or the mouse wheel on desktop. Zoom remains centred on the point being viewed.</p></div><div class="legend"><span class="east">East face</span><span class="west">West face</span><span class="pos">Positive</span><span class="neg">Negative</span><span class="loop">Loop area</span><span class="inv">Inverter</span></div></div>
+<div class="canvas-head"><div><h2>Scalable plan · complete closed circuit</h2><p>Drag the large drawing in any direction. Use the fixed − and + controls on mobile or the mouse wheel on desktop. Click a string to inspect its complete circuit.</p></div><div class="legend"><span class="east">East face</span><span class="west">West face</span><span class="pos">Positive</span><span class="neg">Negative</span><span class="loop">Loop area</span><span class="inv">Inverter</span></div></div>
 <div class="canvas-wrap"><canvas id="scene"></canvas><div class="zoom-toolbar" aria-label="Drawing zoom controls"><button type="button" id="zoomOut" aria-label="Zoom out">−</button><button type="button" id="zoomReset" aria-label="Reset zoom"><span id="zoomPercent">100%</span></button><button type="button" id="zoomIn" aria-label="Zoom in">+</button></div><div id="zoomReadout">DRAG TO MOVE · USE − / + TO ZOOM</div></div>
 <div class="section-inset"><canvas id="sectionCanvas" width="520" height="190"></canvas><div><strong>A-frame section inset</strong><p>Module slope geometry remains separate from plan projection. The electrical model accounts for external conductors and module-integrated series leads.</p></div></div>
+<div class="section-inset topology-explainer"><canvas id="wiringComparison" width="1100" height="430"></canvas><div><strong>Sequential versus leapfrog</strong><p id="wiringImpactSummary" class="topology-mode-note">Calculating topology impact…</p></div></div>
 <div id="modelDecision" class="decision"></div><div id="warningBox" class="warnings"></div>
 <div class="selection"><h2>Selected complete circuit</h2><div id="selectedSummary">Click a string in plan.</div></div>
 <div class="metrics">
@@ -121,5 +131,5 @@
 </section>
 </main>
 <footer><span>Generic reproducible example · planned geometry, not as-built</span><span>Every exported value carries inputs and evidence status; no output is a warranty or design certificate.</span></footer>
-<script src="./physics.generated.js"></script><script src="./app.js"></script><script src="./spider-navigation.js"></script>
+<script src="./physics.generated.js"></script><script src="./app.js"></script><script src="./v6-leapfrog.js"></script><script src="./spider-navigation.js"></script>
 </body></html>
