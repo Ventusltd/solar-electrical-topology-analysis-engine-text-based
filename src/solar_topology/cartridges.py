@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from dataclasses import asdict
 import hashlib
 import json
 from typing import Iterable, Iterator, Sequence
@@ -19,6 +18,10 @@ from .segments import (
     canonical_input_hash,
     fleet_string_definitions,
 )
+
+
+FACTORY_GEOMETRY_WARNING = "FACTORY_LEAD_GEOMETRY_UNRESOLVED"
+SEQUENTIAL_RETURN_WARNING = "SEQUENTIAL_RETURN_REQUIRES_LOOP_MODEL"
 
 
 class TopologyCartridge(ABC):
@@ -157,6 +160,7 @@ def _build_module_chain(
     order: Sequence[int],
     first_terminal: Point3D,
     last_terminal: Point3D,
+    turnaround_after_position: int | None = None,
 ) -> None:
     centres = {
         module_index: _point_at_module(
@@ -166,7 +170,10 @@ def _build_module_chain(
         )
         for module_index in order
     }
-
+    factory_warnings = (
+        *builder.feasibility.warnings,
+        FACTORY_GEOMETRY_WARNING,
+    )
     previous_connector_node = "string:terminal:positive"
     previous_connector_point = first_terminal
 
@@ -199,15 +206,16 @@ def _build_module_chain(
             end=centre,
             conductor_length_m=inputs.positive_factory_lead_m,
             separation_mm=inputs.factory_pair_separation_mm,
-            formation="spaced_pair",
+            formation="single_pole",
             installation_class="under_module",
             conductor=inputs.factory_lead_conductor,
             temperature_c=inputs.factory_lead_temperature_c,
             effective_epsilon_r=inputs.effective_epsilon_r,
+            loop_parameter_weight=0.0,
             module_id=module_id,
             provenance="oem_declared",
             source_reference="factory_lead_length_input",
-            warnings=builder.feasibility.warnings,
+            warnings=factory_warnings,
         )
         builder.append(
             segment_type="module_factory_negative_lead",
@@ -218,23 +226,27 @@ def _build_module_chain(
             end=outgoing_point,
             conductor_length_m=inputs.negative_factory_lead_m,
             separation_mm=inputs.factory_pair_separation_mm,
-            formation="spaced_pair",
+            formation="single_pole",
             installation_class="under_module",
             conductor=inputs.factory_lead_conductor,
             temperature_c=inputs.factory_lead_temperature_c,
             effective_epsilon_r=inputs.effective_epsilon_r,
+            loop_parameter_weight=0.0,
             module_id=module_id,
             provenance="oem_declared",
             source_reference="factory_lead_length_input",
-            warnings=builder.feasibility.warnings,
+            warnings=factory_warnings,
         )
 
         if position < len(order):
-            next_connector_node = (
-                f"string:connector:{position}:b"
+            next_connector_node = f"string:connector:{position}:b"
+            segment_type = (
+                "string_turnaround"
+                if position == turnaround_after_position
+                else "module_interconnect"
             )
             builder.append(
-                segment_type="module_interconnect",
+                segment_type=segment_type,
                 polarity="series",
                 from_node_id=outgoing_node,
                 to_node_id=next_connector_node,
@@ -247,10 +259,14 @@ def _build_module_chain(
                 conductor=inputs.factory_lead_conductor,
                 temperature_c=inputs.factory_lead_temperature_c,
                 effective_epsilon_r=inputs.effective_epsilon_r,
+                loop_parameter_weight=0.0,
                 connector_count=2,
+                connector_resistance_ohm_each=(
+                    inputs.connector_contact_ohm
+                ),
                 provenance="assumed",
                 source_reference="module_connector_contact_model",
-                warnings=builder.feasibility.warnings,
+                warnings=factory_warnings,
             )
             previous_connector_node = next_connector_node
             previous_connector_point = outgoing_point
@@ -275,7 +291,9 @@ def _append_positive_home_run(
         conductor=inputs.external_conductor,
         temperature_c=inputs.external_temperature_c,
         effective_epsilon_r=inputs.effective_epsilon_r,
+        loop_parameter_weight=0.5,
         connector_count=2,
+        connector_resistance_ohm_each=inputs.connector_contact_ohm,
         provenance="assumed",
         source_reference="geometry_derived_external_route",
         warnings=builder.feasibility.warnings,
@@ -303,7 +321,9 @@ def _append_negative_home_run(
         conductor=inputs.external_conductor,
         temperature_c=inputs.external_temperature_c,
         effective_epsilon_r=inputs.effective_epsilon_r,
+        loop_parameter_weight=0.5,
         connector_count=2,
+        connector_resistance_ohm_each=inputs.connector_contact_ohm,
         provenance="assumed",
         source_reference="geometry_derived_external_route",
         warnings=builder.feasibility.warnings,
@@ -312,7 +332,7 @@ def _append_negative_home_run(
 
 class SequentialCartridge(TopologyCartridge):
     name = "sequential"
-    version = "1.0.0"
+    version = "1.1.0"
 
     def feasibility(
         self,
@@ -379,8 +399,10 @@ class SequentialCartridge(TopologyCartridge):
             conductor=inputs.external_conductor,
             temperature_c=inputs.external_temperature_c,
             effective_epsilon_r=inputs.effective_epsilon_r,
+            loop_parameter_weight=0.0,
             provenance="assumed",
             source_reference="sequential_far_end_return",
+            warnings=(SEQUENTIAL_RETURN_WARNING,),
         )
         _append_negative_home_run(
             builder,
@@ -394,7 +416,7 @@ class SequentialCartridge(TopologyCartridge):
 
 class LeapfrogCartridge(TopologyCartridge):
     name = "leapfrog"
-    version = "1.0.0"
+    version = "1.1.0"
 
     def feasibility(
         self,
@@ -413,7 +435,7 @@ class LeapfrogCartridge(TopologyCartridge):
         )
         margin = available - required
         feasible = margin >= 0
-        warning = (
+        warnings = (
             ()
             if feasible
             else ("LEAPFROG_LENGTH_SCREEN_FAILED",)
@@ -434,7 +456,7 @@ class LeapfrogCartridge(TopologyCartridge):
                 if measured is not None and measured > 0
                 else "TWO_MODULE_PITCH_SCREEN"
             ),
-            warnings=warning,
+            warnings=warnings,
         )
 
     def module_order(
@@ -444,11 +466,12 @@ class LeapfrogCartridge(TopologyCartridge):
         if module_count < 1:
             raise ValueError("module_count must be positive")
         odds = tuple(range(1, module_count + 1, 2))
-        evens = tuple(range(
-            module_count if module_count % 2 == 0 else module_count - 1,
-            1,
-            -2,
-        ))
+        even_start = (
+            module_count
+            if module_count % 2 == 0
+            else module_count - 1
+        )
+        evens = tuple(range(even_start, 1, -2))
         return odds + evens
 
     def build_segments(
@@ -465,15 +488,20 @@ class LeapfrogCartridge(TopologyCartridge):
             feasibility=feasibility,
         )
         near = _near_terminal(definition)
+        order = self.module_order(inputs.modules_per_string)
+        turnaround_position = (
+            inputs.modules_per_string + 1
+        ) // 2
 
         _append_positive_home_run(builder, inputs, definition)
         _build_module_chain(
             builder=builder,
             inputs=inputs,
             definition=definition,
-            order=self.module_order(inputs.modules_per_string),
+            order=order,
             first_terminal=near,
             last_terminal=near,
+            turnaround_after_position=turnaround_position,
         )
         _append_negative_home_run(
             builder,
@@ -557,7 +585,6 @@ def validate_cross_cartridge_invariants(
                 if row.segment_type in {
                     "module_factory_positive_lead",
                     "module_factory_negative_lead",
-                    "extension_lead",
                 }
             )
 
