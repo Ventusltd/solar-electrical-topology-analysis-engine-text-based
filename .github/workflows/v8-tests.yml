@@ -1,0 +1,32 @@
+name: V8 leapfrog regression tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'v8-leapfrog/**'
+      - 'tests/v8-model.test.js'
+      - '.github/workflows/v8-tests.yml'
+  pull_request:
+    paths:
+      - 'v8-leapfrog/**'
+      - 'tests/v8-model.test.js'
+      - '.github/workflows/v8-tests.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test-v8:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check model
+        run: node --check v8-leapfrog/model.js
+      - name: Syntax check browser application
+        run: node --check v8-leapfrog/app.js
+      - name: Run V8 regression tests
+        run: node tests/v8-model.test.js
