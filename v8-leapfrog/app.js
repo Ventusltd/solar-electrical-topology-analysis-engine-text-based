@@ -117,7 +117,7 @@
       banner.style.color = '#bdf5d4';
       banner.innerHTML =
         '<strong>LEAPFROG LENGTH SCREEN PASSED</strong>' +
-        `${study.feasibility.message}`;
+        study.feasibility.message;
       return;
     }
 
@@ -126,7 +126,7 @@
     banner.style.color = '#ffbec4';
     banner.innerHTML =
       '<strong>LEAPFROG SAVING NOT AVAILABLE</strong>' +
-      `${study.feasibility.message}`;
+      study.feasibility.message;
   }
 
   function renderMetrics(study) {
@@ -155,17 +155,11 @@
     );
     setText(
       'metricSequential',
-      `${fmt(
-        totals.sequentialExternalMPerArchetypeInverter / 1000,
-        3
-      )} km`
+      `${fmt(totals.sequentialExternalMPerArchetypeInverter / 1000, 3)} km`
     );
     setText(
       'metricLeapfrog',
-      `${fmt(
-        totals.leapfrogExternalMPerArchetypeInverter / 1000,
-        3
-      )} km theoretical`
+      `${fmt(totals.leapfrogExternalMPerArchetypeInverter / 1000, 3)} km theoretical`
     );
     setText(
       'metricSavingInverter',
@@ -193,21 +187,15 @@
       'metricVoltageSaving',
       electrical.availableVoltageDropSavingVPerString == null
         ? 'UNAVAILABLE'
-        : `${fmt(
-            electrical.availableVoltageDropSavingVPerString,
-            2
-          )} V · ${fmt(
-            electrical.voltageDropSavingPercentOfStringVmp,
-            3
-          )}%`
+        : `${fmt(electrical.availableVoltageDropSavingVPerString, 2)} V · ` +
+          `${fmt(electrical.voltageDropSavingPercentOfStringVmp, 3)}%`
     );
     setText(
       'metricLossSaving',
       available(
         totals.availablePowerLossSavingWPerArchetypeInverter == null
           ? null
-          : totals.availablePowerLossSavingWPerArchetypeInverter /
-              1000,
+          : totals.availablePowerLossSavingWPerArchetypeInverter / 1000,
         ' kW',
         3
       )
@@ -228,20 +216,13 @@
           ? 'UNAVAILABLE'
           : 'Not priced'
     );
-
     setText(
       'decompBasePair',
-      `${fmt(
-        totals.leapfrogExternalMPerArchetypeInverter,
-        1
-      )} m`
+      `${fmt(totals.leapfrogExternalMPerArchetypeInverter, 1)} m`
     );
     setText(
       'decompSequentialReturn',
-      `${fmt(
-        totals.theoreticalSavingMPerArchetypeInverter,
-        1
-      )} m`
+      `${fmt(totals.theoreticalSavingMPerArchetypeInverter, 1)} m`
     );
     setText(
       'decompLeapfrogReturn',
@@ -249,25 +230,15 @@
     );
     setText(
       'decompSequentialTotal',
-      `${fmt(
-        totals.sequentialExternalMPerArchetypeInverter,
-        1
-      )} m`
+      `${fmt(totals.sequentialExternalMPerArchetypeInverter, 1)} m`
     );
     setText(
       'decompLeapfrogTotal',
-      `${fmt(
-        totals.leapfrogExternalMPerArchetypeInverter,
-        1
-      )} m theoretical`
+      `${fmt(totals.leapfrogExternalMPerArchetypeInverter, 1)} m theoretical`
     );
     setText(
       'decompDifference',
-      available(
-        totals.availableSavingMPerArchetypeInverter,
-        ' m',
-        1
-      )
+      available(totals.availableSavingMPerArchetypeInverter, ' m', 1)
     );
   }
 
@@ -291,10 +262,7 @@
       `${fmt(lead.requiredReachM, 3)} m`
     );
     setText('leadBasis', lead.basis);
-    setText(
-      'leadMargin',
-      `${fmt(lead.marginM, 3)} m`
-    );
+    setText('leadMargin', `${fmt(lead.marginM, 3)} m`);
     setText(
       'leadExtension',
       `${fmt(lead.extensionRequiredM, 3)} m`
@@ -326,13 +294,11 @@
         const first = group[0];
         const count = group.length;
         const sequentialTotal = group.reduce(
-          (sum, string) =>
-            sum + string.sequential.totalExternalM,
+          (sum, string) => sum + string.sequential.totalExternalM,
           0
         );
         const leapfrogTotal = group.reduce(
-          (sum, string) =>
-            sum + string.leapfrog.totalExternalM,
+          (sum, string) => sum + string.leapfrog.totalExternalM,
           0
         );
         const theoreticalDifference =
@@ -370,30 +336,26 @@
           <th colspan="6">Per archetype inverter</th>
           <td>
             ${fmt(
-              study.totals
-                .sequentialExternalMPerArchetypeInverter,
+              study.totals.sequentialExternalMPerArchetypeInverter,
               2
             )}
           </td>
           <td colspan="2"></td>
           <td>
             ${fmt(
-              study.totals
-                .leapfrogExternalMPerArchetypeInverter,
+              study.totals.leapfrogExternalMPerArchetypeInverter,
               2
             )}
           </td>
           <td class="warning-cell">
             ${fmt(
-              study.totals
-                .theoreticalSavingMPerArchetypeInverter,
+              study.totals.theoreticalSavingMPerArchetypeInverter,
               2
             )}
           </td>
           <td class="good-cell">
             ${available(
-              study.totals
-                .availableSavingMPerArchetypeInverter,
+              study.totals.availableSavingMPerArchetypeInverter,
               '',
               2
             )}
@@ -423,10 +385,7 @@
           <td>${fmt(string.leapfrog.positiveM, 2)}</td>
           <td>${fmt(string.leapfrog.negativeM, 2)}</td>
           <td class="warning-cell">
-            ${fmt(
-              string.saving.theoreticalExternalCableM,
-              2
-            )}
+            ${fmt(string.saving.theoreticalExternalCableM, 2)}
           </td>
           <td class="good-cell">
             ${available(
@@ -473,51 +432,39 @@
         <tr>
           <td>${fmt(scenario.distanceM, 1)}</td>
           <td>
+            ${fmt(scenario.basePairMPerArchetypeInverter, 1)}
+          </td>
+          <td>
             ${fmt(
-              scenario.basePairMPerArchetypeInverter,
+              scenario.sequentialExternalMPerArchetypeInverter,
               1
             )}
           </td>
           <td>
             ${fmt(
-              scenario
-                .sequentialExternalMPerArchetypeInverter,
-              1
-            )}
-          </td>
-          <td>
-            ${fmt(
-              scenario
-                .leapfrogExternalMPerArchetypeInverter,
+              scenario.leapfrogExternalMPerArchetypeInverter,
               1
             )}
           </td>
           <td class="warning-cell">
             ${fmt(
-              scenario
-                .theoreticalSavingMPerArchetypeInverter,
+              scenario.theoreticalSavingMPerArchetypeInverter,
               1
             )}
           </td>
           <td class="good-cell">
             ${available(
-              scenario
-                .availableSavingMPerArchetypeInverter,
+              scenario.availableSavingMPerArchetypeInverter,
               '',
               1
             )}
           </td>
           <td class="good-cell">
-            ${available(
-              scenario.availableSiteSavingKm,
-              '',
-              1
-            )}
+            ${available(scenario.availableSiteSavingKm, '', 1)}
           </td>
           <td class="good-cell">
             ${available(
-              scenario
-                .availablePowerLossSavingKWPerArchetypeInverter,
+              scenario.availablePowerLossSavingKWPerArchetypeInverter,
               '',
               3
             )}
@@ -527,54 +474,387 @@
       .join('');
   }
 
-  function svgPath(points, className, width) {
-    const path = points
-      .map(
-        (point, index) =>
-          `${index ? 'L' : 'M'} ${point[0]} ${point[1]}`
-      )
-      .join(' ');
-
+  function svgPath(path, className, width, extra = '') {
     return (
-      `<path d="${path}" ` +
-      `class="${className}" ` +
-      `stroke-width="${width}"/>`
+      `<path d="${path}" class="${className}" ` +
+      `stroke-width="${width}" ${extra}/>`
     );
   }
 
-  function cable(points, width = 4) {
+  function cablePath(path, width = 3, extra = '') {
     return (
-      svgPath(points, 'svg-cable-halo', width + 3) +
-      svgPath(points, 'svg-cable', width)
+      svgPath(path, 'svg-cable-halo', width + 3, extra) +
+      svgPath(path, 'svg-cable', width, extra)
     );
   }
 
-  function moduleRectangles(y, count, x0, width, gap) {
+  function svgText(x, y, text, className = 'svg-label', size = 12) {
+    return (
+      `<text x="${x}" y="${y}" class="${className}" ` +
+      `font-size="${size}">${text}</text>`
+    );
+  }
+
+  function buildSequentialSequence(count) {
+    return Array.from({ length: count }, (_, index) => index + 1);
+  }
+
+  function buildLeapfrogSequence(count) {
+    if (count <= 1) {
+      return [1];
+    }
+
+    const outward = [];
+    const returning = [];
+
+    for (let module = 1; module <= count; module += 2) {
+      outward.push(module);
+    }
+
+    let returnStart = count % 2 === 0 ? count : count - 1;
+
+    for (; returnStart >= 2; returnStart -= 2) {
+      returning.push(returnStart);
+    }
+
+    return outward.concat(returning);
+  }
+
+  function sequenceConnections(sequence) {
+    return sequence.slice(0, -1).map((from, index) => ({
+      from,
+      to: sequence[index + 1]
+    }));
+  }
+
+  function moduleGeometry(count, x0, y, moduleWidth, moduleHeight, gap) {
+    const modules = new Map();
+
+    for (let number = 1; number <= count; number += 1) {
+      const x = x0 + (number - 1) * (moduleWidth + gap);
+      const centreX = x + moduleWidth / 2;
+      const terminalY = y + 30;
+
+      modules.set(number, {
+        number,
+        x,
+        y,
+        centreX,
+        terminalY,
+        negativeX: centreX - 11,
+        positiveX: centreX + 11
+      });
+    }
+
+    return modules;
+  }
+
+  function terminalPoint(modules, moduleNumber, polarity) {
+    const module = modules.get(moduleNumber);
+
+    return {
+      x: polarity === '+' ? module.positiveX : module.negativeX,
+      y: module.terminalY
+    };
+  }
+
+  function moduleRowHtml(modules, moduleWidth, moduleHeight) {
     let html = '';
 
-    for (let index = 0; index < count; index += 1) {
-      const x = x0 + index * (width + gap);
+    modules.forEach((module) => {
+      html += `
+        <g data-module="M${module.number}">
+          <rect
+            x="${module.x}"
+            y="${module.y}"
+            width="${moduleWidth}"
+            height="${moduleHeight}"
+            rx="2"
+            class="svg-module-east"
+          />
+          <rect
+            x="${module.negativeX - 7}"
+            y="${module.terminalY - 7}"
+            width="14"
+            height="14"
+            rx="2"
+            fill="#0a0e12"
+            stroke="#eef7ff"
+            stroke-width="1"
+          />
+          <rect
+            x="${module.positiveX - 7}"
+            y="${module.terminalY - 7}"
+            width="14"
+            height="14"
+            rx="2"
+            fill="#0a0e12"
+            stroke="#eef7ff"
+            stroke-width="1"
+          />
+          <text
+            x="${module.negativeX}"
+            y="${module.terminalY + 4}"
+            text-anchor="middle"
+            class="svg-label"
+            font-size="11"
+          >−</text>
+          <text
+            x="${module.positiveX}"
+            y="${module.terminalY + 4}"
+            text-anchor="middle"
+            class="svg-label"
+            font-size="11"
+          >+</text>
+          <text
+            x="${module.centreX}"
+            y="${module.y + moduleHeight + 18}"
+            text-anchor="middle"
+            class="svg-label"
+            font-size="12"
+          >M${module.number}</text>
+        </g>
+      `;
+    });
 
-      html += `
-        <rect
-          x="${x}"
-          y="${y}"
-          width="${width}"
-          height="52"
-          rx="1"
-          class="svg-module-east"
-        />
-      `;
-      html += `
-        <rect
-          x="${x + width / 2 - 2}"
-          y="${y + 19}"
-          width="4"
-          height="4"
-          fill="#000"
-        />
-      `;
-    }
+    return html;
+  }
+
+  function connectionArc(modules, connection, rowY, side, index) {
+    const start = terminalPoint(modules, connection.from, '+');
+    const end = terminalPoint(modules, connection.to, '−');
+    const distance = Math.abs(end.x - start.x);
+    const direction = side === 'above' ? -1 : 1;
+    const lane = Math.min(42, 22 + distance * 0.12 + (index % 2) * 3);
+    const controlY = rowY + 30 + direction * lane;
+    const path =
+      `M ${start.x} ${start.y} ` +
+      `C ${start.x} ${controlY}, ${end.x} ${controlY}, ` +
+      `${end.x} ${end.y}`;
+
+    return cablePath(path, 2.4);
+  }
+
+  function externalCable(start, endX, endY, laneY) {
+    const path =
+      `M ${start.x} ${start.y} ` +
+      `L ${start.x} ${laneY} ` +
+      `L ${endX} ${laneY} ` +
+      `L ${endX} ${endY}`;
+
+    return cablePath(path, 4);
+  }
+
+  function drawInverter(x, y, height, negativeY, positiveY) {
+    return `
+      <rect
+        x="${x}"
+        y="${y}"
+        width="74"
+        height="${height}"
+        rx="4"
+        class="svg-inverter"
+      />
+      ${svgText(x + 8, y + 22, 'INVERTER', 'svg-label', 13)}
+      <circle
+        cx="${x + 74}"
+        cy="${negativeY}"
+        r="5"
+        fill="#05070a"
+        stroke="#eef7ff"
+        stroke-width="2"
+      />
+      <circle
+        cx="${x + 74}"
+        cy="${positiveY}"
+        r="5"
+        fill="#05070a"
+        stroke="#eef7ff"
+        stroke-width="2"
+      />
+      ${svgText(x + 48, negativeY + 4, '−', 'svg-label', 14)}
+      ${svgText(x + 48, positiveY + 4, '+', 'svg-label', 14)}
+    `;
+  }
+
+  function renderSequentialGeometry(options) {
+    const {
+      count,
+      modules,
+      rowY,
+      inverterX,
+      inverterY,
+      moduleWidth,
+      moduleHeight,
+      study
+    } = options;
+    const sequence = buildSequentialSequence(count);
+    const connections = sequenceConnections(sequence);
+    const freeNegative = terminalPoint(modules, sequence[0], '−');
+    const freePositive = terminalPoint(
+      modules,
+      sequence[sequence.length - 1],
+      '+'
+    );
+    const inverterNegativeY = rowY + 18;
+    const inverterPositiveY = rowY + 58;
+    const returnLaneY = rowY + moduleHeight + 48;
+    let html = '';
+
+    html += drawInverter(
+      inverterX,
+      inverterY,
+      126,
+      inverterNegativeY,
+      inverterPositiveY
+    );
+    html += moduleRowHtml(modules, moduleWidth, moduleHeight);
+
+    connections.forEach((connection, index) => {
+      html += connectionArc(modules, connection, rowY, 'above', index);
+    });
+
+    html += externalCable(
+      freeNegative,
+      inverterX + 74,
+      inverterNegativeY,
+      rowY + 4
+    );
+    html += externalCable(
+      freePositive,
+      inverterX + 74,
+      inverterPositiveY,
+      returnLaneY
+    );
+    html += svgText(
+      freeNegative.x - 16,
+      freeNegative.y - 16,
+      'FREE − M1−',
+      'svg-label',
+      12
+    );
+    html += svgText(
+      freePositive.x - 30,
+      returnLaneY - 8,
+      `FREE + M${count}+`,
+      'svg-label',
+      12
+    );
+    html += svgText(
+      modules.get(1).x,
+      rowY + moduleHeight + 82,
+      `Additional far-end return ≈ ${fmt(study.geometry.rowSpanM, 2)} m`,
+      'svg-label',
+      14
+    );
+
+    return html;
+  }
+
+  function renderLeapfrogGeometry(options) {
+    const {
+      count,
+      modules,
+      rowY,
+      inverterX,
+      inverterY,
+      moduleWidth,
+      moduleHeight,
+      study
+    } = options;
+    const sequence = buildLeapfrogSequence(count);
+    const connections = sequenceConnections(sequence);
+    const freeNegative = terminalPoint(modules, sequence[0], '−');
+    const freePositive = terminalPoint(
+      modules,
+      sequence[sequence.length - 1],
+      '+'
+    );
+    const inverterNegativeY = rowY + 18;
+    const inverterPositiveY = rowY + 58;
+    let html = '';
+
+    html += drawInverter(
+      inverterX,
+      inverterY,
+      126,
+      inverterNegativeY,
+      inverterPositiveY
+    );
+    html += moduleRowHtml(modules, moduleWidth, moduleHeight);
+
+    connections.forEach((connection, index) => {
+      const isOutward = connection.from % 2 === 1 && connection.to % 2 === 1;
+      const isTurnaround =
+        Math.abs(connection.from - connection.to) === 1 &&
+        Math.max(connection.from, connection.to) === count;
+      const side = isOutward ? 'above' : 'below';
+
+      html += connectionArc(modules, connection, rowY, side, index);
+
+      if (isTurnaround) {
+        const start = terminalPoint(modules, connection.from, '+');
+        const end = terminalPoint(modules, connection.to, '−');
+        const labelX = (start.x + end.x) / 2;
+
+        html += svgText(
+          labelX - 72,
+          rowY - 42,
+          `TURNAROUND M${connection.from}+ → M${connection.to}−`,
+          'svg-label',
+          12
+        );
+      }
+    });
+
+    html += externalCable(
+      freeNegative,
+      inverterX + 74,
+      inverterNegativeY,
+      rowY + 4
+    );
+    html += externalCable(
+      freePositive,
+      inverterX + 74,
+      inverterPositiveY,
+      rowY + moduleHeight + 42
+    );
+    html += svgText(
+      freeNegative.x - 18,
+      freeNegative.y - 17,
+      'FREE − M1−',
+      'svg-label',
+      12
+    );
+    html += svgText(
+      freePositive.x - 20,
+      rowY + moduleHeight + 68,
+      'FREE + M2+',
+      'svg-label',
+      12
+    );
+    html += svgText(
+      modules.get(1).x,
+      rowY + moduleHeight + 96,
+      'Same physical M1–M30 row. Only the connection order changes.',
+      'svg-label',
+      14
+    );
+    html += svgText(
+      modules.get(1).x,
+      rowY + moduleHeight + 120,
+      `Electrical order: ${sequence.map((item) => `M${item}`).join(' → ')}`,
+      'svg-muted',
+      11
+    );
+    html += svgText(
+      modules.get(1).x,
+      rowY + moduleHeight + 143,
+      `Feasibility: ${study.feasibility.status} · required reach ` +
+        `${fmt(study.feasibility.requiredReachM, 3)} m`,
+      'svg-muted',
+      12
+    );
 
     return html;
   }
@@ -587,197 +867,91 @@
     }
 
     const count = Math.min(study.input.modulesPerString, 30);
-    const x0 = 225;
-    const moduleWidth = 23;
-    const gap = 5;
-    const pitch = moduleWidth + gap;
-    const lastX =
-      x0 + (count - 1) * pitch + moduleWidth / 2;
-    const nearX = x0 + moduleWidth / 2;
-    const inverterX = 65;
-    const inverterWidth = 48;
-    const sequentialY = 92;
-    const leapfrogY = 328;
-    const sequentialCentre = sequentialY + 26;
-    const leapfrogCentre = leapfrogY + 26;
+    const moduleHeightM = 2.384;
+    const scale = 42;
+    const moduleWidth = study.input.moduleWidthM * scale;
+    const moduleHeight = moduleHeightM * scale;
+    const gap = Math.max(5, study.input.alongRowGapM * scale);
+    const x0 = 180;
+    const inverterX = 28;
+    const sequentialY = 88;
+    const leapfrogY = 445;
+    const sequentialModules = moduleGeometry(
+      count,
+      x0,
+      sequentialY,
+      moduleWidth,
+      moduleHeight,
+      gap
+    );
+    const leapfrogModules = moduleGeometry(
+      count,
+      x0,
+      leapfrogY,
+      moduleWidth,
+      moduleHeight,
+      gap
+    );
+    const rowWidth =
+      count * moduleWidth + Math.max(0, count - 1) * gap;
+    const viewWidth = Math.max(1280, x0 + rowWidth + 90);
+    const viewHeight = 760;
     let html = '';
 
-    html += `
-      <rect
-        x="${inverterX}"
-        y="54"
-        width="${inverterWidth}"
-        height="154"
-        rx="3"
-        class="svg-inverter"
-      />
-      <rect
-        x="${inverterX}"
-        y="290"
-        width="${inverterWidth}"
-        height="154"
-        rx="3"
-        class="svg-inverter"
-      />
-      <text
-        x="30"
-        y="42"
-        class="svg-label"
-        font-size="18"
-        font-weight="800"
-      >SEQUENTIAL</text>
-      <text
-        x="30"
-        y="278"
-        class="svg-label"
-        font-size="18"
-        font-weight="800"
-      >LEAPFROG</text>
-    `;
-
-    html += moduleRectangles(
-      sequentialY,
+    html += svgText(
+      28,
+      30,
+      'PHYSICAL MODULE POSITIONS ARE IDENTICAL IN BOTH VIEWS',
+      'svg-label',
+      18
+    );
+    html += svgText(
+      28,
+      55,
+      'M1, M2, M3 … M30 stay fixed left-to-right. The panels do not move.',
+      'svg-muted',
+      13
+    );
+    html += svgText(28, 82, 'SEQUENTIAL', 'svg-label', 18);
+    html += renderSequentialGeometry({
       count,
-      x0,
+      modules: sequentialModules,
+      rowY: sequentialY,
+      inverterX,
+      inverterY: sequentialY - 12,
       moduleWidth,
-      gap
-    );
-    html += moduleRectangles(
-      leapfrogY,
+      moduleHeight,
+      study
+    });
+    html += svgText(28, 438, 'LEAPFROG', 'svg-label', 18);
+    html += renderLeapfrogGeometry({
       count,
-      x0,
+      modules: leapfrogModules,
+      rowY: leapfrogY,
+      inverterX,
+      inverterY: leapfrogY - 12,
       moduleWidth,
-      gap
-    );
+      moduleHeight,
+      study
+    });
 
-    html += cable(
-      [
-        [inverterX + inverterWidth, sequentialCentre - 9],
-        [nearX, sequentialCentre - 9]
-      ],
-      4
-    );
-    html += cable(
-      [
-        [nearX, sequentialCentre],
-        [lastX, sequentialCentre]
-      ],
-      3
-    );
-    html += cable(
-      [
-        [lastX, sequentialCentre + 9],
-        [lastX, sequentialY + 102],
-        [inverterX + inverterWidth, sequentialY + 102]
-      ],
-      4
-    );
-    html += `
-      <path
-        d="M ${lastX} ${sequentialCentre + 9}
-           L ${lastX} ${sequentialY + 102}
-           L ${inverterX + inverterWidth} ${sequentialY + 102}"
-        class="svg-saving"
-      />
-      <text
-        x="${x0}"
-        y="${sequentialY + 140}"
-        class="svg-label"
-        font-size="14"
-        fill="#ff6170"
-      >
-        Additional external return =
-        ${fmt(study.geometry.rowSpanM, 2)} m per string
-      </text>
-    `;
-
-    html += cable(
-      [
-        [inverterX + inverterWidth, leapfrogCentre - 11],
-        [nearX, leapfrogCentre - 11]
-      ],
-      4
-    );
-    html += cable(
-      [
-        [inverterX + inverterWidth, leapfrogCentre + 11],
-        [x0 + pitch + moduleWidth / 2, leapfrogCentre + 11]
-      ],
-      4
-    );
-
-    for (let index = 0; index < count - 2; index += 2) {
-      const start = x0 + index * pitch + moduleWidth / 2;
-      const end = x0 + (index + 2) * pitch + moduleWidth / 2;
-
-      html += cable(
-        [
-          [start, leapfrogCentre - 11],
-          [end, leapfrogCentre - 11]
-        ],
-        2.5
-      );
-    }
-
-    for (let index = 1; index < count - 2; index += 2) {
-      const start = x0 + index * pitch + moduleWidth / 2;
-      const end = x0 + (index + 2) * pitch + moduleWidth / 2;
-
-      html += cable(
-        [
-          [start, leapfrogCentre + 11],
-          [end, leapfrogCentre + 11]
-        ],
-        2.5
-      );
-    }
-
-    if (count >= 2) {
-      const penultimate =
-        x0 + (count - 2) * pitch + moduleWidth / 2;
-      const final =
-        x0 + (count - 1) * pitch + moduleWidth / 2;
-
-      html += cable(
-        [
-          [penultimate, leapfrogCentre - 11],
-          [final, leapfrogCentre + 11]
-        ],
-        2.5
-      );
-    }
-
-    html += `
-      <text
-        x="${x0}"
-        y="${leapfrogY + 92}"
-        class="svg-label"
-        font-size="14"
-        fill="#53e28b"
-      >
-        Both free terminals emerge at the inverter-side end.
-      </text>
-      <text
-        x="${x0}"
-        y="${leapfrogY + 117}"
-        class="svg-muted"
-        font-size="13"
-      >
-        Feasibility: ${study.feasibility.status} · required reach
-        ${fmt(study.feasibility.requiredReachM, 3)} m
-      </text>
-      <text
-        x="30"
-        y="492"
-        class="svg-muted"
-        font-size="13"
-      >
-        Black = conductor. Diagram is topological, not as-built routing.
-      </text>
-    `;
-
-    svg.setAttribute('viewBox', '0 0 1160 510');
+    svg.setAttribute('viewBox', `0 0 ${viewWidth} ${viewHeight}`);
+    svg.setAttribute('width', String(viewWidth));
+    svg.setAttribute('height', String(viewHeight));
+    svg.style.width = `${viewWidth}px`;
+    svg.style.minWidth = `${viewWidth}px`;
+    svg.style.maxWidth = 'none';
     svg.innerHTML = html;
+
+    window.__V8_GEOMETRY__ = {
+      physicalOrder: Array.from({ length: count }, (_, index) => index + 1),
+      sequentialOrder: buildSequentialSequence(count),
+      leapfrogOrder: buildLeapfrogSequence(count),
+      moduleWidthM: study.input.moduleWidthM,
+      moduleHeightM,
+      moduleGapM: study.input.alongRowGapM,
+      panelsMove: false
+    };
   }
 
   function renderTrace(study) {
@@ -787,20 +961,20 @@
       `FORMULA ID = ${study.formulaId}`,
       `MODULE PITCH = width + gap = ` +
         `${fmt(study.geometry.modulePitchM, 3)} m`,
-      `LEAPFROG REACH = 2 × module pitch, unless measured override`,
-      `REQUIRED REACH = ` +
-        `${fmt(study.feasibility.requiredReachM, 3)} m`,
+      'PHYSICAL MODULE ORDER = M1, M2, M3 ... M30',
+      'LEAPFROG CHANGES CONNECTION ORDER ONLY; PANELS DO NOT MOVE',
+      'LEAPFROG REACH = 2 × module pitch, unless measured override',
+      `REQUIRED REACH = ${fmt(study.feasibility.requiredReachM, 3)} m`,
       `AVAILABLE FACTORY LEAD = ` +
         `${fmt(study.feasibility.availableLeadReachM, 3)} m`,
       `LEAD MARGIN = ${fmt(study.feasibility.marginM, 3)} m`,
       `FEASIBILITY = ${study.feasibility.status}`,
-      `ROW SPAN R = N × module width + (N − 1) × gap`,
+      'ROW SPAN R = N × module width + (N − 1) × gap',
       `R = ${fmt(study.geometry.rowSpanM, 3)} m`,
-      `SEQUENTIAL PER STRING = 2(D + O) + R`,
-      `LEAPFROG PER STRING = 2(D + O)`,
-      `THEORETICAL DIFFERENCE PER STRING = R`,
-      `ARCHETYPE STRINGS = ` +
-        `${totals.stringsPerArchetypeInverter}`,
+      'SEQUENTIAL PER STRING = 2(D + O) + R',
+      'LEAPFROG PER STRING = 2(D + O)',
+      'THEORETICAL DIFFERENCE PER STRING = R',
+      `ARCHETYPE STRINGS = ${totals.stringsPerArchetypeInverter}`,
       `ACTUAL SITE STRINGS = ${totals.totalSiteStringCount}`,
       `AVERAGE SITE STRINGS/INVERTER = ` +
         `${fmt(totals.averageSiteStringsPerInverter, 3)}`,
@@ -808,7 +982,7 @@
         `${fmt(totals.theoreticalSiteSavingKm, 3)} km`,
       `AVAILABLE SITE DIFFERENCE = ` +
         `${available(totals.availableSiteSavingKm, ' km', 3)}`,
-      `Fleet values use actual site strings, not 24 × inverter count.`
+      'Fleet values use actual site strings, not 24 × inverter count.'
     ];
 
     setText('calculationTrace', trace.join('\n'));
@@ -817,11 +991,12 @@
   function renderSummary(study) {
     const text = [
       'V8.2 sequential versus leapfrog cable comparison',
+      'Physical panels remain M1 to M30 from left to right.',
+      'Leapfrog changes electrical connection order only.',
       `Module pitch: ${fmt(study.geometry.modulePitchM, 3)} m`,
       `Row span: ${fmt(study.geometry.rowSpanM, 2)} m`,
       `Lead screen: ${study.feasibility.status}`,
-      `Required reach: ` +
-        `${fmt(study.feasibility.requiredReachM, 3)} m`,
+      `Required reach: ${fmt(study.feasibility.requiredReachM, 3)} m`,
       `Available lead: ` +
         `${fmt(study.feasibility.availableLeadReachM, 3)} m`,
       `Archetype strings/inverter: ` +
@@ -829,22 +1004,16 @@
       `Actual site strings: ${study.totals.totalSiteStringCount}`,
       `Sequential external cable/archetype: ` +
         `${fmt(
-          study.totals
-            .sequentialExternalMPerArchetypeInverter,
+          study.totals.sequentialExternalMPerArchetypeInverter,
           1
         )} m`,
       `Theoretical leapfrog external cable/archetype: ` +
         `${fmt(
-          study.totals
-            .leapfrogExternalMPerArchetypeInverter,
+          study.totals.leapfrogExternalMPerArchetypeInverter,
           1
         )} m`,
       `Available site saving: ` +
-        `${available(
-          study.totals.availableSiteSavingKm,
-          ' km',
-          2
-        )}`,
+        `${available(study.totals.availableSiteSavingKm, ' km', 2)}`,
       'Reliance: indicative screening only.'
     ].join('\n');
 
@@ -873,24 +1042,70 @@
     setText(
       'v8Comparison',
       'V8 owns the sequential-versus-leapfrog external cable ' +
-        'comparison, lead feasibility gate, actual site string count ' +
-        'and all-string schedule.'
+        'comparison, fixed physical module geometry, lead feasibility ' +
+        'gate, actual site string count and all-string schedule.'
     );
   }
 
+  function geometrySelfTests() {
+    const sequence = buildLeapfrogSequence(30);
+    const connections = sequenceConnections(sequence);
+    const physical = Array.from({ length: 30 }, (_, index) => index + 1);
+
+    return [
+      {
+        name: 'Physical modules remain M1 to M30',
+        pass: physical.every((item, index) => item === index + 1)
+      },
+      {
+        name: 'Thirty modules create twenty-nine series connections',
+        pass: connections.length === 29
+      },
+      {
+        name: 'Leapfrog turnaround is M29+ to M30−',
+        pass: connections.some(
+          (connection) => connection.from === 29 && connection.to === 30
+        )
+      },
+      {
+        name: 'Leapfrog return begins M30+ to M28−',
+        pass: connections.some(
+          (connection) => connection.from === 30 && connection.to === 28
+        )
+      },
+      {
+        name: 'Leapfrog free terminals are M1− and M2+',
+        pass: sequence[0] === 1 && sequence[sequence.length - 1] === 2
+      }
+    ];
+  }
+
   function renderSelfTests() {
-    const tests = Model.runGoldenTests();
+    const modelTests = Model.runGoldenTests();
+    const geometryTests = geometrySelfTests();
+    const geometryPassed = geometryTests.filter((test) => test.pass).length;
+    const passed = modelTests.passed + geometryPassed;
+    const total = modelTests.total + geometryTests.length;
+    const allPassed = modelTests.allPassed &&
+      geometryTests.every((test) => test.pass);
     const status = $('selfTestStatus');
 
     if (status) {
-      status.textContent =
-        `${tests.passed}/${tests.total} GOLDEN TESTS PASSED`;
-      status.className = tests.allPassed
+      status.textContent = `${passed}/${total} TESTS PASSED`;
+      status.className = allPassed
         ? 'status-badge testing'
         : 'status-badge error';
     }
 
-    return tests;
+    window.__V8_GEOMETRY_TESTS__ = geometryTests;
+
+    return {
+      modelTests,
+      geometryTests,
+      passed,
+      total,
+      allPassed
+    };
   }
 
   function showError(error) {
@@ -899,8 +1114,7 @@
 
     if (box) {
       box.classList.add('visible');
-      box.textContent =
-        `${error.name || 'Error'}: ${error.message || error}`;
+      box.textContent = `${error.name || 'Error'}: ${error.message || error}`;
     }
 
     if (status) {
@@ -955,15 +1169,16 @@
     const study = Model.calculate(raw);
     const payload = {
       schema: 'globalgrid2050-v8-leapfrog-cable-comparison',
-      schemaVersion: '2.0.0',
+      schemaVersion: '2.1.0',
       generatedAt: new Date().toISOString(),
       reliance:
         'Indicative engineering screening only. Not an as-built ' +
         'quantity, procurement instruction, design approval or ' +
         'compliance certificate.',
+      geometry: window.__V8_GEOMETRY__,
       study,
       scenarios: Model.scenarioStudies(raw),
-      goldenTests: Model.runGoldenTests()
+      tests: renderSelfTests()
     };
     const url = URL.createObjectURL(
       new Blob(
@@ -1001,16 +1216,12 @@
   function initialiseTabs() {
     document.querySelectorAll('.tab').forEach((button) => {
       button.addEventListener('click', () => {
-        document
-          .querySelectorAll('.tab')
-          .forEach((candidate) => {
-            candidate.classList.remove('active');
-          });
-        document
-          .querySelectorAll('.tabpane')
-          .forEach((pane) => {
-            pane.classList.remove('active');
-          });
+        document.querySelectorAll('.tab').forEach((candidate) => {
+          candidate.classList.remove('active');
+        });
+        document.querySelectorAll('.tabpane').forEach((pane) => {
+          pane.classList.remove('active');
+        });
 
         button.classList.add('active');
         $(button.dataset.tab)?.classList.add('active');
@@ -1042,11 +1253,7 @@
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener(
-      'DOMContentLoaded',
-      initialise,
-      { once: true }
-    );
+    document.addEventListener('DOMContentLoaded', initialise, { once: true });
   } else {
     initialise();
   }
