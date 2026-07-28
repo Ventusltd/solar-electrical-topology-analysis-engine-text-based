@@ -17,9 +17,8 @@
         <small>GlobalGrid2050 · V9 development</small>
         <h1>Multi-Array Electrical Sandbox</h1>
         <p>
-          Correctly named V9 development entry point. The first migration slice
-          preserves the proven browser behaviour while the typed V9 architecture
-          is separated into independent state, schema and study modules.
+          Configure physical modules, electrical order and MPPT input allocation.
+          String quantity follows the available MPPT inputs automatically.
         </p>
       </header>
 
@@ -51,14 +50,36 @@
       </section>
 
       <section class="panel">
+        <h2>MPPT and string allocation</h2>
+        <div class="field full">
+          <label for="mpptInputs">Inputs per MPPT</label>
+          <input
+            id="mpptInputs"
+            type="text"
+            value="2"
+            placeholder="Example: 2,2,1,4"
+          >
+        </div>
+        <p class="help">
+          Enter one number per MPPT. Example: 2,2,1,4 creates four MPPTs and
+          nine strings. Zero is allowed for an unused MPPT.
+        </p>
+        <dl class="summary-grid">
+          <dt>MPPT count</dt><dd id="mpptCount">1</dd>
+          <dt>Derived strings</dt><dd id="derivedStringCount">2</dd>
+        </dl>
+        <ul id="mpptSummary" class="warning-list"></ul>
+      </section>
+
+      <section class="panel">
         <h2>String and terminals</h2>
         <div class="field">
-          <label for="modulesPerString">Modules per string</label>
+          <label for="modulesPerString">Modules in series</label>
           <input id="modulesPerString" type="number" value="30" min="1">
         </div>
         <div class="field">
-          <label for="stringCount">Parallel strings</label>
-          <input id="stringCount" type="number" value="24" min="1">
+          <label for="stringCount">Derived string count</label>
+          <input id="stringCount" type="number" value="2" min="1" readonly>
         </div>
         <div class="field">
           <label for="topology">Electrical cartridge</label>
@@ -96,18 +117,42 @@
 
       <section class="panel">
         <h2>Table and route geometry</h2>
-        <div class="field"><label for="lowEdge">Low edge (m)</label><input id="lowEdge" type="number" value="1" step="0.1"></div>
-        <div class="field"><label for="highEdge">High edge / axis (m)</label><input id="highEdge" type="number" value="4" step="0.1"></div>
-        <div class="field"><label for="ridgeGap">Ridge gap (m)</label><input id="ridgeGap" type="number" value="0.3" step="0.05"></div>
-        <div class="field"><label for="rowPitch">String row pitch (m)</label><input id="rowPitch" type="number" value="3" step="0.1"></div>
-        <div class="field"><label for="trackerAngle">Tracker angle (°)</label><input id="trackerAngle" type="number" value="0" step="1"></div>
-        <div class="field"><label for="inverterDistance">Inverter distance (m)</label><input id="inverterDistance" type="number" value="10" step="1"></div>
+        <div class="field">
+          <label for="lowEdge">Low edge (m)</label>
+          <input id="lowEdge" type="number" value="1" step="0.1">
+        </div>
+        <div class="field">
+          <label for="highEdge">High edge / axis (m)</label>
+          <input id="highEdge" type="number" value="4" step="0.1">
+        </div>
+        <div class="field">
+          <label for="ridgeGap">Ridge gap (m)</label>
+          <input id="ridgeGap" type="number" value="0.3" step="0.05">
+        </div>
+        <div class="field">
+          <label for="rowPitch">String row pitch (m)</label>
+          <input id="rowPitch" type="number" value="3" step="0.1">
+        </div>
+        <div class="field">
+          <label for="trackerAngle">Tracker angle (°)</label>
+          <input id="trackerAngle" type="number" value="0" step="1">
+        </div>
+        <div class="field">
+          <label for="inverterDistance">MPPT distance (m)</label>
+          <input id="inverterDistance" type="number" value="10" step="1">
+        </div>
       </section>
 
       <section class="panel">
         <h2>Conductor basis</h2>
-        <div class="field"><label for="externalCableCsa">External cable CSA (mm²)</label><input id="externalCableCsa" type="number" value="6" step="1"></div>
-        <div class="field"><label for="factoryLeadCsa">Factory lead CSA (mm²)</label><input id="factoryLeadCsa" type="number" value="4" step="1"></div>
+        <div class="field">
+          <label for="externalCableCsa">External cable CSA (mm²)</label>
+          <input id="externalCableCsa" type="number" value="6" step="1">
+        </div>
+        <div class="field">
+          <label for="factoryLeadCsa">Factory lead CSA (mm²)</label>
+          <input id="factoryLeadCsa" type="number" value="4" step="1">
+        </div>
       </section>
     </aside>
 
@@ -119,7 +164,9 @@
       </nav>
       <div class="stage-wrap">
         <svg id="stage" role="img" aria-label="PV array and circuit drawing"></svg>
-        <div class="legend">Blue = negative · Red = positive · Orange = inverter</div>
+        <div class="legend">
+          Blue = negative · Red = positive · Orange = MPPT
+        </div>
       </div>
     </section>
 
@@ -147,7 +194,10 @@
           <dt>Commercial Cu</dt><dd id="summaryCopper">—</dd>
         </dl>
       </section>
-      <section class="panel"><h2>Warnings</h2><ul id="warningList" class="warning-list"></ul></section>
+      <section class="panel">
+        <h2>Warnings</h2>
+        <ul id="warningList" class="warning-list"></ul>
+      </section>
       <section class="panel">
         <h2>Export</h2>
         <div class="actions">
@@ -160,12 +210,12 @@
       <section class="panel">
         <h2>V9 build boundary</h2>
         <p class="status-note">
-          This migration entry point temporarily reuses the proven B9 renderer.
-          New V9 state, schema, segments and studies are being built independently.
+          MPPT allocation now drives string duplication. Modules in series remain
+          independently editable and rebuild every derived string.
         </p>
       </section>
     </aside>
   </main>
-  <script type="module" src="../b9-sandbox/app.js"></script>
+  <script type="module" src="./app.js"></script>
 </body>
 </html>
