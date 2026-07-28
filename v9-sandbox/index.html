@@ -3,11 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>V9 Multi-Array Electrical Sandbox</title>
-  <meta
-    name="description"
-    content="Generic PV array geometry and electrical-topology sandbox."
-  >
+  <title>V9 East-West Inverter Block Sandbox</title>
+  <meta name="description" content="Generic PV east-west geometry and DC topology sandbox.">
   <link rel="stylesheet" href="../b9-sandbox/styles.css">
 </head>
 <body>
@@ -15,205 +12,78 @@
     <aside class="sidebar">
       <header class="brand">
         <small>GlobalGrid2050 · V9 development</small>
-        <h1>Multi-Array Electrical Sandbox</h1>
-        <p>
-          Configure physical modules, electrical order and MPPT input allocation.
-          String quantity follows the available MPPT inputs automatically.
-        </p>
+        <h1>East-West Inverter Block Sandbox</h1>
+        <p>Build the complete DC side from physical modules, electrical order, strings, MPPTs and cable routes.</p>
       </header>
 
       <section class="panel">
-        <h2>Mechanical cartridge</h2>
-        <div class="field full">
-          <label for="cartridge">Array arrangement</label>
-          <select id="cartridge"></select>
-        </div>
-        <div class="field">
-          <label for="orientation">Module orientation</label>
-          <select id="orientation">
-            <option value="portrait">Portrait</option>
-            <option value="landscape">Landscape</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="moduleWidth">Module width (m)</label>
-          <input id="moduleWidth" type="number" value="1.303" step="0.001">
-        </div>
-        <div class="field">
-          <label for="moduleHeight">Module height (m)</label>
-          <input id="moduleHeight" type="number" value="2.384" step="0.001">
-        </div>
-        <div class="field">
-          <label for="moduleGap">Along-row gap (m)</label>
-          <input id="moduleGap" type="number" value="0" step="0.001">
-        </div>
+        <h2>East-west mechanical cartridge</h2>
+        <div class="field full"><label for="cartridge">Array arrangement</label><select id="cartridge"></select></div>
+        <div class="field"><label for="orientation">Module orientation</label><select id="orientation"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></div>
+        <div class="field"><label for="moduleWidth">Module width (m)</label><input id="moduleWidth" type="number" value="1.303" step="0.001"></div>
+        <div class="field"><label for="moduleHeight">Module height (m)</label><input id="moduleHeight" type="number" value="2.384" step="0.001"></div>
+        <div class="field"><label for="moduleGap">Along-row gap (m)</label><input id="moduleGap" type="number" value="0" step="0.001"></div>
       </section>
 
       <section class="panel">
-        <h2>MPPT and string allocation</h2>
-        <div class="field full">
-          <label for="mpptInputs">Inputs per MPPT</label>
-          <input
-            id="mpptInputs"
-            type="text"
-            value="2"
-            placeholder="Example: 2,2,1,4"
-          >
-        </div>
-        <p class="help">
-          Enter one number per MPPT. Example: 2,2,1,4 creates four MPPTs and
-          nine strings. Zero is allowed for an unused MPPT.
-        </p>
-        <dl class="summary-grid">
-          <dt>MPPT count</dt><dd id="mpptCount">1</dd>
-          <dt>Derived strings</dt><dd id="derivedStringCount">2</dd>
-        </dl>
+        <h2>Inverter / combiner allocation</h2>
+        <div class="field"><label for="mpptQuantity">MPPT quantity</label><input id="mpptQuantity" type="number" value="12" min="1" max="100" step="1"></div>
+        <div class="field"><label for="defaultInputsPerMppt">Default strings per MPPT</label><input id="defaultInputsPerMppt" type="number" value="2" min="0" max="4" step="1"></div>
+        <div class="field full"><label for="mpptInputs">Per-MPPT allocation override</label><textarea id="mpptInputs" placeholder="Example: 2,2,1,4. Leave blank to use MPPT quantity × default strings per MPPT."></textarea></div>
+        <p class="help">1–100 MPPTs may be represented. Each MPPT accepts 0–4 string inputs. This phase limits the complete block to 24 active strings.</p>
+        <dl class="summary-grid"><dt>MPPT count</dt><dd id="mpptCount">12</dd><dt>Active strings</dt><dd id="derivedStringCount">24</dd></dl>
         <ul id="mpptSummary" class="warning-list"></ul>
       </section>
 
       <section class="panel">
-        <h2>String and terminals</h2>
-        <div class="field">
-          <label for="modulesPerString">Modules in series</label>
-          <input id="modulesPerString" type="number" value="30" min="1">
-        </div>
-        <div class="field">
-          <label for="stringCount">Derived string count</label>
-          <input id="stringCount" type="number" value="2" min="1" readonly>
-        </div>
-        <div class="field">
-          <label for="topology">Electrical cartridge</label>
-          <select id="topology">
-            <option value="sequential">Sequential</option>
-            <option value="leapfrog" selected>Leapfrog</option>
-            <option value="mirrored-sequential">Mirrored sequential</option>
-            <option value="alternating-return">Alternating return</option>
-            <option value="custom">Custom order</option>
-          </select>
-        </div>
-        <div class="field full">
-          <label for="customOrder">Custom module order</label>
-          <textarea
-            id="customOrder"
-            placeholder="1,3,5,...,29,30,28,...,4,2"
-          ></textarea>
-        </div>
-        <div class="field">
-          <label for="junctionBoxMode">Junction boxes</label>
-          <select id="junctionBoxMode">
-            <option value="split">Split positive / negative</option>
-            <option value="central">Single central box</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="positiveLead">Positive lead (m)</label>
-          <input id="positiveLead" type="number" value="1.4" step="0.01">
-        </div>
-        <div class="field">
-          <label for="negativeLead">Negative lead (m)</label>
-          <input id="negativeLead" type="number" value="1.4" step="0.01">
-        </div>
+        <h2>String electrical design</h2>
+        <div class="field"><label for="modulesPerString">Modules in series</label><input id="modulesPerString" type="number" value="30" min="1" max="30" step="1"></div>
+        <div class="field"><label for="stringCount">Derived string count</label><input id="stringCount" type="number" value="24" min="1" max="24" readonly></div>
+        <div class="field"><label for="topology">Electrical arrangement</label><select id="topology"><option value="sequential">Sequential</option><option value="leapfrog" selected>Leapfrog</option><option value="mirrored-sequential">Mirrored sequential</option><option value="alternating-return">Alternating return</option><option value="custom">Custom order</option></select></div>
+        <div class="field full"><label for="customOrder">Custom module order</label><textarea id="customOrder" placeholder="1,3,5,...,29,30,28,...,4,2"></textarea></div>
+        <div class="field"><label for="junctionBoxMode">Junction boxes</label><select id="junctionBoxMode"><option value="split">Split positive / negative</option><option value="central">Single central box</option></select></div>
+        <div class="field"><label for="positiveLead">Positive factory lead (m)</label><input id="positiveLead" type="number" value="1.4" step="0.01"></div>
+        <div class="field"><label for="negativeLead">Negative factory lead (m)</label><input id="negativeLead" type="number" value="1.4" step="0.01"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Voltage gate</h2>
+        <div class="field"><label for="moduleVoc">Module Voc at STC (V)</label><input id="moduleVoc" type="number" value="50.0" min="1" step="0.1"></div>
+        <div class="field"><label for="vocTempCoefficient">Voc temperature coefficient (%/°C)</label><input id="vocTempCoefficient" type="number" value="-0.24" step="0.01"></div>
+        <div class="field"><label for="designTemperature">Design temperature (°C)</label><input id="designTemperature" type="number" value="20" step="1"></div>
+        <div class="field"><label for="systemVoltageLimit">DC system limit (V)</label><select id="systemVoltageLimit"><option value="1500" selected>1500 V</option><option value="3000">3000 V future study</option></select></div>
+        <p class="help">A red warning is issued from 95% of the selected system limit and a blocking warning at or above the limit.</p>
       </section>
 
       <section class="panel">
         <h2>Table and route geometry</h2>
-        <div class="field">
-          <label for="lowEdge">Low edge (m)</label>
-          <input id="lowEdge" type="number" value="1" step="0.1">
-        </div>
-        <div class="field">
-          <label for="highEdge">High edge / axis (m)</label>
-          <input id="highEdge" type="number" value="4" step="0.1">
-        </div>
-        <div class="field">
-          <label for="ridgeGap">Ridge gap (m)</label>
-          <input id="ridgeGap" type="number" value="0.3" step="0.05">
-        </div>
-        <div class="field">
-          <label for="rowPitch">String row pitch (m)</label>
-          <input id="rowPitch" type="number" value="3" step="0.1">
-        </div>
-        <div class="field">
-          <label for="trackerAngle">Tracker angle (°)</label>
-          <input id="trackerAngle" type="number" value="0" step="1">
-        </div>
-        <div class="field">
-          <label for="inverterDistance">MPPT distance (m)</label>
-          <input id="inverterDistance" type="number" value="10" step="1">
-        </div>
+        <div class="field"><label for="lowEdge">Low edge (m)</label><input id="lowEdge" type="number" value="1" step="0.1"></div>
+        <div class="field"><label for="highEdge">High edge / axis (m)</label><input id="highEdge" type="number" value="4" step="0.1"></div>
+        <div class="field"><label for="ridgeGap">Ridge gap (m)</label><input id="ridgeGap" type="number" value="0.3" step="0.05"></div>
+        <div class="field"><label for="rowPitch">String row pitch (m)</label><input id="rowPitch" type="number" value="3" step="0.1"></div>
+        <div class="field"><label for="trackerAngle">Tracker angle (°)</label><input id="trackerAngle" type="number" value="0" step="1"></div>
+        <div class="field"><label for="inverterDistance">Inverter / combiner route one-way (m)</label><input id="inverterDistance" type="number" value="10" step="1"></div>
       </section>
 
       <section class="panel">
         <h2>Conductor basis</h2>
-        <div class="field">
-          <label for="externalCableCsa">External cable CSA (mm²)</label>
-          <input id="externalCableCsa" type="number" value="6" step="1">
-        </div>
-        <div class="field">
-          <label for="factoryLeadCsa">Factory lead CSA (mm²)</label>
-          <input id="factoryLeadCsa" type="number" value="4" step="1">
-        </div>
+        <div class="field"><label for="externalCableCsa">External cable CSA (mm²)</label><input id="externalCableCsa" type="number" value="6" step="1"></div>
+        <div class="field"><label for="factoryLeadCsa">Factory lead CSA (mm²)</label><input id="factoryLeadCsa" type="number" value="4" step="1"></div>
       </section>
     </aside>
 
     <section class="workspace">
-      <nav class="toolbar" aria-label="Drawing views">
-        <button class="active" data-view="plan">Plan view</button>
-        <button data-view="side">Side view</button>
-        <button data-view="circuit">Circuit view</button>
-      </nav>
-      <div class="stage-wrap">
-        <svg id="stage" role="img" aria-label="PV array and circuit drawing"></svg>
-        <div class="legend">
-          Blue = negative · Red = positive · Orange = MPPT
-        </div>
-      </div>
+      <nav class="toolbar" aria-label="Drawing views"><button class="active" data-view="plan">Plan view</button><button data-view="side">Side view</button><button data-view="circuit">Circuit view</button></nav>
+      <div class="stage-wrap"><svg id="stage" role="img" aria-label="PV array and circuit drawing"></svg><div class="legend">Blue = negative · Red = positive · Orange = inverter / MPPT</div></div>
     </section>
 
     <aside class="inspector">
-      <section class="panel">
-        <h2>Technician summary</h2>
-        <dl class="summary-grid">
-          <dt>Cartridge</dt><dd id="summaryCartridge">—</dd>
-          <dt>Orientation</dt><dd id="summaryOrientation">—</dd>
-          <dt>Modules</dt><dd id="summaryModules">—</dd>
-          <dt>Strings</dt><dd id="summaryStrings">—</dd>
-          <dt>Row span</dt><dd id="summaryRowSpan">—</dd>
-          <dt>Topology</dt><dd id="summaryTopology">—</dd>
-          <dt>Free negative</dt><dd id="summaryFreeNegative">—</dd>
-          <dt>Free positive</dt><dd id="summaryFreePositive">—</dd>
-          <dt>Connections</dt><dd id="summaryConnections">—</dd>
-          <dt>Lead feasibility</dt><dd id="summaryFeasibility">—</dd>
-        </dl>
-      </section>
-      <section class="panel">
-        <h2>Cable and copper screen</h2>
-        <dl class="summary-grid">
-          <dt>External cable</dt><dd id="summaryExternal">—</dd>
-          <dt>Factory leads</dt><dd id="summaryFactory">—</dd>
-          <dt>Commercial Cu</dt><dd id="summaryCopper">—</dd>
-        </dl>
-      </section>
-      <section class="panel">
-        <h2>Warnings</h2>
-        <ul id="warningList" class="warning-list"></ul>
-      </section>
-      <section class="panel">
-        <h2>Export</h2>
-        <div class="actions">
-          <button id="exportScene" class="primary">Scene JSON</button>
-          <button id="exportGeoJson">GeoJSON</button>
-          <button id="resetScene">Reset</button>
-          <button disabled>Parquet later</button>
-        </div>
-      </section>
-      <section class="panel">
-        <h2>V9 build boundary</h2>
-        <p class="status-note">
-          MPPT allocation now drives string duplication. Modules in series remain
-          independently editable and rebuild every derived string.
-        </p>
-      </section>
+      <section class="panel"><h2>Technician summary</h2><dl class="summary-grid"><dt>Cartridge</dt><dd id="summaryCartridge">—</dd><dt>Orientation</dt><dd id="summaryOrientation">—</dd><dt>Modules</dt><dd id="summaryModules">—</dd><dt>Strings</dt><dd id="summaryStrings">—</dd><dt>Row span</dt><dd id="summaryRowSpan">—</dd><dt>Topology</dt><dd id="summaryTopology">—</dd><dt>Free negative</dt><dd id="summaryFreeNegative">—</dd><dt>Free positive</dt><dd id="summaryFreePositive">—</dd><dt>Connections</dt><dd id="summaryConnections">—</dd><dt>Lead feasibility</dt><dd id="summaryFeasibility">—</dd></dl></section>
+      <section class="panel"><h2>Computed block</h2><dl class="summary-grid"><dt>String voltage</dt><dd id="computedVoltage">—</dd><dt>Voltage utilisation</dt><dd id="computedVoltageUse">—</dd><dt>Active MPPTs</dt><dd id="computedActiveMppts">—</dd><dt>Total modules</dt><dd id="computedTotalModules">—</dd><dt>External cable estimate</dt><dd id="computedExternalCable">—</dd><dt>Total DC conductor estimate</dt><dd id="computedTotalCable">—</dd></dl></section>
+      <section class="panel"><h2>Cable and copper screen</h2><dl class="summary-grid"><dt>External cable</dt><dd id="summaryExternal">—</dd><dt>Factory leads</dt><dd id="summaryFactory">—</dd><dt>Commercial Cu</dt><dd id="summaryCopper">—</dd></dl></section>
+      <section class="panel"><h2>Warnings</h2><ul id="warningList" class="warning-list"></ul><ul id="v9WarningList" class="warning-list"></ul></section>
+      <section class="panel"><h2>Export</h2><div class="actions"><button id="exportScene" class="primary">Scene JSON</button><button id="exportGeoJson">GeoJSON</button><button id="resetScene">Reset</button><button disabled>Parquet later</button></div></section>
+      <section class="panel"><h2>V9 build boundary</h2><p class="status-note">East-west first. The circuit view is computed from MPPT allocation, strings, modules in series, electrical order and route inputs.</p></section>
     </aside>
   </main>
   <script type="module" src="./app.js"></script>
