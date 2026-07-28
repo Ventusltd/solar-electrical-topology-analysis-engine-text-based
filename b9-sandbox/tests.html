@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>B9 Sandbox Tests</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: system-ui, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 28px;
+      background: #071018;
+      color: #edf7ff;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #0d1721;
+    }
+
+    th,
+    td {
+      padding: 10px 12px;
+      border: 1px solid #2a4052;
+      text-align: left;
+    }
+
+    .pass {
+      color: #62e39a;
+      font-weight: 800;
+    }
+
+    .fail {
+      color: #ff6b7a;
+      font-weight: 800;
+    }
+
+    a {
+      color: #36d7ff;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p><a href="./">← Back to B9 sandbox</a></p>
+    <h1>B9 hand-calculated browser fixtures</h1>
+    <p id="overall">Running…</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Invariant / canary</th>
+          <th>Observed result</th>
+        </tr>
+      </thead>
+      <tbody id="results"></tbody>
+    </table>
+  </main>
+  <script type="module" src="./tests.js"></script>
+</body>
+</html>
