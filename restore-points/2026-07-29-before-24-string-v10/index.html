@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ventus DC String Engine V10</title>
+<meta name="description" content="Kernel-first photovoltaic DC topology and computation workbench.">
+<style>
+:root{color-scheme:dark;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#061018;color:#e8f5ff}*{box-sizing:border-box}body{margin:0;padding:20px}main{max-width:1500px;margin:auto}.hero,.panel{border:1px solid #28475b;background:#0b1923;border-radius:10px;padding:18px;margin-bottom:16px}.hero{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.status{color:#62f59a;font-weight:800}.grid{display:grid;grid-template-columns:minmax(300px,430px) 1fr;gap:16px}.field{display:grid;grid-template-columns:1fr 130px;gap:10px;align-items:center;margin:10px 0}input,select,button{font:inherit;color:#fff;background:#07131c;border:1px solid #42647b;border-radius:5px;padding:8px}button{cursor:pointer}.primary{border-color:#20d7ff;color:#20d7ff;font-weight:800}pre{white-space:pre-wrap;overflow:auto;max-height:650px;background:#03080c;padding:14px;border-radius:7px}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.metric{background:#07131c;border:1px solid #253b4a;border-radius:7px;padding:12px}.metric strong{display:block;font-size:1.25rem;margin-top:5px}.warning{border-left:4px solid #ffbd59;background:#1b1710;padding:12px;margin:12px 0}.links a{color:#65ddff;margin-right:15px}@media(max-width:900px){.grid,.hero{grid-template-columns:1fr;display:grid}.field{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<section class="hero"><div><div>GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING</div><h1>Ventus DC String Engine V10</h1><p>Topology-aware, evidence-bearing, JSON-in/JSON-out computation kernel. The interface renders kernel results; it does not perform hidden engineering calculations.</p><div class="links"><a href="../index.html">V6 visual workbench</a><a href="../v9-sandbox/">V9 computation sandbox</a><a href="./README.md">V10 architecture</a></div></div><div class="status">V10 · ACTIVE DEVELOPMENT</div></section>
+<div class="warning"><strong>Research workbench.</strong> Current geometry uses module centres and does not yet represent terminal offsets, junction-box positions, factory-lead routing, slack, connectors or field-installed home runs. Results are calculation candidates, not design approval.</div>
+<div class="grid">
+<section class="panel"><h2>Kernel input</h2>
+<label class="field">Modules / string<input id="moduleCount" type="number" min="1" value="30"></label>
+<label class="field">Module pitch (m)<input id="pitchMetres" type="number" min="0" step="0.001" value="1.303"></label>
+<label class="field">Topology<select id="topology"><option value="sequential">Sequential</option><option value="mirrored-sequential">Mirrored sequential</option><option value="leapfrog" selected>Leapfrog</option></select></label>
+<label class="field">Conductor R at 20°C (Ω/m)<input id="resistancePerMetre" type="number" min="0" step="0.000001" value="0.00308"></label>
+<label class="field">Conductor temperature (°C)<input id="temperatureC" type="number" value="70"></label>
+<label class="field">Current (A)<input id="currentA" type="number" min="0" step="0.01" value="17.35"></label>
+<label class="field">Module Voc STC (V)<input id="moduleVoc" type="number" min="0" step="0.1" value="45.9"></label>
+<label class="field">βVoc (%/°C)<input id="betaVoc" type="number" step="0.01" value="-0.25"></label>
+<label class="field">Cold cell temperature (°C)<input id="coldTemp" type="number" value="-10"></label>
+<label class="field">System maximum (V)<input id="systemMax" type="number" min="0" value="1500"></label>
+<button id="run" class="primary" type="button">RUN V10 KERNEL</button>
+</section>
+<section><div class="panel"><h2>Computed results</h2><div id="metrics" class="metrics"></div></div><div class="panel"><h2>Traceable result JSON</h2><pre id="output">Loading kernel…</pre></div></section>
+</div>
+</main>
+<script type="module">
+import { runKernel } from '../../v10-development/src/kernel.mjs';
+const $=id=>document.getElementById(id);
+function value(id){return Number($(id).value)}
+function render(){
+ const input={schemaVersion:'globalgrid2050.solar-dc-computation.v10.input.1',layout:{moduleCount:value('moduleCount'),pitchMetres:value('pitchMetres'),topology:$('topology').value},conductor:{resistanceOhmPerMetreAt20C:value('resistancePerMetre'),temperatureC:value('temperatureC'),temperatureCoefficientPerC:0.00393},operating:{currentA:value('currentA')},voltageLimit:{moduleVocStcV:value('moduleVoc'),betaVocPercentPerC:value('betaVoc'),coldCellTemperatureC:value('coldTemp'),systemMaximumVoltageV:value('systemMax')}};
+ try{const result=runKernel(input);$('output').textContent=JSON.stringify(result,null,2);const m=result.results;const cards=[['Topology path',m.topology.pathLengthMetres.toFixed(3)+' m'],['Resistance',m.resistance.value.toFixed(6)+' Ω'],['Voltage drop',m.voltageDrop.value.toFixed(4)+' V'],['Power loss',m.powerLoss.value.toFixed(2)+' W'],['Cold string Voc',m.coldStringVoc?.value.toFixed(2)+' V'],['Voltage status',m.voltageLimitStatus||'—']];$('metrics').innerHTML=cards.map(([a,b])=>`<div class="metric"><span>${a}</span><strong>${b}</strong></div>`).join('');}catch(error){$('output').textContent=error.stack||String(error);$('metrics').innerHTML='';}
+}
+$('run').addEventListener('click',render);render();
+</script>
+</body>
+</html>
