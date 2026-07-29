@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "globalgrid2050.solar-dc-computation.v10.kernel-input.1",
+  "title": "Ventus DC String Engine V10 kernel input",
+  "type": "object",
+  "required": ["layout", "electrical"],
+  "additionalProperties": false,
+  "properties": {
+    "documentId": { "type": ["string", "null"] },
+    "layout": {
+      "type": "object",
+      "required": ["moduleCount", "pitchMetres", "topology"],
+      "additionalProperties": false,
+      "properties": {
+        "moduleCount": { "type": "integer", "minimum": 1 },
+        "pitchMetres": { "type": "number", "minimum": 0 },
+        "topology": { "enum": ["sequential", "mirrored-sequential", "leapfrog", "custom"] },
+        "customOrder": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1 }
+        },
+        "originMetres": { "type": "number" }
+      }
+    },
+    "electrical": {
+      "type": "object",
+      "required": ["resistanceOhmPerMetre", "currentAmps"],
+      "properties": {
+        "resistanceOhmPerMetre": { "type": "number", "minimum": 0 },
+        "currentAmps": { "type": "number", "minimum": 0 },
+        "circuitFactor": { "type": "number", "exclusiveMinimum": 0 },
+        "lengthUncertaintyMetres": { "type": "number", "minimum": 0 },
+        "vocStcVolts": { "type": "number", "exclusiveMinimum": 0 },
+        "betaVocPercentPerKelvin": { "type": "number" },
+        "minimumCellTemperatureKelvin": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    }
+  }
+}
