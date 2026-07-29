@@ -1,6 +1,6 @@
 # Ventus DC String Engine — Development Goals
 
-Status: preparation register. Priorities will be revised after the Claude deep-research output is received and independently checked.
+Status: implementation started under controlled P0 scope. External research has been reviewed, sanitised and treated as hypotheses rather than truth.
 
 ## P0 — Do not damage the proven versions
 
@@ -35,6 +35,19 @@ Status: preparation register. Priorities will be revised after the Claude deep-r
 - Detect open circuits, accidental shorts, polarity reversals, duplicate terminal use and impossible series sequences.
 - Support sequential, leapfrog, mirrored, serpentine and custom topologies.
 - Preserve physical route geometry independently from electrical connectivity.
+
+Current implementation status:
+
+- [x] Sequential order generator.
+- [x] Mirrored-sequential order generator.
+- [x] Canonical leapfrog order generator.
+- [x] Exact-permutation validation for custom orders.
+- [x] Linear module-coordinate generator.
+- [x] Ordered segment and path-length derivation.
+- [x] Deterministic tests proving the canonical 30-module leapfrog path is 57 pitches, not the unproven 58-pitch research claim.
+- [ ] Junction-box terminal coordinates and lead exit directions.
+- [ ] Typed factory-lead and field-cable components.
+- [ ] Full electrical graph validation.
 
 ## P4 — Create the evidence and provenance layer
 
@@ -123,12 +136,15 @@ Status: preparation register. Priorities will be revised after the Claude deep-r
 - Keep a migration note explaining changes from V9 to V10.
 - Preserve the ability to reproduce historical results from earlier engine versions.
 
-## Immediate preparation tasks
+## Immediate tasks
 
-1. Receive and archive the Claude deep-research output as a research input, not as automatic truth.
-2. Compare its findings with the existing V6–V9 source code and owner-provided evidence.
-3. Create the V6–V9 formula and feature inventory.
-4. Create the reference-case test catalogue.
-5. Draft the V10 canonical schema.
-6. Draft the monthly scanner scope and source registry.
-7. Agree the first implementation purchase order before modifying computation code.
+1. [x] Receive the external research output as a research input, not as automatic truth.
+2. [x] Remove all personal, project, client and place identifiers from the engineering review.
+3. [x] Record accepted, corrected, rejected and quarantined claims.
+4. [x] Start the pure topology computation core and deterministic tests.
+5. [ ] Add junction-box and terminal geometry.
+6. [ ] Separate factory and field conductor objects and compute length/mass by class.
+7. [ ] Create the V6–V9 formula and feature inventory.
+8. [ ] Draft the V10 canonical debug schema.
+9. [ ] Draft the monthly scanner scope and source registry.
+10. [ ] Add CI only after the local test command and repository branch layout are confirmed.
