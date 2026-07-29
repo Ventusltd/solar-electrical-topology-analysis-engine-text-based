@@ -3,42 +3,66 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Ventus DC String Engine V10</title>
-<meta name="description" content="Kernel-first photovoltaic DC topology and computation workbench.">
+<title>V10 PV DC Topology & Computation Engine</title>
+<meta name="description" content="Open, kernel-first PV DC drawing and computation workbench for complete inverter blocks.">
 <style>
-:root{color-scheme:dark;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#061018;color:#e8f5ff}*{box-sizing:border-box}body{margin:0;padding:20px}main{max-width:1500px;margin:auto}.hero,.panel{border:1px solid #28475b;background:#0b1923;border-radius:10px;padding:18px;margin-bottom:16px}.hero{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.status{color:#62f59a;font-weight:800}.grid{display:grid;grid-template-columns:minmax(300px,430px) 1fr;gap:16px}.field{display:grid;grid-template-columns:1fr 130px;gap:10px;align-items:center;margin:10px 0}input,select,button{font:inherit;color:#fff;background:#07131c;border:1px solid #42647b;border-radius:5px;padding:8px}button{cursor:pointer}.primary{border-color:#20d7ff;color:#20d7ff;font-weight:800}pre{white-space:pre-wrap;overflow:auto;max-height:650px;background:#03080c;padding:14px;border-radius:7px}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.metric{background:#07131c;border:1px solid #253b4a;border-radius:7px;padding:12px}.metric strong{display:block;font-size:1.25rem;margin-top:5px}.warning{border-left:4px solid #ffbd59;background:#1b1710;padding:12px;margin:12px 0}.links a{color:#65ddff;margin-right:15px}@media(max-width:900px){.grid,.hero{grid-template-columns:1fr;display:grid}.field{grid-template-columns:1fr}}
+:root{color-scheme:dark;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#02070b;color:#e8f5ff}*{box-sizing:border-box}body{margin:0;background:#02070b}.app{display:grid;grid-template-rows:auto 1fr;height:100vh}.top{display:flex;justify-content:space-between;gap:18px;padding:12px 16px;border-bottom:1px solid #28475b;background:#07131c}.top h1{font-size:18px;margin:0}.sub{color:#9eb4c3;font-size:12px;margin-top:4px}.status{color:#62f59a;font-weight:800;white-space:nowrap}.body{display:grid;grid-template-columns:310px minmax(0,1fr) 340px;min-height:0}.panel{background:#08141d;border-right:1px solid #28475b;overflow:auto;padding:14px}.panel.right{border-right:0;border-left:1px solid #28475b}.panel h2{font-size:14px;color:#66ddff;margin:4px 0 12px}.field{display:grid;grid-template-columns:1fr 100px;gap:8px;align-items:center;margin:8px 0;font-size:12px}input,select,button{font:inherit;color:#fff;background:#030a0f;border:1px solid #42647b;border-radius:5px;padding:7px}button{cursor:pointer}.primary{width:100%;border-color:#20d7ff;color:#20d7ff;font-weight:800;margin-top:8px}.toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.toolbar button{font-size:11px}.canvas-wrap{position:relative;min-width:0;min-height:0;overflow:hidden;background:#000}.canvas{width:100%;height:100%;display:block;touch-action:none}.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.metric{border:1px solid #253b4a;background:#030a0f;border-radius:6px;padding:9px;font-size:11px}.metric strong{display:block;color:#fff;font-size:15px;margin-top:3px}.warning{border-left:3px solid #ffbd59;background:#1b1710;padding:8px;font-size:11px;margin:8px 0}.string-row{display:grid;grid-template-columns:38px 1fr 62px;gap:6px;padding:5px 0;border-bottom:1px solid #142531;font-size:10px}.string-row button{padding:3px}.legend{display:flex;gap:12px;font-size:10px;margin-top:10px;flex-wrap:wrap}.dot{display:inline-block;width:10px;height:3px;margin-right:4px;vertical-align:middle}.json{font-size:10px;white-space:pre-wrap;max-height:260px;overflow:auto;background:#02070b;padding:8px;border:1px solid #1b3342}.links a{color:#65ddff;margin-right:12px;font-size:11px}@media(max-width:1000px){.body{grid-template-columns:1fr}.panel{display:none}.canvas-wrap{height:calc(100vh - 70px)}}
 </style>
 </head>
 <body>
-<main>
-<section class="hero"><div><div>GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING</div><h1>Ventus DC String Engine V10</h1><p>Topology-aware, evidence-bearing, JSON-in/JSON-out computation kernel. The interface renders kernel results; it does not perform hidden engineering calculations.</p><div class="links"><a href="../index.html">V6 visual workbench</a><a href="../v9-sandbox/">V9 computation sandbox</a><a href="./README.md">V10 architecture</a></div></div><div class="status">V10 · ACTIVE DEVELOPMENT</div></section>
-<div class="warning"><strong>Research workbench.</strong> Current geometry uses module centres and does not yet represent terminal offsets, junction-box positions, factory-lead routing, slack, connectors or field-installed home runs. Results are calculation candidates, not design approval.</div>
-<div class="grid">
-<section class="panel"><h2>Kernel input</h2>
-<label class="field">Modules / string<input id="moduleCount" type="number" min="1" value="30"></label>
-<label class="field">Module pitch (m)<input id="pitchMetres" type="number" min="0" step="0.001" value="1.303"></label>
-<label class="field">Topology<select id="topology"><option value="sequential">Sequential</option><option value="mirrored-sequential">Mirrored sequential</option><option value="leapfrog" selected>Leapfrog</option></select></label>
-<label class="field">Conductor R at 20°C (Ω/m)<input id="resistancePerMetre" type="number" min="0" step="0.000001" value="0.00308"></label>
-<label class="field">Conductor temperature (°C)<input id="temperatureC" type="number" value="70"></label>
-<label class="field">Current (A)<input id="currentA" type="number" min="0" step="0.01" value="17.35"></label>
-<label class="field">Module Voc STC (V)<input id="moduleVoc" type="number" min="0" step="0.1" value="45.9"></label>
-<label class="field">βVoc (%/°C)<input id="betaVoc" type="number" step="0.01" value="-0.25"></label>
-<label class="field">Cold cell temperature (°C)<input id="coldTemp" type="number" value="-10"></label>
-<label class="field">System maximum (V)<input id="systemMax" type="number" min="0" value="1500"></label>
-<button id="run" class="primary" type="button">RUN V10 KERNEL</button>
-</section>
-<section><div class="panel"><h2>Computed results</h2><div id="metrics" class="metrics"></div></div><div class="panel"><h2>Traceable result JSON</h2><pre id="output">Loading kernel…</pre></div></section>
-</div>
+<div class="app">
+<header class="top"><div><h1>V10 · PV DC Topology & Computation Engine</h1><div class="sub">Complete inverter drawing: 24 strings · 48 field conductors · 720 modules by default</div><div class="links"><a href="../v9-sandbox/">V9 reference</a><a href="./README.md">Architecture</a><a href="https://github.com/Ventusltd/solar-electrical-topology-analysis-engine-text-based/tree/main/v10-development">Source code</a></div></div><div class="status">OPEN KERNEL DEVELOPMENT</div></header>
+<div class="body">
+<aside class="panel">
+<h2>INVERTER BLOCK INPUTS</h2>
+<label class="field">Strings<input id="stringCount" type="number" min="1" max="24" value="24"></label>
+<label class="field">Modules/string<input id="modulesPerString" type="number" min="1" value="30"></label>
+<label class="field">MPPTs<input id="mpptCount" type="number" min="1" value="12"></label>
+<label class="field">Inputs/MPPT<input id="inputsPerMppt" type="number" min="1" value="2"></label>
+<label class="field">Topology<select id="topology"><option value="sequential">Sequential</option><option value="mirrored-sequential">Mirrored</option><option value="leapfrog" selected>Leapfrog</option></select></label>
+<label class="field">Module pitch (m)<input id="modulePitchMetres" type="number" step="0.001" value="1.303"></label>
+<label class="field">Row spacing (m)<input id="rowSpacingMetres" type="number" step="0.1" value="5"></label>
+<label class="field">Nearest route (m)<input id="nearestHomeRunMetres" type="number" step="1" value="10"></label>
+<label class="field">Route increment (m)<input id="homeRunStepMetres" type="number" step="0.5" value="2"></label>
+<label class="field">R at 20°C (Ω/m)<input id="resistanceOhmPerMetre" type="number" step="0.00001" value="0.00308"></label>
+<label class="field">Operating current (A)<input id="currentAmps" type="number" step="0.01" value="17.35"></label>
+<label class="field">Module Voc STC (V)<input id="moduleVocStcVolts" type="number" step="0.1" value="45.9"></label>
+<label class="field">βVoc (%/°C)<input id="betaVocPercentPerKelvin" type="number" step="0.01" value="-0.25"></label>
+<label class="field">Minimum cell (°C)<input id="minimumCellTemperatureCelsius" type="number" value="-10"></label>
+<button id="rebuild" class="primary">REBUILD COMPLETE INVERTER</button>
+<div class="warning">All geometry and field routes are editable candidates. No project, location or manufacturer-specific values are embedded.</div>
+<h2>STRING INSPECTOR</h2><div id="stringList"></div>
+</aside>
+<main class="canvas-wrap">
+<div class="toolbar" style="position:absolute;z-index:2;left:10px;top:10px;background:#07131ccc;padding:7px;border-radius:6px"><button id="zoomIn">Zoom +</button><button id="zoomOut">Zoom −</button><button id="fit">Fit</button><button id="toggleCables">Cables</button><button id="toggleModules">Modules</button></div>
+<svg id="canvas" class="canvas" aria-label="Complete inverter drawing canvas"></svg>
 </main>
+<aside class="panel right">
+<h2>COMPUTED INVERTER TOTALS</h2><div id="metrics" class="metric-grid"></div>
+<div class="legend"><span><i class="dot" style="background:#23d9ff"></i>positive</span><span><i class="dot" style="background:#ff5f7d"></i>negative</span><span><i class="dot" style="background:#5af28a"></i>series path</span></div>
+<div class="warning"><strong>Evidence boundary:</strong> resistance, voltage drop, loss and cold Voc are kernel candidates. Surge, SPD residual voltage, IMD behaviour and semiconductor isolation remain excluded until proven.</div>
+<h2>TRACEABLE RESULT JSON</h2><pre id="output" class="json"></pre>
+</aside>
+</div>
+</div>
 <script type="module">
-import { runKernel } from './src/kernel.mjs';
-const $=id=>document.getElementById(id);
-function value(id){return Number($(id).value)}
-function render(){
- const input={schemaVersion:'globalgrid2050.solar-dc-computation.v10.input.1',layout:{moduleCount:value('moduleCount'),pitchMetres:value('pitchMetres'),topology:$('topology').value},conductor:{resistanceOhmPerMetreAt20C:value('resistancePerMetre'),temperatureC:value('temperatureC'),temperatureCoefficientPerC:0.00393},operating:{currentA:value('currentA')},voltageLimit:{moduleVocStcV:value('moduleVoc'),betaVocPercentPerC:value('betaVoc'),coldCellTemperatureC:value('coldTemp'),systemMaximumVoltageV:value('systemMax')}};
- try{const result=runKernel(input);$('output').textContent=JSON.stringify(result,null,2);const m=result.results;const cards=[['Topology path',m.topology.pathLengthMetres.toFixed(3)+' m'],['Resistance',m.resistance.value.toFixed(6)+' Ω'],['Voltage drop',m.voltageDrop.value.toFixed(4)+' V'],['Power loss',m.powerLoss.value.toFixed(2)+' W'],['Cold string Voc',m.coldStringVoc?.value.toFixed(2)+' V'],['Voltage status',m.voltageLimitStatus||'—']];$('metrics').innerHTML=cards.map(([a,b])=>`<div class="metric"><span>${a}</span><strong>${b}</strong></div>`).join('');}catch(error){$('output').textContent=error.stack||String(error);$('metrics').innerHTML='';}
-}
-$('run').addEventListener('click',render);render();
+import { buildCompleteInverterDocument } from './src/inverter-block.mjs';
+const $=id=>document.getElementById(id); const num=id=>Number($(id).value);
+let model=null,selected=1,zoom=1,panX=0,panY=0,showCables=true,showModules=true;
+function input(){return{stringCount:num('stringCount'),modulesPerString:num('modulesPerString'),mpptCount:num('mpptCount'),inputsPerMppt:num('inputsPerMppt'),topology:$('topology').value,modulePitchMetres:num('modulePitchMetres'),rowSpacingMetres:num('rowSpacingMetres'),nearestHomeRunMetres:num('nearestHomeRunMetres'),homeRunStepMetres:num('homeRunStepMetres'),resistanceOhmPerMetre:num('resistanceOhmPerMetre'),currentAmps:num('currentAmps'),moduleVocStcVolts:num('moduleVocStcVolts'),betaVocPercentPerKelvin:num('betaVocPercentPerKelvin'),minimumCellTemperatureCelsius:num('minimumCellTemperatureCelsius')}}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function render(){try{model=buildCompleteInverterDocument(input());$('output').textContent=JSON.stringify(model,null,2);renderMetrics();renderList();draw()}catch(e){$('output').textContent=e.stack||String(e)}}
+function renderMetrics(){const t=model.totals;const cards=[['Strings',t.strings],['Conductors',t.conductors],['Modules',t.modules],['Positive cable',t.positiveCableMetres.toFixed(1)+' m'],['Negative cable',t.negativeCableMetres.toFixed(1)+' m'],['Field cable total',t.fieldCableMetres.toFixed(1)+' m'],['All conductor',t.totalConductorMetres.toFixed(1)+' m'],['Loss at set current',t.powerLossWatts.toFixed(0)+' W']];$('metrics').innerHTML=cards.map(([a,b])=>`<div class="metric">${esc(a)}<strong>${esc(b)}</strong></div>`).join('')}
+function renderList(){$('stringList').innerHTML=model.strings.map(s=>`<div class="string-row"><b>${s.id}</b><span>MPPT ${s.mpptNumber}.${s.inputNumber}<br>${s.totalConductorMetres.toFixed(1)} m</span><button data-string="${s.stringNumber}">view</button></div>`).join('');document.querySelectorAll('[data-string]').forEach(b=>b.onclick=()=>{selected=Number(b.dataset.string);draw()})}
+function draw(){const svg=$('canvas');const W=1800,H=Math.max(950,model.strings.length*34+160);svg.setAttribute('viewBox',`${panX} ${panY} ${W/zoom} ${H/zoom}`);const invX=80,invY=70,invW=170,invH=Math.max(360,model.strings.length*30);let html=`<rect width="100%" height="100%" fill="#000"/><g>`;html+=`<rect x="${invX}" y="${invY}" width="${invW}" height="${invH}" rx="12" fill="#17120b" stroke="#ffb340" stroke-width="3"/><text x="${invX+18}" y="${invY+30}" fill="#ffcf7a" font-size="18">INVERTER INV-01</text><text x="${invX+18}" y="${invY+55}" fill="#9fb2bf" font-size="12">12 MPPT · 2 inputs each</text>`;
+for(const s of model.strings){const y=95+(s.stringNumber-1)*30;const active=s.stringNumber===selected;const sx=430,span=Math.min(1180,s.modulesPerString*34);html+=`<g data-id="${s.id}" opacity="${active?1:.78}">`;html+=`<circle cx="${invX+invW}" cy="${y}" r="4" fill="#23d9ff"/><circle cx="${invX+invW}" cy="${y+8}" r="4" fill="#ff5f7d"/>`;
+if(showCables){html+=`<path d="M ${invX+invW} ${y} H ${sx-18}" fill="none" stroke="#23d9ff" stroke-width="${active?3:1.3}"/><path d="M ${invX+invW} ${y+8} H ${sx-8} V ${y+20} H ${sx+span}" fill="none" stroke="#ff5f7d" stroke-width="${active?3:1.3}"/>`}
+if(showModules){for(let m=0;m<s.modulesPerString;m++){const x=sx+m*(span/s.modulesPerString);html+=`<rect x="${x}" y="${y-9}" width="${span/s.modulesPerString-2}" height="20" fill="#083246" stroke="#38bfe8" stroke-width=".7"/>`}}
+if(showCables){html+=`<path d="M ${sx} ${y+2} H ${sx+span}" fill="none" stroke="#5af28a" stroke-width="${active?2.5:1}"/>`}
+html+=`<text x="${sx-75}" y="${y+5}" fill="${active?'#fff':'#718895'}" font-size="10">${s.id}</text></g>`}
+html+=`</g>`;svg.innerHTML=html}
+$('rebuild').onclick=render;$('zoomIn').onclick=()=>{zoom=Math.min(4,zoom*1.25);draw()};$('zoomOut').onclick=()=>{zoom=Math.max(.3,zoom/1.25);draw()};$('fit').onclick=()=>{zoom=1;panX=0;panY=0;draw()};$('toggleCables').onclick=()=>{showCables=!showCables;draw()};$('toggleModules').onclick=()=>{showModules=!showModules;draw()};
+let dragging=false,last=null;$('canvas').addEventListener('pointerdown',e=>{dragging=true;last=[e.clientX,e.clientY];$('canvas').setPointerCapture(e.pointerId)});$('canvas').addEventListener('pointermove',e=>{if(!dragging)return;panX-=(e.clientX-last[0])/zoom;panY-=(e.clientY-last[1])/zoom;last=[e.clientX,e.clientY];draw()});$('canvas').addEventListener('pointerup',()=>dragging=false);render();
 </script>
 </body>
 </html>
