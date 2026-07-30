@@ -44,6 +44,28 @@ from .circuit_validation import (
     validate_circuit_model,
     validated_circuit_hash,
 )
+from .evidence import (
+    EVIDENCE_SCHEMA_VERSION,
+    EvidenceDescriptor,
+    VerificationState,
+    canonical_evidence_descriptor,
+    javascript_provenance_descriptor,
+    segment_provenance_descriptor,
+    weakest_evidence_class,
+)
+from .calculation_receipts import (
+    CALCULATION_RECEIPT_SCHEMA_VERSION,
+    COMPLETE_CIRCUIT_METHOD_VERSION,
+    OrderedCircuitCalculationReceipt,
+    SegmentCalculationResult,
+    calculation_receipt_hash,
+    calculation_receipt_json,
+    calculation_receipt_payload,
+)
+from .circuit_calculations import (
+    ALPHA_CU_20_PER_C,
+    calculate_complete_circuit,
+)
 from .fleet_store import build_deterministic_store, build_store
 from .formulas import (
     cold_string_voc,
@@ -114,6 +136,22 @@ __all__ = [
     "ValidationIssue",
     "validate_circuit_model",
     "validated_circuit_hash",
+    "EVIDENCE_SCHEMA_VERSION",
+    "EvidenceDescriptor",
+    "VerificationState",
+    "canonical_evidence_descriptor",
+    "javascript_provenance_descriptor",
+    "segment_provenance_descriptor",
+    "weakest_evidence_class",
+    "CALCULATION_RECEIPT_SCHEMA_VERSION",
+    "COMPLETE_CIRCUIT_METHOD_VERSION",
+    "OrderedCircuitCalculationReceipt",
+    "SegmentCalculationResult",
+    "calculation_receipt_hash",
+    "calculation_receipt_json",
+    "calculation_receipt_payload",
+    "ALPHA_CU_20_PER_C",
+    "calculate_complete_circuit",
     "build_deterministic_store",
     "build_store",
     "cold_string_voc",
