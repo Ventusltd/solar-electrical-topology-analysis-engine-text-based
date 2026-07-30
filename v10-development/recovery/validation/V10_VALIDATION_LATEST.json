@@ -1,0 +1,60 @@
+{
+  "generated_utc": "2026-07-30T01:50:50Z",
+  "git_sha": "3abf9a2a76ea25bd2c71b2b583ae46b23f576258",
+  "pass": false,
+  "repository": "Ventusltd/solar-electrical-topology-analysis-engine-text-based",
+  "results": [
+    {
+      "command": [
+        "/opt/hostedtoolcache/Python/3.11.15/x64/bin/python",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "cwd": ".",
+      "duration_seconds": 3.768,
+      "name": "python",
+      "output": "..........................................F..........                    [100%]\n=================================== FAILURES ===================================\n_________ test_deterministic_partitioned_store_and_actual_string_count _________\n\ntmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_deterministic_partitioned0')\n\n    def test_deterministic_partitioned_store_and_actual_string_count(tmp_path):\n        inputs = TopologyInputs(\n            inverter_count=2,\n            total_site_string_count=47,\n            positive_factory_lead_m=1.4,\n            negative_factory_lead_m=1.4,\n        )\n        output = tmp_path / \"store\"\n        result = build_deterministic_store(\n            inputs,\n            output,\n            source_commit=\"test-commit\",\n        )\n    \n        assert result[\"deterministic\"] is True\n        assert result[\"string_count\"] == 47\n        assert result[\"generated_segment_rows\"] == 47 * 183\n    \n        partitions = sorted(\n            output.glob(\"segments/topology=*/band=*/data_*.parquet\")\n        )\n        result_partitions = sorted(\n            output.glob(\"results/segments/topology=*/band=*/data_*.parquet\")\n        )\n        assert len(partitions) == 6\n        assert len(result_partitions) == 6\n    \n        connection = duckdb.connect()\n        try:\n            comparison = read_one(\n                connection,\n                output / \"aggregates\" / \"comparison.parquet\",\n            )\n            assert comparison[0] == 47\n            assert comparison[3] == pytest.approx(47 * 39.67)\n            assert comparison[4] == pytest.approx(47 * 39.67)\n            assert comparison[5] is True\n    \n            site = connection.execute(\n                \"\"\"\n                SELECT topology, string_count\n                FROM read_parquet(?)\n                ORDER BY topology\n                \"\"\",\n                [str(output / \"aggregates\" / \"site.parquet\")],\n            ).fetchall()\n            assert site == [(\"leapfrog\", 47), (\"sequential\", 47)]\n    \n            factory = connection.execute(\n                \"\"\"\n                SELECT\n                    topology,\n                    min(factory_lead_m),\n                    max(factory_lead_m),\n                    min(connector_count),\n                    max(connector_count)\n                FROM read_parquet(?)\n                GROUP BY topology\n                ORDER BY topology\n                \"\"\",\n                [str(output / \"aggregates\" / \"strings.parquet\")],\n            ).fetchall()\n>           assert factory == [\n                (\"leapfrog\", 84.0, 84.0, 62, 62),\n                (\"sequential\", 84.0, 84.0, 62, 62),\n            ]\nE           AssertionError: assert [('leapfrog',..., 62.0, 62.0)] == [('leapfrog',...84.0, 62, 62)]\nE             \nE             At index 0 diff: ('leapfrog', 84.00000000000004, 84.00000000000004, 62.0, 62.0) != ('leapfrog', 84.0, 84.0, 62, 62)\nE             \nE             Full diff:\nE               [\nE                   (\nE                       'leapfrog',\nE             -         84.0,\nE             -         84.0,\nE             +         84.00000000000004,\nE             +         84.00000000000004,\nE             -         62,\nE             +         62.0,\nE             ?           ++\nE             -         62,\nE             +         62.0,\nE             ?           ++\nE                   ),\nE                   (\nE                       'sequential',\nE             -         84.0,\nE             -         84.0,\nE             +         84.00000000000004,\nE             +         84.00000000000004,\nE             -         62,\nE             +         62.0,\nE             ?           ++\nE             -         62,\nE             +         62.0,\nE             ?           ++\nE                   ),\nE               ]\n\ntests/test_parquet_store.py:83: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_parquet_store.py::test_deterministic_partitioned_store_and_actual_string_count - AssertionError: assert [('leapfrog',..., 62.0, 62.0)] == [('leapfrog',...84.0, 62, 62)]\n  \n  At index 0 diff: ('leapfrog', 84.00000000000004, 84.00000000000004, 62.0, 62.0) != ('leapfrog', 84.0, 84.0, 62, 62)\n  \n  Full diff:\n    [\n        (\n            'leapfrog',\n  -         84.0,\n  -         84.0,\n  +         84.00000000000004,\n  +         84.00000000000004,\n  -         62,\n  +         62.0,\n  ?           ++\n  -         62,\n  +         62.0,\n  ?           ++\n        ),\n        (\n            'sequential',\n  -         84.0,\n  -         84.0,\n  +         84.00000000000004,\n  +         84.00000000000004,\n  -         62,\n  +         62.0,\n  ?           ++\n  -         62,\n  +         62.0,\n  ?           ++\n        ),\n    ]\n1 failed, 52 passed in 3.32s\n",
+      "pass": false,
+      "return_code": 1
+    },
+    {
+      "command": [
+        "node",
+        "--test",
+        "tests/v8-model.test.js"
+      ],
+      "cwd": ".",
+      "duration_seconds": 0.073,
+      "name": "v8",
+      "output": "TAP version 13\n# V8 regression tests passed: 13/13\n# Subtest: /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js\nok 1 - /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js\n  ---\n  duration_ms: 36.04762\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 1\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 40.550019\n",
+      "pass": true,
+      "return_code": 0
+    },
+    {
+      "command": [
+        "node",
+        "v9-sandbox/debug/run-tests.mjs"
+      ],
+      "cwd": ".",
+      "duration_seconds": 0.039,
+      "name": "v9",
+      "output": "{\n  \"schema\": \"globalgrid2050.solar-dc-debug-test-report.v1\",\n  \"generatedAt\": \"2026-07-30T01:50:49.852Z\",\n  \"passed\": 10,\n  \"failed\": 0,\n  \"results\": [\n    {\n      \"name\": \"sequential order\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"leapfrog order for 30 modules\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"custom order accepts module numbers above four\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"invalid custom order is rejected\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"MPPT allocation caps active strings at 24\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"12 MPPT by two inputs produces 24 strings\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"corrected Voc default exceeds 1500 V\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"copper resistance at 20 C\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"segment count is modules plus one\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"deterministic result excluding timestamp\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    }\n  ],\n  \"reviewQuestions\": [\n    \"Does each formula use the correct physical quantity and temperature basis?\",\n    \"Does the electrical order pass through every module exactly once?\",\n    \"Are known routes, factory leads and provisional extensions separated?\",\n    \"Are screening estimates clearly distinguished from construction quantities?\",\n    \"Which missing physical objects block trusted EMC or transient studies?\"\n  ]\n}\n",
+      "pass": true,
+      "return_code": 0
+    },
+    {
+      "command": [
+        "npm",
+        "test"
+      ],
+      "cwd": "v10-development",
+      "duration_seconds": 0.209,
+      "name": "v10-javascript",
+      "output": "\n> test\n> node --test tests/*.test.mjs\n\nTAP version 13\n# Subtest: quantity rejects unsupported units and propagates weakest provenance\nok 1 - quantity rejects unsupported units and propagates weakest provenance\n  ---\n  duration_ms: 1.376374\n  ...\n# Subtest: kernel computes geometry-derived resistance, voltage drop and power loss\nok 2 - kernel computes geometry-derived resistance, voltage drop and power loss\n  ---\n  duration_ms: 1.023257\n  ...\n# Subtest: kernel preserves uncertainty intervals through resistance and voltage drop\nok 3 - kernel preserves uncertainty intervals through resistance and voltage drop\n  ---\n  duration_ms: 0.362541\n  ...\n# Subtest: cold Voc candidate calculation is traceable and interval bounded\nok 4 - cold Voc candidate calculation is traceable and interval bounded\n  ---\n  duration_ms: 0.704031\n  ...\n# Subtest: kernel output is deterministic for identical JSON input\nok 5 - kernel output is deterministic for identical JSON input\n  ---\n  duration_ms: 1.093463\n  ...\n# Subtest: sequential order is deterministic\nok 6 - sequential order is deterministic\n  ---\n  duration_ms: 1.625126\n  ...\n# Subtest: mirrored sequential order is deterministic\nok 7 - mirrored sequential order is deterministic\n  ---\n  duration_ms: 0.163825\n  ...\n# Subtest: canonical leapfrog order is a complete permutation\nok 8 - canonical leapfrog order is a complete permutation\n  ---\n  duration_ms: 0.267579\n  ...\n# Subtest: custom order rejects duplicates and omissions\nok 9 - custom order rejects duplicates and omissions\n  ---\n  duration_ms: 0.346487\n  ...\n# Subtest: sequential path for 30 modules equals 29 pitches\nok 10 - sequential path for 30 modules equals 29 pitches\n  ---\n  duration_ms: 1.423495\n  ...\n# Subtest: canonical leapfrog path for 30 modules equals 57 pitches\nok 11 - canonical leapfrog path for 30 modules equals 57 pitches\n  ---\n  duration_ms: 0.196834\n  ...\n# Subtest: geometry output is deterministic\nok 12 - geometry output is deterministic\n  ---\n  duration_ms: 0.434419\n  ...\n1..12\n# tests 12\n# suites 0\n# pass 12\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 68.025614\n",
+      "pass": true,
+      "return_code": 0
+    }
+  ],
+  "schema_version": "globalgrid2050.v10-validation-receipt.v1"
+}
