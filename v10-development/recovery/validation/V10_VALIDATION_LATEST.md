@@ -1,7 +1,7 @@
 # V10 Validation Receipt
 
-Generated UTC: `2026-07-30T14:54:31Z`  
-Repository head: `45c75d060f465ba06f21648deb64a96a7f81c1a9`  
+Generated UTC: `2026-07-30T14:55:33Z`  
+Repository head: `3b4d6369a50a3bd53f4904257738b6638c26c66b`  
 Overall result: `FAIL`  
 Schema version: `globalgrid2050.v10-validation-receipt.v1`
 
@@ -11,7 +11,7 @@ Schema version: `globalgrid2050.v10-validation-receipt.v1`
 
 Result: `FAIL`  
 Return code: `1`  
-Duration: `4.711 s`  
+Duration: `4.905 s`  
 Working directory: `.`  
 Command:
 
@@ -22,8 +22,8 @@ Command:
 Output:
 
 ```text
-......FF...F............................................................ [ 54%]
-............................................................             [100%]
+......FF...F............................................................ [ 52%]
+................................................................         [100%]
 =================================== FAILURES ===================================
 ___ test_valid_model_requires_independent_validation_and_complete_traversal ____
 
@@ -85,14 +85,14 @@ FAILED tests/test_build023_topology_invariants.py::test_payload_and_traversal_do
  +  where False = OrderedCircuitTraversal(start_terminal_id='a:left', end_terminal_id='b:right', ordered_terminal_ids=(), ordered_connec...Y_EXCEEDED', terminal_id=None, connection_id=None),), schema_version='globalgrid2050.solar-dc.ordered-traversal.v10.1').valid
 FAILED tests/test_build023_topology_invariants.py::test_segment_reference_cannot_substitute_for_terminal_connectivity - AssertionError: assert 'SEGMENT_REFERENCE_NOT_INTERNAL' in ('CIRCUIT_VALIDATION_FAILED',)
  +  where ('CIRCUIT_VALIDATION_FAILED',) = OrderedCircuitTraversal(start_terminal_id='a:left', end_terminal_id='b:right', ordered_terminal_ids=(), ordered_connec...Y_EXCEEDED', terminal_id=None, connection_id=None),), schema_version='globalgrid2050.solar-dc.ordered-traversal.v10.1').error_codes
-3 failed, 129 passed in 4.12s
+3 failed, 133 passed in 4.34s
 ```
 
 ### v8
 
 Result: `PASS`  
 Return code: `0`  
-Duration: `0.079 s`  
+Duration: `0.075 s`  
 Working directory: `.`  
 Command:
 
@@ -108,7 +108,7 @@ TAP version 13
 # Subtest: /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js
 ok 1 - /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js
   ---
-  duration_ms: 39.557485
+  duration_ms: 36.075241
   ...
 1..1
 # tests 1
@@ -118,7 +118,7 @@ ok 1 - /home/runner/work/solar-electrical-topology-analysis-engine-text-based/so
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 44.268229
+# duration_ms 40.985632
 ```
 
 ### v9
@@ -138,7 +138,7 @@ Output:
 ```text
 {
   "schema": "globalgrid2050.solar-dc-debug-test-report.v1",
-  "generatedAt": "2026-07-30T14:54:31.134Z",
+  "generatedAt": "2026-07-30T14:55:33.521Z",
   "passed": 10,
   "failed": 0,
   "results": [
@@ -207,7 +207,7 @@ Output:
 
 Result: `PASS`  
 Return code: `0`  
-Duration: `0.237 s`  
+Duration: `0.225 s`  
 Working directory: `v10-development`  
 Command:
 
@@ -226,67 +226,67 @@ TAP version 13
 # Subtest: JavaScript matches the shared 20 C steady-state formula fixture
 ok 1 - JavaScript matches the shared 20 C steady-state formula fixture
   ---
-  duration_ms: 2.501738
+  duration_ms: 2.778122
   ...
 # Subtest: quantity rejects unsupported units and propagates weakest provenance
 ok 2 - quantity rejects unsupported units and propagates weakest provenance
   ---
-  duration_ms: 1.450704
+  duration_ms: 1.529638
   ...
 # Subtest: kernel computes geometry-derived resistance, voltage drop and power loss
 ok 3 - kernel computes geometry-derived resistance, voltage drop and power loss
   ---
-  duration_ms: 1.051013
+  duration_ms: 1.121537
   ...
 # Subtest: kernel preserves uncertainty intervals through resistance and voltage drop
 ok 4 - kernel preserves uncertainty intervals through resistance and voltage drop
   ---
-  duration_ms: 0.336517
+  duration_ms: 0.35462
   ...
 # Subtest: cold Voc candidate calculation is traceable and interval bounded
 ok 5 - cold Voc candidate calculation is traceable and interval bounded
   ---
-  duration_ms: 0.785721
+  duration_ms: 0.674776
   ...
 # Subtest: kernel output is deterministic for identical JSON input
 ok 6 - kernel output is deterministic for identical JSON input
   ---
-  duration_ms: 1.15023
+  duration_ms: 1.141414
   ...
 # Subtest: sequential order is deterministic
 ok 7 - sequential order is deterministic
   ---
-  duration_ms: 2.382392
+  duration_ms: 2.950552
   ...
 # Subtest: mirrored sequential order is deterministic
 ok 8 - mirrored sequential order is deterministic
   ---
-  duration_ms: 0.24342
+  duration_ms: 0.276354
   ...
 # Subtest: canonical leapfrog order is a complete permutation
 ok 9 - canonical leapfrog order is a complete permutation
   ---
-  duration_ms: 0.411048
+  duration_ms: 0.552438
   ...
 # Subtest: custom order rejects duplicates and omissions
 ok 10 - custom order rejects duplicates and omissions
   ---
-  duration_ms: 0.46668
+  duration_ms: 0.512955
   ...
 # Subtest: sequential path for 30 modules equals 29 pitches
 ok 11 - sequential path for 30 modules equals 29 pitches
   ---
-  duration_ms: 2.000207
+  duration_ms: 2.14898
   ...
 # Subtest: canonical leapfrog path for 30 modules equals 57 pitches
 ok 12 - canonical leapfrog path for 30 modules equals 57 pitches
   ---
-  duration_ms: 0.315747
+  duration_ms: 0.274531
   ...
 # Subtest: geometry output is deterministic
 ok 13 - geometry output is deterministic
   ---
-  duration_ms: 0.587228
+  duration_ms: 0.623791
   ...
 1..13
 # tests 13
@@ -296,7 +296,7 @@ ok 13 - geometry output is deterministic
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 88.650391
+# duration_ms 87.137727
 ```
 
 ## Gate
