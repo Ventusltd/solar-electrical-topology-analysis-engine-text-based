@@ -92,6 +92,18 @@ from .contradictions import (
     contradiction_register_payload,
     unresolved_contradictions,
 )
+from .persistence import (
+    PERSISTENCE_SCHEMA_VERSION,
+    DeterministicStore,
+    PersistedRecord,
+    build_deterministic_record_store,
+    canonical_payload_json,
+    deterministic_store_hash,
+    deterministic_store_json,
+    deterministic_store_payload,
+    persist_record,
+    read_back_store,
+)
 from .calculation_receipts import (
     CALCULATION_RECEIPT_SCHEMA_VERSION,
     COMPLETE_CIRCUIT_METHOD_VERSION,
