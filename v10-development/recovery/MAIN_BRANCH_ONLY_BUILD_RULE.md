@@ -22,6 +22,13 @@ Before each material V10 build slice:
 
 ## Restore-point register
 
+### Evidence and complete-circuit calculation
+
+Branch: `restore/2026-07-30-pre-v10-evidence-calculation-receipts`  
+Commit: `afa54a057e0aa02bd264958590dc1782c281fd7d`
+
+This restore point captures `main` immediately before evidence vocabulary reconciliation, immutable calculation receipts and validated complete-circuit resistance, voltage-drop and loss calculations were added.
+
 ### Cartridge adapter and ordered traversal
 
 Branch: `restore/2026-07-30-pre-v10-cartridge-adapter-traversal`  
@@ -40,13 +47,21 @@ This restore point captures `main` immediately before the V10 canonical circuit 
 
 Build receipt:
 
-`v10-development/recovery/BUILD_RECEIPT_003_CARTRIDGE_ADAPTER_AND_TRAVERSAL.md`
+`v10-development/recovery/BUILD_RECEIPT_004_EVIDENCE_AND_COMPLETE_CIRCUIT_CALCULATION.md`
 
 Validation receipt:
 
 `v10-development/recovery/validation/V10_VALIDATION_LATEST.md`
 
-The complete declared Python, V8, V9 and V10 JavaScript suites passed after the bounded floating-point assertion repair recorded in Build Receipt 003.
+The declared suites passed at validation source head `74bb7ba120cad98f6a7e45e4b802287d971b4d34`:
+
+```text
+Python:          61 passed
+V8:              13/13 passed
+V9:              10 passed, 0 failed
+V10 JavaScript:  13 passed, 0 failed
+Overall:         PASS
+```
 
 ## Boundaries
 
