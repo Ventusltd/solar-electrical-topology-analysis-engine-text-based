@@ -22,6 +22,21 @@ from .circuit import (
     canonical_circuit_json,
     canonical_circuit_payload,
 )
+from .circuit_adapters import (
+    CARTRIDGE_ADAPTER_VERSION,
+    adapt_segment_chain_to_circuit,
+    build_leapfrog_circuit,
+    build_sequential_circuit,
+    circuit_boundary_terminal_ids,
+    segment_chain_hash,
+    source_segment_ids,
+)
+from .circuit_traversal import (
+    TRAVERSAL_SCHEMA_VERSION,
+    OrderedCircuitTraversal,
+    TraversalIssue,
+    verify_ordered_circuit,
+)
 from .circuit_validation import (
     CircuitValidationResult,
     IssueSeverity,
@@ -83,6 +98,17 @@ __all__ = [
     "TerminalPolarity",
     "canonical_circuit_json",
     "canonical_circuit_payload",
+    "CARTRIDGE_ADAPTER_VERSION",
+    "adapt_segment_chain_to_circuit",
+    "build_leapfrog_circuit",
+    "build_sequential_circuit",
+    "circuit_boundary_terminal_ids",
+    "segment_chain_hash",
+    "source_segment_ids",
+    "TRAVERSAL_SCHEMA_VERSION",
+    "OrderedCircuitTraversal",
+    "TraversalIssue",
+    "verify_ordered_circuit",
     "CircuitValidationResult",
     "IssueSeverity",
     "ValidationIssue",
