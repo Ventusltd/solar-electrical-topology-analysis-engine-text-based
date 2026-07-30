@@ -66,6 +66,13 @@ from .diagnostic_adapters import (
     circuit_validation_diagnostics,
     coverage_for_unperformed_studies,
 )
+from .diagnostic_bridges import (
+    DIAGNOSTIC_BRIDGE_VERSION,
+    build_validation_diagnostic_report,
+    diagnostics_from_circuit_validation,
+    diagnostics_from_traversal,
+    guarded_diagnostic_call,
+)
 from .study_applicability import (
     STUDY_APPLICABILITY_SCHEMA_VERSION,
     AcceptanceCriterion,
@@ -75,6 +82,19 @@ from .study_applicability import (
     applicability_coverage,
     build_study_applicability,
     evaluate_criterion,
+)
+from .study_registry import (
+    INITIAL_STUDIES,
+    STUDY_REGISTRY_SCHEMA_VERSION,
+    StudyAssessment,
+    StudyCategory,
+    StudyDefinition,
+    StudyRegistry,
+    assess_study,
+    build_study_registry,
+    study_registry_hash,
+    study_registry_json,
+    study_registry_payload,
 )
 from .evidence import (
     EVIDENCE_SCHEMA_VERSION,
