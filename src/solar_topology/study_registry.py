@@ -221,7 +221,7 @@ INITIAL_STUDIES = (
         title="Differential loop geometry",
         method_reference="globalgrid2050.solar-dc.geometry-receipt.v10.1",
         required_input_ids=("ordered-segments",),
-        required_evidence_roles=("route-geometry", "pole-separation"),
+        required_evidence_roles=("pole-separation", "route-geometry"),
     ),
     StudyDefinition(
         study_id="ampacity-acceptance",
