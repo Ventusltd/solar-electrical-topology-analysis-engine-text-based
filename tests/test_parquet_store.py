@@ -80,10 +80,15 @@ def test_deterministic_partitioned_store_and_actual_string_count(tmp_path):
             """,
             [str(output / "aggregates" / "strings.parquet")],
         ).fetchall()
-        assert factory == [
-            ("leapfrog", 84.0, 84.0, 62, 62),
-            ("sequential", 84.0, 84.0, 62, 62),
+        assert [row[0] for row in factory] == [
+            "leapfrog",
+            "sequential",
         ]
+        for row in factory:
+            assert row[1] == pytest.approx(84.0)
+            assert row[2] == pytest.approx(84.0)
+            assert row[3] == 62
+            assert row[4] == 62
 
         result_glob = (
             output / "results" / "segments" / "**" / "*.parquet"
