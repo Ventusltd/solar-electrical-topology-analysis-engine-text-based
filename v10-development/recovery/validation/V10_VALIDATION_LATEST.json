@@ -1,6 +1,6 @@
 {
-  "generated_utc": "2026-07-30T11:09:54Z",
-  "git_sha": "649b9795e031ecea8462762e7c0dfa852c0bc414",
+  "generated_utc": "2026-07-30T11:10:47Z",
+  "git_sha": "4d5aa9bf3bf2a40a4f681922b5265598ab4d1542",
   "pass": true,
   "repository": "Ventusltd/solar-electrical-topology-analysis-engine-text-based",
   "results": [
@@ -12,9 +12,9 @@
         "-q"
       ],
       "cwd": ".",
-      "duration_seconds": 3.162,
+      "duration_seconds": 3.845,
       "name": "python",
-      "output": "........................................................................ [ 86%]\n...........                                                              [100%]\n83 passed in 2.72s\n",
+      "output": "........................................................................ [ 81%]\n................                                                         [100%]\n88 passed in 3.56s\n",
       "pass": true,
       "return_code": 0
     },
@@ -25,9 +25,9 @@
         "tests/v8-model.test.js"
       ],
       "cwd": ".",
-      "duration_seconds": 0.061,
+      "duration_seconds": 0.076,
       "name": "v8",
-      "output": "TAP version 13\n# V8 regression tests passed: 13/13\n# Subtest: /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js\nok 1 - /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js\n  ---\n  duration_ms: 31.890319\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 1\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 35.416951\n",
+      "output": "TAP version 13\n# V8 regression tests passed: 13/13\n# Subtest: /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js\nok 1 - /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js\n  ---\n  duration_ms: 38.012867\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 1\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 42.54959\n",
       "pass": true,
       "return_code": 0
     },
@@ -37,9 +37,9 @@
         "v9-sandbox/debug/run-tests.mjs"
       ],
       "cwd": ".",
-      "duration_seconds": 0.033,
+      "duration_seconds": 0.04,
       "name": "v9",
-      "output": "{\n  \"schema\": \"globalgrid2050.solar-dc-debug-test-report.v1\",\n  \"generatedAt\": \"2026-07-30T11:09:54.414Z\",\n  \"passed\": 10,\n  \"failed\": 0,\n  \"results\": [\n    {\n      \"name\": \"sequential order\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"leapfrog order for 30 modules\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"custom order accepts module numbers above four\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"invalid custom order is rejected\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"MPPT allocation caps active strings at 24\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"12 MPPT by two inputs produces 24 strings\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"corrected Voc default exceeds 1500 V\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"copper resistance at 20 C\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"segment count is modules plus one\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"deterministic result excluding timestamp\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    }\n  ],\n  \"reviewQuestions\": [\n    \"Does each formula use the correct physical quantity and temperature basis?\",\n    \"Does the electrical order pass through every module exactly once?\",\n    \"Are known routes, factory leads and provisional extensions separated?\",\n    \"Are screening estimates clearly distinguished from construction quantities?\",\n    \"Which missing physical objects block trusted EMC or transient studies?\"\n  ]\n}\n",
+      "output": "{\n  \"schema\": \"globalgrid2050.solar-dc-debug-test-report.v1\",\n  \"generatedAt\": \"2026-07-30T11:10:47.356Z\",\n  \"passed\": 10,\n  \"failed\": 0,\n  \"results\": [\n    {\n      \"name\": \"sequential order\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"leapfrog order for 30 modules\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"custom order accepts module numbers above four\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"invalid custom order is rejected\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"MPPT allocation caps active strings at 24\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"12 MPPT by two inputs produces 24 strings\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"corrected Voc default exceeds 1500 V\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"copper resistance at 20 C\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"segment count is modules plus one\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"deterministic result excluding timestamp\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    }\n  ],\n  \"reviewQuestions\": [\n    \"Does each formula use the correct physical quantity and temperature basis?\",\n    \"Does the electrical order pass through every module exactly once?\",\n    \"Are known routes, factory leads and provisional extensions separated?\",\n    \"Are screening estimates clearly distinguished from construction quantities?\",\n    \"Which missing physical objects block trusted EMC or transient studies?\"\n  ]\n}\n",
       "pass": true,
       "return_code": 0
     },
@@ -49,9 +49,9 @@
         "test"
       ],
       "cwd": "v10-development",
-      "duration_seconds": 0.177,
+      "duration_seconds": 0.225,
       "name": "v10-javascript",
-      "output": "\n> test\n> node --test tests/*.test.mjs\n\nTAP version 13\n# Subtest: JavaScript matches the shared 20 C steady-state formula fixture\nok 1 - JavaScript matches the shared 20 C steady-state formula fixture\n  ---\n  duration_ms: 1.99079\n  ...\n# Subtest: quantity rejects unsupported units and propagates weakest provenance\nok 2 - quantity rejects unsupported units and propagates weakest provenance\n  ---\n  duration_ms: 1.164577\n  ...\n# Subtest: kernel computes geometry-derived resistance, voltage drop and power loss\nok 3 - kernel computes geometry-derived resistance, voltage drop and power loss\n  ---\n  duration_ms: 0.840442\n  ...\n# Subtest: kernel preserves uncertainty intervals through resistance and voltage drop\nok 4 - kernel preserves uncertainty intervals through resistance and voltage drop\n  ---\n  duration_ms: 0.263029\n  ...\n# Subtest: cold Voc candidate calculation is traceable and interval bounded\nok 5 - cold Voc candidate calculation is traceable and interval bounded\n  ---\n  duration_ms: 0.492625\n  ...\n# Subtest: kernel output is deterministic for identical JSON input\nok 6 - kernel output is deterministic for identical JSON input\n  ---\n  duration_ms: 0.892072\n  ...\n# Subtest: sequential order is deterministic\nok 7 - sequential order is deterministic\n  ---\n  duration_ms: 2.235021\n  ...\n# Subtest: mirrored sequential order is deterministic\nok 8 - mirrored sequential order is deterministic\n  ---\n  duration_ms: 0.205257\n  ...\n# Subtest: canonical leapfrog order is a complete permutation\nok 9 - canonical leapfrog order is a complete permutation\n  ---\n  duration_ms: 0.20416\n  ...\n# Subtest: custom order rejects duplicates and omissions\nok 10 - custom order rejects duplicates and omissions\n  ---\n  duration_ms: 0.240836\n  ...\n# Subtest: sequential path for 30 modules equals 29 pitches\nok 11 - sequential path for 30 modules equals 29 pitches\n  ---\n  duration_ms: 1.265835\n  ...\n# Subtest: canonical leapfrog path for 30 modules equals 57 pitches\nok 12 - canonical leapfrog path for 30 modules equals 57 pitches\n  ---\n  duration_ms: 0.163127\n  ...\n# Subtest: geometry output is deterministic\nok 13 - geometry output is deterministic\n  ---\n  duration_ms: 0.304414\n  ...\n1..13\n# tests 13\n# suites 0\n# pass 13\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 67.082069\n",
+      "output": "\n> test\n> node --test tests/*.test.mjs\n\nTAP version 13\n# Subtest: JavaScript matches the shared 20 C steady-state formula fixture\nok 1 - JavaScript matches the shared 20 C steady-state formula fixture\n  ---\n  duration_ms: 2.506253\n  ...\n# Subtest: quantity rejects unsupported units and propagates weakest provenance\nok 2 - quantity rejects unsupported units and propagates weakest provenance\n  ---\n  duration_ms: 1.483913\n  ...\n# Subtest: kernel computes geometry-derived resistance, voltage drop and power loss\nok 3 - kernel computes geometry-derived resistance, voltage drop and power loss\n  ---\n  duration_ms: 1.044383\n  ...\n# Subtest: kernel preserves uncertainty intervals through resistance and voltage drop\nok 4 - kernel preserves uncertainty intervals through resistance and voltage drop\n  ---\n  duration_ms: 0.371028\n  ...\n# Subtest: cold Voc candidate calculation is traceable and interval bounded\nok 5 - cold Voc candidate calculation is traceable and interval bounded\n  ---\n  duration_ms: 0.732783\n  ...\n# Subtest: kernel output is deterministic for identical JSON input\nok 6 - kernel output is deterministic for identical JSON input\n  ---\n  duration_ms: 1.158141\n  ...\n# Subtest: sequential order is deterministic\nok 7 - sequential order is deterministic\n  ---\n  duration_ms: 2.580893\n  ...\n# Subtest: mirrored sequential order is deterministic\nok 8 - mirrored sequential order is deterministic\n  ---\n  duration_ms: 0.292812\n  ...\n# Subtest: canonical leapfrog order is a complete permutation\nok 9 - canonical leapfrog order is a complete permutation\n  ---\n  duration_ms: 0.399901\n  ...\n# Subtest: custom order rejects duplicates and omissions\nok 10 - custom order rejects duplicates and omissions\n  ---\n  duration_ms: 0.490144\n  ...\n# Subtest: sequential path for 30 modules equals 29 pitches\nok 11 - sequential path for 30 modules equals 29 pitches\n  ---\n  duration_ms: 2.228863\n  ...\n# Subtest: canonical leapfrog path for 30 modules equals 57 pitches\nok 12 - canonical leapfrog path for 30 modules equals 57 pitches\n  ---\n  duration_ms: 0.297559\n  ...\n# Subtest: geometry output is deterministic\nok 13 - geometry output is deterministic\n  ---\n  duration_ms: 0.464196\n  ...\n1..13\n# tests 13\n# suites 0\n# pass 13\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 85.789469\n",
       "pass": true,
       "return_code": 0
     }
