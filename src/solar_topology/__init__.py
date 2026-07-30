@@ -1,5 +1,13 @@
 """Solar electrical topology physics, cartridges and fleet data core."""
 
+from .public_api import (
+    PUBLIC_API_SCHEMA_VERSION,
+    ApiStatus,
+    PUBLIC_API_CLASSIFICATION,
+    build_public_api_inventory,
+    explicitly_classified_public_names,
+    public_api_status,
+)
 from .cartridges import (
     INITIAL_CARTRIDGES,
     LeapfrogCartridge,
