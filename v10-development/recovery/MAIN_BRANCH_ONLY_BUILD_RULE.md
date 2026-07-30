@@ -22,6 +22,13 @@ Before each material V10 build slice:
 
 ## Restore-point register
 
+### Uncertainty and operating state
+
+Branch: `restore/2026-07-30-pre-v10-uncertainty-operating-state`  
+Commit: `074c5743f82b867f05abb46927e8facdc5fbb84a`
+
+This restore point captures `main` immediately before conservative interval uncertainty propagation, immutable current and string-Vmp operating-state inputs, voltage-drop percentage and deterministic uncertainty receipts were added.
+
 ### Evidence and complete-circuit calculation
 
 Branch: `restore/2026-07-30-pre-v10-evidence-calculation-receipts`  
@@ -47,16 +54,16 @@ This restore point captures `main` immediately before the V10 canonical circuit 
 
 Build receipt:
 
-`v10-development/recovery/BUILD_RECEIPT_004_EVIDENCE_AND_COMPLETE_CIRCUIT_CALCULATION.md`
+`v10-development/recovery/BUILD_RECEIPT_005_UNCERTAINTY_AND_OPERATING_STATE.md`
 
 Validation receipt:
 
 `v10-development/recovery/validation/V10_VALIDATION_LATEST.md`
 
-The declared suites passed at validation source head `74bb7ba120cad98f6a7e45e4b802287d971b4d34`:
+The declared suites passed at validation source head `80057fe4bdfbbafc97ee6fa3cf8082f9e02ae598`:
 
 ```text
-Python:          61 passed
+Python:          66 passed
 V8:              13/13 passed
 V9:              10 passed, 0 failed
 V10 JavaScript:  13 passed, 0 failed
