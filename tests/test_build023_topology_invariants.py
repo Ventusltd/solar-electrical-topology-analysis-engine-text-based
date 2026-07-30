@@ -20,6 +20,7 @@ def _terminal(object_id: str, suffix: str, polarity: TerminalPolarity) -> Termin
         terminal_id=f"{object_id}:{suffix}",
         object_id=object_id,
         polarity=polarity,
+        max_connections=2,
         evidence_class=EvidenceClass.USER_CREATED,
     )
 
