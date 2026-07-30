@@ -8,6 +8,7 @@ on:
     paths:
       - "src/solar_topology/**"
       - "tests/**"
+      - "scripts/run_v10_validation.py"
       - "v8-leapfrog/**"
       - "v9-sandbox/debug/**"
       - "v10-development/src/**"
@@ -16,7 +17,7 @@ on:
       - ".github/workflows/v10-validation.yml"
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: v10-engine-validation
@@ -30,6 +31,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
@@ -42,20 +45,43 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e ".[test]"
 
-      - name: Run complete Python suite
-        run: python -m pytest -q
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Run V8 regression suite
-        run: node --test tests/v8-model.test.js
+      - name: Run all declared suites and write receipts
+        id: validation
+        continue-on-error: true
+        run: python scripts/run_v10_validation.py
 
-      - name: Run V9 deterministic engine suite
-        run: node v9-sandbox/debug/run-tests.mjs
+      - name: Commit paired validation receipts
+        if: always()
+        run: |
+          git config user.name "GridBot"
+          git config user.email "gridbot@users.noreply.github.com"
+          git add \
+            v10-development/recovery/validation/V10_VALIDATION_LATEST.md \
+            v10-development/recovery/validation/V10_VALIDATION_LATEST.json
+          if git diff --cached --quiet; then
+            echo "Validation receipts are unchanged"
+          else
+            git commit -m "test: record V10 validation receipt"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
 
-      - name: Run V10 JavaScript suite
-        working-directory: v10-development
-        run: npm test
+      - name: Enforce validation gate
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("v10-development/recovery/validation/V10_VALIDATION_LATEST.json")
+          payload = json.loads(path.read_text(encoding="utf-8"))
+          if not payload["pass"]:
+              failed = [item["name"] for item in payload["results"] if not item["pass"]]
+              raise SystemExit("V10 validation failed: " + ", ".join(failed))
+          print("V10 validation passed")
+          PY
