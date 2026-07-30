@@ -1,8 +1,8 @@
 """Canonical classification manifest for the package-level public API.
 
-The manifest is deliberately declarative.  It makes package exports reviewable
-without importing optional implementation modules and gives tests a stable
-contract against accidental export drift.
+The manifest makes package exports reviewable and gives tests a stable contract
+against accidental export drift. Symbols not yet explicitly adjudicated remain
+PROVISIONAL rather than silently becoming canonical.
 """
 
 from __future__ import annotations
@@ -84,53 +84,7 @@ PUBLIC_API_CLASSIFICATION: dict[ApiStatus, tuple[str, ...]] = {
         "validated_circuit_hash",
         "verify_ordered_circuit",
     ),
-    ApiStatus.PROVISIONAL: (
-        "AcceptanceCriterion",
-        "CanonicalIdentifier",
-        "Claim",
-        "Contradiction",
-        "ContradictionRegister",
-        "ContradictionSeverity",
-        "ContradictionStatus",
-        "CriterionOperator",
-        "Diagnostic",
-        "DiagnosticCategory",
-        "DiagnosticReport",
-        "DiagnosticSeverity",
-        "EngineeringEvidenceRegister",
-        "EntityLevel",
-        "EvidenceMaturity",
-        "EvidenceRegisterEntry",
-        "EvidenceSource",
-        "PersistedRecord",
-        "PublicationDecision",
-        "PublicationPermission",
-        "PublicTopologyManifest",
-        "PublicTopologyRecord",
-        "RequirementStatus",
-        "RightsStatus",
-        "StudyApplicability",
-        "StudyAssessment",
-        "StudyCategory",
-        "StudyCoverage",
-        "StudyDefinition",
-        "StudyKind",
-        "StudyRegistry",
-        "StudyState",
-        "build_contradiction_register",
-        "build_diagnostic_report",
-        "build_evidence_register",
-        "build_public_topology_manifest",
-        "build_study_applicability",
-        "build_study_registry",
-        "evaluate_criterion",
-        "public_topology_hash",
-        "public_topology_json",
-        "public_topology_payload",
-        "study_registry_hash",
-        "study_registry_json",
-        "study_registry_payload",
-    ),
+    ApiStatus.PROVISIONAL: (),
     ApiStatus.COMPATIBILITY: (
         "EXTERNAL_STRING_6MM2",
         "FACTORY_LEAD_4MM2",
@@ -150,8 +104,8 @@ PUBLIC_API_CLASSIFICATION: dict[ApiStatus, tuple[str, ...]] = {
 }
 
 
-def classified_public_names() -> tuple[str, ...]:
-    """Return all classified names in deterministic sorted order."""
+def explicitly_classified_public_names() -> tuple[str, ...]:
+    """Return explicitly adjudicated names in deterministic order."""
 
     names = [name for group in PUBLIC_API_CLASSIFICATION.values() for name in group]
     if len(names) != len(set(names)):
@@ -159,10 +113,21 @@ def classified_public_names() -> tuple[str, ...]:
     return tuple(sorted(names))
 
 
-def public_api_status(name: str) -> ApiStatus | None:
-    """Return the declared status for one package-level symbol."""
+def public_api_status(name: str) -> ApiStatus:
+    """Return status for a package symbol; unknown names remain provisional."""
 
     for status, names in PUBLIC_API_CLASSIFICATION.items():
         if name in names:
             return status
-    return None
+    return ApiStatus.PROVISIONAL
+
+
+def build_public_api_inventory(
+    exported_names: tuple[str, ...] | list[str],
+) -> tuple[tuple[str, ApiStatus], ...]:
+    """Build a deterministic total inventory for supplied package exports."""
+
+    names = tuple(exported_names)
+    if len(names) != len(set(names)):
+        raise ValueError("package exports contain duplicate symbols")
+    return tuple((name, public_api_status(name)) for name in sorted(names))
