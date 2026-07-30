@@ -79,6 +79,19 @@ from .public_topology import (
     public_topology_json,
     public_topology_payload,
 )
+from .contradictions import (
+    CONTRADICTION_SCHEMA_VERSION,
+    Claim,
+    Contradiction,
+    ContradictionRegister,
+    ContradictionSeverity,
+    ContradictionStatus,
+    build_contradiction_register,
+    contradiction_register_hash,
+    contradiction_register_json,
+    contradiction_register_payload,
+    unresolved_contradictions,
+)
 from .calculation_receipts import (
     CALCULATION_RECEIPT_SCHEMA_VERSION,
     COMPLETE_CIRCUIT_METHOD_VERSION,
