@@ -1,7 +1,7 @@
 # V10 Validation Receipt
 
-Generated UTC: `2026-07-30T11:41:58Z`  
-Repository head: `b2888f6905f2c78359dd7f694f77b615a444ded8`  
+Generated UTC: `2026-07-30T11:43:01Z`  
+Repository head: `8042af733377470392349a3e67ef620f9c8a0b1c`  
 Overall result: `PASS`  
 Schema version: `globalgrid2050.v10-validation-receipt.v1`
 
@@ -11,7 +11,7 @@ Schema version: `globalgrid2050.v10-validation-receipt.v1`
 
 Result: `PASS`  
 Return code: `0`  
-Duration: `4.395 s`  
+Duration: `3.081 s`  
 Working directory: `.`  
 Command:
 
@@ -24,14 +24,14 @@ Output:
 ```text
 ........................................................................ [ 72%]
 ...........................                                              [100%]
-99 passed in 4.12s
+99 passed in 2.25s
 ```
 
 ### v8
 
 Result: `PASS`  
 Return code: `0`  
-Duration: `0.073 s`  
+Duration: `0.046 s`  
 Working directory: `.`  
 Command:
 
@@ -47,7 +47,7 @@ TAP version 13
 # Subtest: /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js
 ok 1 - /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js
   ---
-  duration_ms: 37.244252
+  duration_ms: 23.534496
   ...
 1..1
 # tests 1
@@ -57,14 +57,14 @@ ok 1 - /home/runner/work/solar-electrical-topology-analysis-engine-text-based/so
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 42.093861
+# duration_ms 26.048544
 ```
 
 ### v9
 
 Result: `PASS`  
 Return code: `0`  
-Duration: `0.039 s`  
+Duration: `0.025 s`  
 Working directory: `.`  
 Command:
 
@@ -77,7 +77,7 @@ Output:
 ```text
 {
   "schema": "globalgrid2050.solar-dc-debug-test-report.v1",
-  "generatedAt": "2026-07-30T11:41:58.410Z",
+  "generatedAt": "2026-07-30T11:43:01.115Z",
   "passed": 10,
   "failed": 0,
   "results": [
@@ -146,7 +146,7 @@ Output:
 
 Result: `PASS`  
 Return code: `0`  
-Duration: `0.223 s`  
+Duration: `0.137 s`  
 Working directory: `v10-development`  
 Command:
 
@@ -165,67 +165,67 @@ TAP version 13
 # Subtest: JavaScript matches the shared 20 C steady-state formula fixture
 ok 1 - JavaScript matches the shared 20 C steady-state formula fixture
   ---
-  duration_ms: 2.740152
+  duration_ms: 1.308427
   ...
 # Subtest: quantity rejects unsupported units and propagates weakest provenance
 ok 2 - quantity rejects unsupported units and propagates weakest provenance
   ---
-  duration_ms: 1.566703
+  duration_ms: 0.841178
   ...
 # Subtest: kernel computes geometry-derived resistance, voltage drop and power loss
 ok 3 - kernel computes geometry-derived resistance, voltage drop and power loss
   ---
-  duration_ms: 1.10428
+  duration_ms: 0.575765
   ...
 # Subtest: kernel preserves uncertainty intervals through resistance and voltage drop
 ok 4 - kernel preserves uncertainty intervals through resistance and voltage drop
   ---
-  duration_ms: 0.390819
+  duration_ms: 0.18415
   ...
 # Subtest: cold Voc candidate calculation is traceable and interval bounded
 ok 5 - cold Voc candidate calculation is traceable and interval bounded
   ---
-  duration_ms: 0.726867
+  duration_ms: 0.409952
   ...
 # Subtest: kernel output is deterministic for identical JSON input
 ok 6 - kernel output is deterministic for identical JSON input
   ---
-  duration_ms: 1.134807
+  duration_ms: 0.623797
   ...
 # Subtest: sequential order is deterministic
 ok 7 - sequential order is deterministic
   ---
-  duration_ms: 3.2479
+  duration_ms: 1.443112
   ...
 # Subtest: mirrored sequential order is deterministic
 ok 8 - mirrored sequential order is deterministic
   ---
-  duration_ms: 0.252752
+  duration_ms: 0.138621
   ...
 # Subtest: canonical leapfrog order is a complete permutation
 ok 9 - canonical leapfrog order is a complete permutation
   ---
-  duration_ms: 0.413642
+  duration_ms: 0.205181
   ...
 # Subtest: custom order rejects duplicates and omissions
 ok 10 - custom order rejects duplicates and omissions
   ---
-  duration_ms: 0.515722
+  duration_ms: 0.304702
   ...
 # Subtest: sequential path for 30 modules equals 29 pitches
 ok 11 - sequential path for 30 modules equals 29 pitches
   ---
-  duration_ms: 2.217658
+  duration_ms: 1.157178
   ...
 # Subtest: canonical leapfrog path for 30 modules equals 57 pitches
 ok 12 - canonical leapfrog path for 30 modules equals 57 pitches
   ---
-  duration_ms: 0.333803
+  duration_ms: 0.154284
   ...
 # Subtest: geometry output is deterministic
 ok 13 - geometry output is deterministic
   ---
-  duration_ms: 0.671202
+  duration_ms: 0.36225
   ...
 1..13
 # tests 13
@@ -235,7 +235,7 @@ ok 13 - geometry output is deterministic
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 85.495712
+# duration_ms 49.198316
 ```
 
 ## Gate
