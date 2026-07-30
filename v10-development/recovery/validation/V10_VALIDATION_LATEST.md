@@ -1,7 +1,7 @@
 # V10 Validation Receipt
 
-Generated UTC: `2026-07-30T13:22:53Z`  
-Repository head: `128afb4e322100aaa1186dbf1d8544430a829e34`  
+Generated UTC: `2026-07-30T13:24:06Z`  
+Repository head: `f3fd2b7974caa5d0c0efcd1e95994b487d68a6b8`  
 Overall result: `FAIL`  
 Schema version: `globalgrid2050.v10-validation-receipt.v1`
 
@@ -11,7 +11,7 @@ Schema version: `globalgrid2050.v10-validation-receipt.v1`
 
 Result: `FAIL`  
 Return code: `2`  
-Duration: `1.059 s`  
+Duration: `0.953 s`  
 Working directory: `.`  
 Command:
 
@@ -24,9 +24,167 @@ Output:
 ```text
 
 ==================================== ERRORS ====================================
+_________________ ERROR collecting tests/test_batch_011_013.py _________________
+tests/test_batch_011_013.py:6: in <module>
+    from solar_topology.cartridges import SequentialCartridge
+src/solar_topology/__init__.py:86: in <module>
+    from .study_registry import (
+src/solar_topology/study_registry.py:218: in <module>
+    StudyDefinition(
+<string>:11: in __init__
+    ???
+src/solar_topology/study_registry.py:50: in __post_init__
+    raise ValueError("required_evidence_roles must be unique and sorted")
+E   ValueError: required_evidence_roles must be unique and sorted
+_____________ ERROR collecting tests/test_circuit_calculations.py ______________
+tests/test_circuit_calculations.py:8: in <module>
+    from solar_topology.calculation_receipts import (
+src/solar_topology/__init__.py:86: in <module>
+    from .study_registry import (
+src/solar_topology/study_registry.py:218: in <module>
+    StudyDefinition(
+<string>:11: in __init__
+    ???
+src/solar_topology/study_registry.py:50: in __post_init__
+    raise ValueError("required_evidence_roles must be unique and sorted")
+E   ValueError: required_evidence_roles must be unique and sorted
+________________ ERROR collecting tests/test_contradictions.py _________________
+tests/test_contradictions.py:3: in <module>
+    from solar_topology.contradictions import (
+src/solar_topology/__init__.py:86: in <module>
+    from .study_registry import (
+src/solar_topology/study_registry.py:218: in <module>
+    StudyDefinition(
+<string>:11: in __init__
+    ???
+src/solar_topology/study_registry.py:50: in __post_init__
+    raise ValueError("required_evidence_roles must be unique and sorted")
+E   ValueError: required_evidence_roles must be unique and sorted
+_____________ ERROR collecting tests/test_diagnostic_public_api.py _____________
+tests/test_diagnostic_public_api.py:1: in <module>
+    import solar_topology as api
+src/solar_topology/__init__.py:86: in <module>
+    from .study_registry import (
+src/solar_topology/study_registry.py:218: in <module>
+    StudyDefinition(
+<string>:11: in __init__
+    ???
+src/solar_topology/study_registry.py:50: in __post_init__
+    raise ValueError("required_evidence_roles must be unique and sorted")
+E   ValueError: required_evidence_roles must be unique and sorted
 ____________ ERROR collecting tests/test_diagnostics_and_studies.py ____________
 tests/test_diagnostics_and_studies.py:26: in <module>
     from solar_topology.study_registry import (
+src/solar_topology/__init__.py:86: in <module>
+    from .study_registry import (
+src/solar_topology/study_registry.py:218: in <module>
+    StudyDefinition(
+<string>:11: in __init__
+    ???
+src/solar_topology/study_registry.py:50: in __post_init__
+    raise ValueError("required_evidence_roles must be unique and sorted")
+E   ValueError: required_evidence_roles must be unique and sorted
+_______________ ERROR collecting tests/test_evidence_boundary.py _______________
+tests/test_evidence_boundary.py:4: in <module>
+    from solar_topology.evidence import canonical_evidence_descriptor
+src/solar_topology/__init__.py:86: in <module>
+    from .study_registry import (
+src/solar_topology/study_registry.py:218: in <module>
+    StudyDefinition(
+<string>:11: in __init__
+    ???
+src/solar_topology/study_registry.py:50: in __post_init__
+    raise ValueError("required_evidence_roles must be unique and sorted")
+E   ValueError: required_evidence_roles must be unique and sorted
+___________________ ERROR collecting tests/test_formulas.py ____________________
+tests/test_formulas.py:6: in <module>
+    import solar_topology.formulas as formulas
+src/solar_topology/__init__.py:86: in <module>
+    from .study_registry import (
+src/solar_topology/study_registry.py:218: in <module>
+    StudyDefinition(
+<string>:11: in __init__
+    ???
+src/solar_topology/study_registry.py:50: in __post_init__
+    raise ValueError("required_evidence_roles must be unique and sorted")
+E   ValueError: required_evidence_roles must be unique and sorted
+__________________ ERROR collecting tests/test_identifiers.py __________________
+tests/test_identifiers.py:3: in <module>
+    from solar_topology.identifiers import (
+src/solar_topology/__init__.py:86: in <module>
+    from .study_registry import (
+src/solar_topology/study_registry.py:218: in <module>
+    StudyDefinition(
+<string>:11: in __init__
+    ???
+src/solar_topology/study_registry.py:50: in __post_init__
+    raise ValueError("required_evidence_roles must be unique and sorted")
+E   ValueError: required_evidence_roles must be unique and sorted
+_________________ ERROR collecting tests/test_parquet_store.py _________________
+tests/test_parquet_store.py:7: in <module>
+    from solar_topology.fleet_store import (
+src/solar_topology/__init__.py:86: in <module>
+    from .study_registry import (
+src/solar_topology/study_registry.py:218: in <module>
+    StudyDefinition(
+<string>:11: in __init__
+    ???
+src/solar_topology/study_registry.py:50: in __post_init__
+    raise ValueError("required_evidence_roles must be unique and sorted")
+E   ValueError: required_evidence_roles must be unique and sorted
+__________________ ERROR collecting tests/test_persistence.py __________________
+tests/test_persistence.py:5: in <module>
+    from solar_topology.persistence import (
+src/solar_topology/__init__.py:86: in <module>
+    from .study_registry import (
+src/solar_topology/study_registry.py:218: in <module>
+    StudyDefinition(
+<string>:11: in __init__
+    ???
+src/solar_topology/study_registry.py:50: in __post_init__
+    raise ValueError("required_evidence_roles must be unique and sorted")
+E   ValueError: required_evidence_roles must be unique and sorted
+________________ ERROR collecting tests/test_public_topology.py ________________
+tests/test_public_topology.py:4: in <module>
+    from solar_topology.evidence import VerificationState, canonical_evidence_descriptor
+src/solar_topology/__init__.py:86: in <module>
+    from .study_registry import (
+src/solar_topology/study_registry.py:218: in <module>
+    StudyDefinition(
+<string>:11: in __init__
+    ???
+src/solar_topology/study_registry.py:50: in __post_init__
+    raise ValueError("required_evidence_roles must be unique and sorted")
+E   ValueError: required_evidence_roles must be unique and sorted
+___________________ ERROR collecting tests/test_topology.py ____________________
+tests/test_topology.py:5: in <module>
+    from solar_topology.topology import (
+src/solar_topology/__init__.py:86: in <module>
+    from .study_registry import (
+src/solar_topology/study_registry.py:218: in <module>
+    StudyDefinition(
+<string>:11: in __init__
+    ???
+src/solar_topology/study_registry.py:50: in __post_init__
+    raise ValueError("required_evidence_roles must be unique and sorted")
+E   ValueError: required_evidence_roles must be unique and sorted
+__________________ ERROR collecting tests/test_uncertainty.py __________________
+tests/test_uncertainty.py:13: in <module>
+    from solar_topology.evidence import (
+src/solar_topology/__init__.py:86: in <module>
+    from .study_registry import (
+src/solar_topology/study_registry.py:218: in <module>
+    StudyDefinition(
+<string>:11: in __init__
+    ???
+src/solar_topology/study_registry.py:50: in __post_init__
+    raise ValueError("required_evidence_roles must be unique and sorted")
+E   ValueError: required_evidence_roles must be unique and sorted
+________________ ERROR collecting tests/test_v10_public_api.py _________________
+tests/test_v10_public_api.py:1: in <module>
+    import solar_topology as engine
+src/solar_topology/__init__.py:86: in <module>
+    from .study_registry import (
 src/solar_topology/study_registry.py:218: in <module>
     StudyDefinition(
 <string>:11: in __init__
@@ -35,16 +193,29 @@ src/solar_topology/study_registry.py:50: in __post_init__
     raise ValueError("required_evidence_roles must be unique and sorted")
 E   ValueError: required_evidence_roles must be unique and sorted
 =========================== short test summary info ============================
+ERROR tests/test_batch_011_013.py - ValueError: required_evidence_roles must be unique and sorted
+ERROR tests/test_circuit_calculations.py - ValueError: required_evidence_roles must be unique and sorted
+ERROR tests/test_contradictions.py - ValueError: required_evidence_roles must be unique and sorted
+ERROR tests/test_diagnostic_public_api.py - ValueError: required_evidence_roles must be unique and sorted
 ERROR tests/test_diagnostics_and_studies.py - ValueError: required_evidence_roles must be unique and sorted
-!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
-1 error in 0.75s
+ERROR tests/test_evidence_boundary.py - ValueError: required_evidence_roles must be unique and sorted
+ERROR tests/test_formulas.py - ValueError: required_evidence_roles must be unique and sorted
+ERROR tests/test_identifiers.py - ValueError: required_evidence_roles must be unique and sorted
+ERROR tests/test_parquet_store.py - ValueError: required_evidence_roles must be unique and sorted
+ERROR tests/test_persistence.py - ValueError: required_evidence_roles must be unique and sorted
+ERROR tests/test_public_topology.py - ValueError: required_evidence_roles must be unique and sorted
+ERROR tests/test_topology.py - ValueError: required_evidence_roles must be unique and sorted
+ERROR tests/test_uncertainty.py - ValueError: required_evidence_roles must be unique and sorted
+ERROR tests/test_v10_public_api.py - ValueError: required_evidence_roles must be unique and sorted
+!!!!!!!!!!!!!!!!!!! Interrupted: 14 errors during collection !!!!!!!!!!!!!!!!!!!
+14 errors in 0.49s
 ```
 
 ### v8
 
 Result: `PASS`  
 Return code: `0`  
-Duration: `0.076 s`  
+Duration: `0.072 s`  
 Working directory: `.`  
 Command:
 
@@ -60,7 +231,7 @@ TAP version 13
 # Subtest: /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js
 ok 1 - /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js
   ---
-  duration_ms: 37.900468
+  duration_ms: 35.01603
   ...
 1..1
 # tests 1
@@ -70,14 +241,14 @@ ok 1 - /home/runner/work/solar-electrical-topology-analysis-engine-text-based/so
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 42.460594
+# duration_ms 39.898939
 ```
 
 ### v9
 
 Result: `PASS`  
 Return code: `0`  
-Duration: `0.041 s`  
+Duration: `0.04 s`  
 Working directory: `.`  
 Command:
 
@@ -90,7 +261,7 @@ Output:
 ```text
 {
   "schema": "globalgrid2050.solar-dc-debug-test-report.v1",
-  "generatedAt": "2026-07-30T13:22:53.005Z",
+  "generatedAt": "2026-07-30T13:24:06.668Z",
   "passed": 10,
   "failed": 0,
   "results": [
@@ -159,7 +330,7 @@ Output:
 
 Result: `PASS`  
 Return code: `0`  
-Duration: `0.228 s`  
+Duration: `0.23 s`  
 Working directory: `v10-development`  
 Command:
 
@@ -178,67 +349,67 @@ TAP version 13
 # Subtest: JavaScript matches the shared 20 C steady-state formula fixture
 ok 1 - JavaScript matches the shared 20 C steady-state formula fixture
   ---
-  duration_ms: 2.451261
+  duration_ms: 2.817903
   ...
 # Subtest: quantity rejects unsupported units and propagates weakest provenance
 ok 2 - quantity rejects unsupported units and propagates weakest provenance
   ---
-  duration_ms: 1.486712
+  duration_ms: 1.513949
   ...
 # Subtest: kernel computes geometry-derived resistance, voltage drop and power loss
 ok 3 - kernel computes geometry-derived resistance, voltage drop and power loss
   ---
-  duration_ms: 1.010938
+  duration_ms: 1.215478
   ...
 # Subtest: kernel preserves uncertainty intervals through resistance and voltage drop
 ok 4 - kernel preserves uncertainty intervals through resistance and voltage drop
   ---
-  duration_ms: 0.328536
+  duration_ms: 0.340952
   ...
 # Subtest: cold Voc candidate calculation is traceable and interval bounded
 ok 5 - cold Voc candidate calculation is traceable and interval bounded
   ---
-  duration_ms: 0.718645
+  duration_ms: 0.737779
   ...
 # Subtest: kernel output is deterministic for identical JSON input
 ok 6 - kernel output is deterministic for identical JSON input
   ---
-  duration_ms: 1.103285
+  duration_ms: 1.097285
   ...
 # Subtest: sequential order is deterministic
 ok 7 - sequential order is deterministic
   ---
-  duration_ms: 2.411122
+  duration_ms: 3.358149
   ...
 # Subtest: mirrored sequential order is deterministic
 ok 8 - mirrored sequential order is deterministic
   ---
-  duration_ms: 0.253195
+  duration_ms: 0.28691
   ...
 # Subtest: canonical leapfrog order is a complete permutation
 ok 9 - canonical leapfrog order is a complete permutation
   ---
-  duration_ms: 0.403658
+  duration_ms: 0.410993
   ...
 # Subtest: custom order rejects duplicates and omissions
 ok 10 - custom order rejects duplicates and omissions
   ---
-  duration_ms: 0.441894
+  duration_ms: 0.545326
   ...
 # Subtest: sequential path for 30 modules equals 29 pitches
 ok 11 - sequential path for 30 modules equals 29 pitches
   ---
-  duration_ms: 2.620823
+  duration_ms: 1.95584
   ...
 # Subtest: canonical leapfrog path for 30 modules equals 57 pitches
 ok 12 - canonical leapfrog path for 30 modules equals 57 pitches
   ---
-  duration_ms: 0.396878
+  duration_ms: 0.277121
   ...
 # Subtest: geometry output is deterministic
 ok 13 - geometry output is deterministic
   ---
-  duration_ms: 0.574792
+  duration_ms: 0.651356
   ...
 1..13
 # tests 13
@@ -248,7 +419,7 @@ ok 13 - geometry output is deterministic
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 84.242748
+# duration_ms 90.345666
 ```
 
 ## Gate
