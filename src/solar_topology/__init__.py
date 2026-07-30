@@ -70,6 +70,15 @@ from .identifiers import (
     project_id,
     require_unique_identifiers,
 )
+from .public_topology import (
+    PUBLIC_TOPOLOGY_SCHEMA_VERSION,
+    PublicTopologyManifest,
+    PublicTopologyRecord,
+    build_public_topology_manifest,
+    public_topology_hash,
+    public_topology_json,
+    public_topology_payload,
+)
 from .calculation_receipts import (
     CALCULATION_RECEIPT_SCHEMA_VERSION,
     COMPLETE_CIRCUIT_METHOD_VERSION,
