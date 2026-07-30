@@ -1,0 +1,19 @@
+{
+  "authority": "comparison evidence only; Python complete-circuit kernel remains provisional authority candidate",
+  "cases": [
+    {
+      "circuit_factor": 1.0,
+      "current_a": 17.35,
+      "expected": {
+        "resistance_ohm": 0.33899999999999997,
+        "resistive_loss_w": 102.0466275,
+        "voltage_drop_v": 5.88165
+      },
+      "id": "single-conductor-100m",
+      "length_m": 100.0,
+      "resistance_ohm_per_m": 0.00339
+    }
+  ],
+  "schema_version": "globalgrid2050.solar-dc.cross-language-fixture.v1",
+  "scope": "Common 20 C conductor-only R, voltage-drop and I2R formula subset"
+}
