@@ -20,12 +20,33 @@ Before each material V10 build slice:
 4. run and record the relevant validation;
 5. preserve earlier versions and restore points.
 
-## Current restore point
+## Restore-point register
 
-Branch: `restore/2026-07-30-pre-v10-canonical-circuit-foundation`
+### Cartridge adapter and ordered traversal
+
+Branch: `restore/2026-07-30-pre-v10-cartridge-adapter-traversal`  
+Commit: `2e14b87db26c6de0ad7d175135a1ef166a8b0717`
+
+This restore point captures `main` immediately before sequential and leapfrog cartridge output was adapted into the canonical circuit model and independently traversed.
+
+### Canonical circuit foundation
+
+Branch: `restore/2026-07-30-pre-v10-canonical-circuit-foundation`  
 Commit: `a7c20cf65a01832103f46e0a6e1690bc7f727252`
 
 This restore point captures `main` immediately before the V10 canonical circuit foundation was landed.
+
+## Current validated position
+
+Build receipt:
+
+`v10-development/recovery/BUILD_RECEIPT_003_CARTRIDGE_ADAPTER_AND_TRAVERSAL.md`
+
+Validation receipt:
+
+`v10-development/recovery/validation/V10_VALIDATION_LATEST.md`
+
+The complete declared Python, V8, V9 and V10 JavaScript suites passed after the bounded floating-point assertion repair recorded in Build Receipt 003.
 
 ## Boundaries
 
