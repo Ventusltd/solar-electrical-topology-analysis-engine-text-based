@@ -66,6 +66,19 @@ from .circuit_calculations import (
     ALPHA_CU_20_PER_C,
     calculate_complete_circuit,
 )
+from .uncertainty import (
+    UNCERTAINTY_METHOD_VERSION,
+    UNCERTAINTY_SCHEMA_VERSION,
+    Interval,
+    OperatingState,
+    SegmentInputIntervals,
+    SegmentUncertaintyResult,
+    UncertainCircuitCalculationReceipt,
+    calculate_complete_circuit_with_uncertainty,
+    uncertainty_receipt_hash,
+    uncertainty_receipt_json,
+    uncertainty_receipt_payload,
+)
 from .fleet_store import build_deterministic_store, build_store
 from .formulas import (
     cold_string_voc,
@@ -152,6 +165,17 @@ __all__ = [
     "calculation_receipt_payload",
     "ALPHA_CU_20_PER_C",
     "calculate_complete_circuit",
+    "UNCERTAINTY_METHOD_VERSION",
+    "UNCERTAINTY_SCHEMA_VERSION",
+    "Interval",
+    "OperatingState",
+    "SegmentInputIntervals",
+    "SegmentUncertaintyResult",
+    "UncertainCircuitCalculationReceipt",
+    "calculate_complete_circuit_with_uncertainty",
+    "uncertainty_receipt_hash",
+    "uncertainty_receipt_json",
+    "uncertainty_receipt_payload",
     "build_deterministic_store",
     "build_store",
     "cold_string_voc",
