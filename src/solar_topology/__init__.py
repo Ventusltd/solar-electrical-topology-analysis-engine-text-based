@@ -104,6 +104,37 @@ from .persistence import (
     persist_record,
     read_back_store,
 )
+from .duckdb_segments import (
+    DUCKDB_SEGMENT_SCHEMA_VERSION,
+    create_segment_table,
+    export_segment_parquet,
+    read_segment_parquet,
+    read_segment_rows,
+    segment_rows_hash,
+    segment_rows_payload,
+    write_segment_rows,
+)
+from .evidence_register import (
+    EVIDENCE_REGISTER_SCHEMA_VERSION,
+    EngineeringEvidenceRegister,
+    EvidenceMaturity,
+    EvidenceRegisterEntry,
+    RequirementStatus,
+    build_evidence_register,
+    evidence_register_hash,
+    evidence_register_json,
+    evidence_register_payload,
+)
+from .geometry_receipts import (
+    GEOMETRY_METHOD_VERSION,
+    GEOMETRY_RECEIPT_SCHEMA_VERSION,
+    GeometryReceipt,
+    SegmentGeometryResult,
+    calculate_geometry_receipt,
+    geometry_receipt_hash,
+    geometry_receipt_json,
+    geometry_receipt_payload,
+)
 from .calculation_receipts import (
     CALCULATION_RECEIPT_SCHEMA_VERSION,
     COMPLETE_CIRCUIT_METHOD_VERSION,
