@@ -44,6 +44,38 @@ from .circuit_validation import (
     validate_circuit_model,
     validated_circuit_hash,
 )
+from .diagnostics import (
+    DIAGNOSTIC_SCHEMA_VERSION,
+    Diagnostic,
+    DiagnosticCategory,
+    DiagnosticReport,
+    DiagnosticSeverity,
+    StudyCoverage,
+    StudyState,
+    build_diagnostic_report,
+    coverage_payload,
+    diagnostic_from_exception,
+    diagnostic_payload,
+    diagnostic_report_hash,
+    diagnostic_report_json,
+    diagnostic_report_payload,
+    require_non_blocking,
+)
+from .diagnostic_adapters import (
+    DIAGNOSTIC_ADAPTER_VERSION,
+    circuit_validation_diagnostics,
+    coverage_for_unperformed_studies,
+)
+from .study_applicability import (
+    STUDY_APPLICABILITY_SCHEMA_VERSION,
+    AcceptanceCriterion,
+    CriterionOperator,
+    StudyApplicability,
+    StudyKind,
+    applicability_coverage,
+    build_study_applicability,
+    evaluate_criterion,
+)
 from .evidence import (
     EVIDENCE_SCHEMA_VERSION,
     EvidenceDescriptor,
