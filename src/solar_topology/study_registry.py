@@ -28,6 +28,18 @@ class StudyCategory(StrEnum):
     PUBLICATION = "publication"
 
 
+def _validate_sorted_unique(
+    values: tuple[str, ...], *, study_id: str, field_name: str
+) -> None:
+    """Fail fast with the exact registry declaration that is malformed."""
+    expected = tuple(sorted(set(values)))
+    if values != expected:
+        raise ValueError(
+            f"study_id={study_id!r} field={field_name!r} must be unique and sorted; "
+            f"received={values!r}; expected={expected!r}"
+        )
+
+
 @dataclass(frozen=True)
 class StudyDefinition:
     study_id: str
@@ -44,10 +56,16 @@ class StudyDefinition:
             raise ValueError("study_id, title and method_reference are required")
         if not isinstance(self.category, StudyCategory):
             raise TypeError("category must be StudyCategory")
-        if tuple(sorted(set(self.required_input_ids))) != self.required_input_ids:
-            raise ValueError("required_input_ids must be unique and sorted")
-        if tuple(sorted(set(self.required_evidence_roles))) != self.required_evidence_roles:
-            raise ValueError("required_evidence_roles must be unique and sorted")
+        _validate_sorted_unique(
+            self.required_input_ids,
+            study_id=self.study_id,
+            field_name="required_input_ids",
+        )
+        _validate_sorted_unique(
+            self.required_evidence_roles,
+            study_id=self.study_id,
+            field_name="required_evidence_roles",
+        )
 
 
 @dataclass(frozen=True)
