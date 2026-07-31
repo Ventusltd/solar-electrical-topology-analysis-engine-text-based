@@ -9,11 +9,7 @@ const LEGACY_RESISTANCE_MODEL = Object.freeze({
     "0.017241 ohm mm2/m bulk-copper resistivity divided by nominal area"
   ),
   sourceRevision: "v9-sandbox-debug-legacy",
-  warning: (
-    "Ideal bulk-copper screening calculation using nominal metallic area. "
-    + "Not a finished-cable declared resistance and not an IEC 60228 "
-    + "maximum-resistance calculation."
-  ),
+  warning: "Ideal bulk-copper screening calculation using nominal metallic area. Not a finished-cable declared resistance and not an IEC 60228 maximum-resistance calculation.",
 });
 
 const byId = (id) => document.getElementById(id);
