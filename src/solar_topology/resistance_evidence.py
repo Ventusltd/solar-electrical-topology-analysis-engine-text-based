@@ -1,4 +1,10 @@
-"""Evidence-bound finished-conductor resistance records for V10 calculations."""
+"""Evidence-bound finished-conductor resistance records for V10 calculations.
+
+This module deliberately has no import-time dependency on the circuit or segment
+models. Product records are created while ``segments`` is importing; importing
+``circuit`` here would therefore create a cycle. Circuit evidence enums are
+resolved lazily only when downstream calculation code asks for them.
+"""
 
 from __future__ import annotations
 
@@ -8,9 +14,6 @@ import hashlib
 import json
 import math
 from typing import Iterable
-
-from .circuit import EvidenceClass
-from .evidence import VerificationState
 
 
 RESISTANCE_EVIDENCE_SCHEMA_VERSION = (
@@ -40,13 +43,13 @@ class ResistanceValueKind(StrEnum):
     UNRESOLVED = "unresolved"
 
 
-_BASIS_EVIDENCE_CLASS = {
-    ResistanceBasis.INDEPENDENTLY_MEASURED: EvidenceClass.FIELD_MEASURED,
-    ResistanceBasis.MANUFACTURER_DECLARED: EvidenceClass.MANUFACTURER_DECLARED,
-    ResistanceBasis.STANDARD_MAXIMUM: EvidenceClass.EXTERNAL_REFERENCE,
-    ResistanceBasis.IDEAL_BULK_ESTIMATE: EvidenceClass.ASSUMED,
-    ResistanceBasis.ASSUMED: EvidenceClass.ASSUMED,
-    ResistanceBasis.UNRESOLVED: EvidenceClass.ASSUMED,
+_BASIS_EVIDENCE_CLASS_VALUE = {
+    ResistanceBasis.INDEPENDENTLY_MEASURED: "field_measured",
+    ResistanceBasis.MANUFACTURER_DECLARED: "manufacturer_declared",
+    ResistanceBasis.STANDARD_MAXIMUM: "external_reference",
+    ResistanceBasis.IDEAL_BULK_ESTIMATE: "assumed",
+    ResistanceBasis.ASSUMED: "assumed",
+    ResistanceBasis.UNRESOLVED: "assumed",
 }
 
 _ALLOWED_VALUE_KINDS = {
@@ -80,7 +83,7 @@ class ResolvedConductorResistance:
     value_kind: ResistanceValueKind
     source_reference: str
     source_revision: str
-    verification_state: VerificationState
+    verification_state: str
     temperature_coefficient_per_c: float = 0.00393
     temperature_coefficient_basis: str = "copper_linear_20c"
     measurement_conditions: str | None = None
@@ -109,8 +112,10 @@ class ResolvedConductorResistance:
             raise ValueError("resistance evidence requires source_reference")
         if not self.source_revision.strip():
             raise ValueError("resistance evidence requires source_revision")
-        if not isinstance(self.verification_state, VerificationState):
-            raise TypeError("verification_state must be a VerificationState")
+        if not isinstance(self.verification_state, str) or not str(
+            self.verification_state
+        ).strip():
+            raise ValueError("verification_state must be non-empty text")
         if (
             not isinstance(self.temperature_coefficient_per_c, (int, float))
             or isinstance(self.temperature_coefficient_per_c, bool)
@@ -135,8 +140,12 @@ class ResolvedConductorResistance:
             raise ValueError("resistance warnings must be non-empty text")
 
     @property
-    def evidence_class(self) -> EvidenceClass:
-        return _BASIS_EVIDENCE_CLASS[self.basis]
+    def evidence_class(self):
+        """Return the circuit EvidenceClass without creating an import cycle."""
+
+        from .circuit import EvidenceClass
+
+        return EvidenceClass(_BASIS_EVIDENCE_CLASS_VALUE[self.basis])
 
     @property
     def legacy_provenance(self) -> str:
@@ -264,23 +273,23 @@ def resistance_registry_hash() -> str:
 
 def _fallback_basis(
     provenance: str,
-) -> tuple[ResistanceBasis, ResistanceValueKind, VerificationState]:
+) -> tuple[ResistanceBasis, ResistanceValueKind, str]:
     if provenance == "measured":
         return (
             ResistanceBasis.INDEPENDENTLY_MEASURED,
             ResistanceValueKind.MEASURED,
-            VerificationState.UNVERIFIED,
+            "unverified",
         )
     if provenance == "oem_declared":
         return (
             ResistanceBasis.MANUFACTURER_DECLARED,
             ResistanceValueKind.MANUFACTURER_NOMINAL,
-            VerificationState.UNVERIFIED,
+            "unverified",
         )
     return (
         ResistanceBasis.ASSUMED,
         ResistanceValueKind.ASSUMED,
-        VerificationState.UNVERIFIED,
+        "unverified",
     )
 
 
@@ -309,7 +318,7 @@ def resolve_conductor_resistance(
     if registered is not None:
         basis = ResistanceBasis.ASSUMED
         value_kind = ResistanceValueKind.ASSUMED
-        verification_state = VerificationState.UNVERIFIED
+        verification_state = "unverified"
         source_reference = (
             f"{source_reference};override-of:{registered.source_reference}"
         )
