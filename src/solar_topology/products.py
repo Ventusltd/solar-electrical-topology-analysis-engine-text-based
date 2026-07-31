@@ -19,9 +19,10 @@ from .resistance_evidence import (
 class ConductorSpec:
     """Finished-cable geometry kept separate from resistance authority.
 
-    ``provenance`` is retained as a legacy cartridge field for backward hash
-    compatibility. It does not determine resistance authority when an explicit
-    ``resistance_evidence`` record is present.
+    This dataclass intentionally retains its pre-refinement serialised shape so
+    geometry and topology input hashes do not change when resistance evidence is
+    registered, verified or revised. Resistance authority is resolved by
+    ``product_id`` through the independent registry.
     """
 
     product_id: str
@@ -30,7 +31,6 @@ class ConductorSpec:
     cable_od_mm: float
     r20_ohm_per_m: float
     provenance: str = "oem_declared"
-    resistance_evidence: ResolvedConductorResistance | None = None
 
     @property
     def envelope_fill_factor(self) -> float:
@@ -41,8 +41,6 @@ class ConductorSpec:
 
     @property
     def resolved_resistance(self) -> ResolvedConductorResistance:
-        if self.resistance_evidence is not None:
-            return self.resistance_evidence
         return resolve_conductor_resistance(
             product_id=self.product_id,
             r20_ohm_per_m=self.r20_ohm_per_m,
@@ -94,7 +92,7 @@ class ConductorSpec:
         return asdict(self)
 
 
-_FACTORY_LEAD_4MM2_RESISTANCE = register_conductor_resistance(
+register_conductor_resistance(
     ResolvedConductorResistance(
         product_id="factory_module_lead_4mm2_metal_coated_class5",
         r20_ohm_per_m=5.09e-3,
@@ -115,7 +113,7 @@ _FACTORY_LEAD_4MM2_RESISTANCE = register_conductor_resistance(
     )
 )
 
-_EXTERNAL_STRING_6MM2_RESISTANCE = register_conductor_resistance(
+register_conductor_resistance(
     ResolvedConductorResistance(
         product_id="external_string_6mm2_metal_coated_class5",
         r20_ohm_per_m=3.39e-3,
@@ -144,7 +142,6 @@ FACTORY_LEAD_4MM2 = ConductorSpec(
     cable_od_mm=5.5,
     r20_ohm_per_m=5.09e-3,
     provenance="oem_declared",
-    resistance_evidence=_FACTORY_LEAD_4MM2_RESISTANCE,
 )
 
 
@@ -155,7 +152,6 @@ EXTERNAL_STRING_6MM2 = ConductorSpec(
     cable_od_mm=6.1,
     r20_ohm_per_m=3.39e-3,
     provenance="oem_declared",
-    resistance_evidence=_EXTERNAL_STRING_6MM2_RESISTANCE,
 )
 
 
