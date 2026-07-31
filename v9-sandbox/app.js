@@ -1,6 +1,21 @@
 import { computeProject, parseIntegerList } from "./debug/engine.js";
 import { runDebugTests } from "./debug/tests.js";
 
+const LEGACY_RESISTANCE_MODEL = Object.freeze({
+  authorityStatus: "historical_reference",
+  basis: "ideal_bulk_estimate",
+  valueKind: "lower_bound_estimate",
+  sourceReference: (
+    "0.017241 ohm mm2/m bulk-copper resistivity divided by nominal area"
+  ),
+  sourceRevision: "v9-sandbox-debug-legacy",
+  warning: (
+    "Ideal bulk-copper screening calculation using nominal metallic area. "
+    + "Not a finished-cable declared resistance and not an IEC 60228 "
+    + "maximum-resistance calculation."
+  ),
+});
+
 const byId = (id) => document.getElementById(id);
 let latestProject = null;
 let latestTests = null;
@@ -104,12 +119,13 @@ function renderProject(project, tests) {
     ["Home-run conductor", `${project.totals.homeRunLengthM.toFixed(2)} m`],
     ["Provisional extensions", `${project.totals.extensionLengthM.toFixed(2)} m`],
     ["Calculated resistive loss", `${project.totals.lossW.toFixed(2)} W`],
+    ["Resistance basis", project.resistanceModel.basis],
   ];
   summary.innerHTML = entries.map(([term, detail]) => `<dt>${term}</dt><dd>${detail}</dd>`).join("");
   renderWarnings(project);
   renderTests(tests);
   renderString(project);
-  byId("reportPreview").textContent = JSON.stringify({ schema: project.schema, input: project.input, allocation: project.allocation, voltage: project.voltage, totals: project.totals, warnings: project.warnings }, null, 2);
+  byId("reportPreview").textContent = JSON.stringify({ schema: project.schema, resistanceModel: project.resistanceModel, input: project.input, allocation: project.allocation, voltage: project.voltage, totals: project.totals, warnings: project.warnings }, null, 2);
   const status = byId("engineStatus");
   if (tests.failed > 0) {
     status.className = "status fail";
@@ -120,10 +136,33 @@ function renderProject(project, tests) {
   }
 }
 
+function applyLegacyResistanceBoundary(project) {
+  return {
+    ...project,
+    resistanceModel: LEGACY_RESISTANCE_MODEL,
+    assumptions: [
+      ...project.assumptions.filter((assumption) => (
+        assumption !== "Resistance currently uses copper conductor properties only."
+      )),
+      LEGACY_RESISTANCE_MODEL.warning,
+    ],
+    warnings: [
+      ...project.warnings,
+      {
+        severity: "warning",
+        code: "RESISTANCE_MODEL_LOWER_BOUND",
+        message: LEGACY_RESISTANCE_MODEL.warning,
+      },
+    ],
+  };
+}
+
 function rebuild() {
   latestTests = runDebugTests();
   try {
-    latestProject = computeProject(collectInput());
+    latestProject = applyLegacyResistanceBoundary(
+      computeProject(collectInput())
+    );
     renderProject(latestProject, latestTests);
   } catch (error) {
     latestProject = null;
