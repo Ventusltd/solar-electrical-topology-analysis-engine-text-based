@@ -1,0 +1,53 @@
+name: Apply Build 025 routing provenance patch
+
+on:
+  pull_request:
+    paths:
+      - ".build025/routing-provenance.patch.gz.b64"
+      - ".github/workflows/build-025-routing-provenance.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/build-025-authority-fixes
+          fetch-depth: 0
+
+      - name: Decode and verify patch
+        run: |
+          base64 -d .build025/routing-provenance.patch.gz.b64 \
+            | gzip -d > /tmp/routing-provenance.patch
+          git apply --check /tmp/routing-provenance.patch
+
+      - name: Apply routing provenance patch
+        run: git apply /tmp/routing-provenance.patch
+
+      - name: Run focused authority tests
+        run: |
+          python -m pip install -e ".[test]"
+          python -m pytest -q \
+            tests/test_geometry_authority.py \
+            tests/test_table_string_assignment.py \
+            tests/test_table_string_validation.py \
+            tests/test_array_topology.py \
+            tests/test_array_engine.py
+
+      - name: Run complete Python regression suite
+        run: python -m pytest -q
+
+      - name: Commit validated provenance fix and remove temporary files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm \
+            .build025/routing-provenance.patch.gz.b64 \
+            .github/workflows/build-025-routing-provenance.yml
+          git add array_route_types.py array_routing.py tests/test_array_engine.py
+          git commit -m "build 025: receipt routing evidence provenance"
+          git push origin HEAD:agent/build-025-authority-fixes
