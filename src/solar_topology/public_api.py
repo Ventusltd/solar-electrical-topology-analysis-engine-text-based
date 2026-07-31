@@ -88,7 +88,12 @@ PUBLIC_API_CLASSIFICATION: dict[ApiStatus, tuple[str, ...]] = {
         "validated_circuit_hash",
         "verify_ordered_circuit",
     ),
-    ApiStatus.PROVISIONAL: (),
+    ApiStatus.PROVISIONAL: (
+        "RESISTANCE_QUALIFICATION_SCHEMA_VERSION",
+        "ResistanceSourceAssessment",
+        "ResistanceSourceStatus",
+        "assess_resistance_source",
+    ),
     ApiStatus.COMPATIBILITY: (
         "EXTERNAL_STRING_6MM2",
         "FACTORY_LEAD_4MM2",
