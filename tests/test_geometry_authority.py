@@ -35,12 +35,8 @@ def test_moving_origin_changes_coordinates_and_hash() -> None:
     original = reference_24_by_30_table()
     moved = reference_24_by_30_table(origin=Point2D(100.0, -25.0))
 
-    assert moved.placements[0].centre.x_m == pytest.approx(
-        original.placements[0].centre.x_m + 100.0
-    )
-    assert moved.placements[0].centre.y_m == pytest.approx(
-        original.placements[0].centre.y_m - 25.0
-    )
+    assert moved.placements[0].centre.x_m == pytest.approx(original.placements[0].centre.x_m + 100.0)
+    assert moved.placements[0].centre.y_m == pytest.approx(original.placements[0].centre.y_m - 25.0)
     assert moved.geometry_hash != original.geometry_hash
 
 
@@ -50,16 +46,12 @@ def test_rotation_changes_geometry_without_changing_module_count() -> None:
 
     assert rotated.module_count == original.module_count
     assert rotated.geometry_hash != original.geometry_hash
-    assert rotated.placements[0].centre.x_m == pytest.approx(
-        -original.placements[0].centre.y_m
-    )
-    assert rotated.placements[0].centre.y_m == pytest.approx(
-        original.placements[0].centre.x_m
-    )
+    assert rotated.placements[0].centre.x_m == pytest.approx(-original.placements[0].centre.y_m)
+    assert rotated.placements[0].centre.y_m == pytest.approx(original.placements[0].centre.x_m)
 
 
 def test_landscape_orientation_swaps_module_envelope() -> None:
-    layout_request = TableLayoutRequest(
+    request = TableLayoutRequest(
         table_id="LANDSCAPE",
         module_count=1,
         rows=1,
@@ -68,7 +60,7 @@ def test_landscape_orientation_swaps_module_envelope() -> None:
         orientation="landscape",
     )
 
-    receipt = generate_table_geometry(layout_request)
+    receipt = generate_table_geometry(request)
     placement = receipt.placements[0]
 
     assert placement.width_m == pytest.approx(2.0)
@@ -93,14 +85,8 @@ def test_partial_final_row_is_supported() -> None:
     assert receipt.placements[-1].column_index == 2
 
 
-@pytest.mark.parametrize(
-    "request_type",
-    [
-        TableLayoutRequest,
-    ],
-)
-def test_public_request_type_exists(request_type: object) -> None:
-    assert request_type is TableLayoutRequest
+def test_public_request_type_exists() -> None:
+    assert TableLayoutRequest.__name__ == "TableLayoutRequest"
 
 
 def test_invalid_capacity_is_rejected() -> None:
