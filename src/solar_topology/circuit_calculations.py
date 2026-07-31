@@ -422,7 +422,7 @@ def calculate_complete_circuit(
         total_resistance_ohm=total_resistance_ohm,
         voltage_drop_v=current_a * total_resistance_ohm,
         resistive_loss_w=current_a**2 * total_resistance_ohm,
-        resistance_registry_hash=applied_resistance_hash,
+        resistance_evidence_set_hash=applied_resistance_hash,
         input_evidence_floor=weakest_evidence_class(
             evidence_classes
         ),
