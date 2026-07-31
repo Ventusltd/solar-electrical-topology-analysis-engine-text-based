@@ -20,7 +20,7 @@ from array_routing import (
     ModuleTerminalLayout,
     RoutingConfig,
 )
-from array_topology import WiringStrategy, uniform_equipment_profile
+from array_topology import NodeKind, WiringStrategy, uniform_equipment_profile
 
 
 @pytest.fixture(scope="module")
@@ -196,6 +196,37 @@ def test_home_run_segments_preserve_same_string_pole_identity(
         }
 
 
+def test_every_route_endpoint_is_an_authoritative_topology_node() -> None:
+    build = reference_24_by_30_build()
+    node_ids = {
+        node.node_id
+        for string in build.topology.strings
+        for node in string.nodes
+    } | {
+        node.node_id for node in build.topology.equipment_nodes
+    }
+
+    for string in build.routing.strings:
+        for route in (
+            string.positive_route,
+            string.negative_route,
+            *string.interconnect_routes,
+        ):
+            assert route.from_node_id in node_ids
+            assert route.to_node_id in node_ids
+
+
+def test_reference_topology_contains_input_mppt_and_bus_terminals() -> None:
+    build = reference_24_by_30_build()
+    kinds = [node.kind for node in build.topology.equipment_nodes]
+
+    assert kinds.count(NodeKind.PHYSICAL_INPUT_NEGATIVE) == 24
+    assert kinds.count(NodeKind.PHYSICAL_INPUT_POSITIVE) == 24
+    assert kinds.count(NodeKind.MPPT_INPUT) == 24
+    assert kinds.count(NodeKind.INVERTER_DC_BUS) == 2
+    assert len(build.topology.equipment_edges) == 120
+
+
 def test_installed_and_procurement_length_layers_are_receipted() -> None:
     policy = InstalledLengthPolicy(
         connector_approach_m_per_route_end=0.10,
@@ -317,3 +348,34 @@ def test_terminal_geometry_outside_module_envelope_is_rejected() -> None:
 
     with pytest.raises(ValueError, match="outside module"):
         reference_24_by_30_build(routing_config=invalid)
+
+
+def test_terminal_geometry_provenance_is_part_of_routing_receipt() -> None:
+    assumed = reference_24_by_30_build(
+        routing_config=RoutingConfig(
+            terminal_layout=ModuleTerminalLayout(
+                evidence_class="assumed",
+                source_reference="source-A",
+            )
+        )
+    )
+    measured = reference_24_by_30_build(
+        routing_config=RoutingConfig(
+            terminal_layout=ModuleTerminalLayout(
+                evidence_class="measured",
+                source_reference="source-B",
+            )
+        )
+    )
+
+    assert assumed.geometry.geometry_hash == measured.geometry.geometry_hash
+    assert (
+        assumed.routing.strings[0].positive_route.route_hash
+        == measured.routing.strings[0].positive_route.route_hash
+    )
+    assert assumed.routing.routing_hash != measured.routing.routing_hash
+    assert assumed.receipt_hash != measured.receipt_hash
+    assert (
+        measured.routing.routing_config.terminal_layout.source_reference
+        == "source-B"
+    )
