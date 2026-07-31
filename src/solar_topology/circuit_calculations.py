@@ -25,7 +25,7 @@ from .evidence import (
 )
 from .resistance_evidence import (
     ResistanceBasis,
-    resistance_registry_hash,
+    resistance_records_hash,
     resolve_conductor_resistance,
 )
 
@@ -118,12 +118,12 @@ def _receipt_id(
     circuit_hash: str,
     current_a: float,
     current_evidence: EvidenceDescriptor,
-    registry_hash: str,
+    resistance_evidence_set_hash: str,
 ) -> str:
     payload = {
         "method_version": COMPLETE_CIRCUIT_METHOD_VERSION,
         "validated_circuit_hash": circuit_hash,
-        "resistance_registry_hash": registry_hash,
+        "resistance_evidence_set_hash": resistance_evidence_set_hash,
         "current_a": current_a,
         "current_evidence": {
             "evidence_class": str(current_evidence.evidence_class),
@@ -204,7 +204,6 @@ def calculate_complete_circuit(
         )
 
     circuit_hash = validated_circuit_hash(model)
-    registry_hash = resistance_registry_hash()
     segment_objects = _segment_object_by_id(model)
     if set(segment_objects) != set(traversal.ordered_segment_ids):
         missing = sorted(
@@ -390,6 +389,9 @@ def calculate_complete_circuit(
         result.total_resistance_ohm
         for result in segment_results
     )
+    applied_resistance_hash = resistance_records_hash(
+        result.resistance_evidence for result in segment_results
+    )
 
     return OrderedCircuitCalculationReceipt(
         receipt_id=(
@@ -398,7 +400,7 @@ def calculate_complete_circuit(
                 circuit_hash,
                 current_a,
                 current_evidence,
-                registry_hash,
+                applied_resistance_hash,
             )
         ),
         circuit_model_id=model.model_id,
@@ -420,7 +422,7 @@ def calculate_complete_circuit(
         total_resistance_ohm=total_resistance_ohm,
         voltage_drop_v=current_a * total_resistance_ohm,
         resistive_loss_w=current_a**2 * total_resistance_ohm,
-        resistance_registry_hash=registry_hash,
+        resistance_registry_hash=applied_resistance_hash,
         input_evidence_floor=weakest_evidence_class(
             evidence_classes
         ),
