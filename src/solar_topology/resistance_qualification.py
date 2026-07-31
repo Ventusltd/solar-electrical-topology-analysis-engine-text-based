@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import StrEnum
+import hashlib
+import json
 
 from .resistance_evidence import (
     ResistanceBasis,
@@ -45,6 +47,45 @@ class ResistanceSourceAssessment:
                 "resistance source is not verified: "
                 + ", ".join(self.reasons)
             )
+
+
+def resistance_source_assessment_payload(
+    assessment: ResistanceSourceAssessment,
+) -> dict[str, object]:
+    """Return the deterministic machine-readable assessment payload."""
+
+    if not isinstance(assessment, ResistanceSourceAssessment):
+        raise TypeError("assessment must be a ResistanceSourceAssessment")
+    return {
+        "schema_version": assessment.schema_version,
+        "record_hash": assessment.record_hash,
+        "status": str(assessment.status),
+        "reasons": list(assessment.reasons),
+    }
+
+
+def resistance_source_assessment_json(
+    assessment: ResistanceSourceAssessment,
+) -> str:
+    """Return canonical JSON without runtime-dependent metadata."""
+
+    return json.dumps(
+        resistance_source_assessment_payload(assessment),
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    )
+
+
+def resistance_source_assessment_hash(
+    assessment: ResistanceSourceAssessment,
+) -> str:
+    """Hash schema, source record, status and deterministic reason codes."""
+
+    digest = hashlib.sha256(
+        resistance_source_assessment_json(assessment).encode("utf-8")
+    ).hexdigest()
+    return f"sha256:{digest}"
 
 
 _PLACEHOLDER_REVISIONS = {
