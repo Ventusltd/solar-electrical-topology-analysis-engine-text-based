@@ -1,0 +1,31 @@
+name: Build 025 authority source snapshot
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/build-025-authority-snapshot.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-025-authority-source
+          path: |
+            geometry_authority.py
+            table_string_assignment.py
+            table_string_validation.py
+            array_*.py
+            tests/test_geometry_authority.py
+            tests/test_table_string_assignment.py
+            tests/test_table_string_validation.py
+            tests/test_array_*.py
+            pyproject.toml
+            .github/workflows/build-025-small-gates.yml
+          if-no-files-found: error
+          retention-days: 1
