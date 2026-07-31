@@ -68,6 +68,12 @@ class OrderedStringMembership:
             if terminal.polarity != polarity:
                 raise ValueError(f"expected {polarity} free terminal")
 
+    @property
+    def physical_module_ids(self) -> tuple[str, ...]:
+        """Read-only compatibility name used by downstream topology layers."""
+
+        return self.ordered_module_ids
+
 
 @dataclass(frozen=True, slots=True)
 class TableStringAssignmentReceipt:
@@ -80,6 +86,12 @@ class TableStringAssignmentReceipt:
     modules_per_string: int
     strings: tuple[OrderedStringMembership, ...]
     assignment_hash: str
+
+    @property
+    def assignments(self) -> tuple[OrderedStringMembership, ...]:
+        """Read-only compatibility name; ``strings`` remains canonical."""
+
+        return self.strings
 
 
 def _canonical_payload(
