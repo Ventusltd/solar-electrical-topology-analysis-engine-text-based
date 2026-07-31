@@ -191,6 +191,35 @@ def resistance_evidence_hash(
     return f"sha256:{digest}"
 
 
+def resistance_records_payload(
+    records: Iterable[ResolvedConductorResistance],
+) -> dict[str, object]:
+    unique = {
+        resistance_evidence_hash(record): record
+        for record in records
+    }
+    return {
+        "registry_version": RESISTANCE_REGISTRY_VERSION,
+        "scope": "applied_records_only",
+        "records": [
+            resistance_evidence_payload(unique[record_hash])
+            for record_hash in sorted(unique)
+        ],
+    }
+
+
+def resistance_records_hash(
+    records: Iterable[ResolvedConductorResistance],
+) -> str:
+    encoded = json.dumps(
+        resistance_records_payload(records),
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    ).encode("utf-8")
+    return f"sha256:{hashlib.sha256(encoded).hexdigest()}"
+
+
 _REGISTRY: dict[str, ResolvedConductorResistance] = {}
 
 
@@ -215,6 +244,7 @@ def registered_conductor_resistance(
 def resistance_registry_payload() -> dict[str, object]:
     return {
         "registry_version": RESISTANCE_REGISTRY_VERSION,
+        "scope": "all_registered_records",
         "records": [
             resistance_evidence_payload(_REGISTRY[product_id])
             for product_id in sorted(_REGISTRY)
