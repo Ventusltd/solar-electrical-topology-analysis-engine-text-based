@@ -10,7 +10,7 @@ logic.
 from __future__ import annotations
 
 from collections import Counter
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, fields, replace
 from enum import StrEnum
 from hashlib import sha256
 import json
@@ -31,7 +31,7 @@ from table_string_validation import validate_table_string_assignment
 StringAssignment = OrderedStringMembership
 StringAllocationReceipt = TableStringAssignmentReceipt
 STRING_ALLOCATION_SCHEMA_VERSION = STRING_ASSIGNMENT_SCHEMA_VERSION
-TOPOLOGY_SCHEMA_VERSION = "globalgrid2050.solar-dc.table-topology.v1"
+TOPOLOGY_SCHEMA_VERSION = "globalgrid2050.solar-dc.table-topology.v2"
 INPUT_ALLOCATION_SCHEMA_VERSION = "globalgrid2050.solar-dc.input-allocation.v1"
 EQUIPMENT_PROFILE_SCHEMA_VERSION = "globalgrid2050.solar-dc.equipment-profile.v1"
 
@@ -135,6 +135,8 @@ class TableTopologyReceipt:
     node_count: int
     edge_count: int
     topology_hash: str
+    equipment_nodes: tuple[TopologyNode, ...] = ()
+    equipment_edges: tuple[TopologyEdge, ...] = ()
     schema_version: str = TOPOLOGY_SCHEMA_VERSION
 
 
@@ -446,49 +448,77 @@ def _validate_string_topology(topology: StringTopology) -> None:
         raise ValueError("connector topology is incomplete")
 
 
-def topology_payload(receipt: TableTopologyReceipt) -> dict[str, object]:
+def _node_payload(node: TopologyNode) -> dict[str, object]:
     return {
-        "schema_version": receipt.schema_version,
-        "table_id": receipt.table_id,
-        "assignment_hash": receipt.assignment_hash,
-        "strategy": str(receipt.strategy),
-        "node_count": receipt.node_count,
-        "edge_count": receipt.edge_count,
-        "topology_hash": receipt.topology_hash,
+        "node_id": node.node_id,
+        "kind": str(node.kind),
+        "string_id": node.string_id,
+        "module_id": node.module_id,
+        "equipment_id": node.equipment_id,
+    }
+
+
+def _edge_payload(edge: TopologyEdge) -> dict[str, object]:
+    return {
+        "edge_id": edge.edge_id,
+        "kind": str(edge.kind),
+        "from_node_id": edge.from_node_id,
+        "to_node_id": edge.to_node_id,
+        "string_id": edge.string_id,
+        "module_id": edge.module_id,
+        "connection_ordinal": edge.connection_ordinal,
+    }
+
+
+def _topology_basis(
+    *,
+    table_id: str,
+    assignment_hash: str,
+    strategy: WiringStrategy,
+    strings: Sequence[StringTopology],
+    equipment_nodes: Sequence[TopologyNode] = (),
+    equipment_edges: Sequence[TopologyEdge] = (),
+) -> dict[str, object]:
+    return {
+        "schema_version": TOPOLOGY_SCHEMA_VERSION,
+        "table_id": table_id,
+        "assignment_hash": assignment_hash,
+        "strategy": str(strategy),
         "strings": [
             {
-                "string_id": string.string_id,
-                "strategy": str(string.strategy),
-                "physical_module_ids": list(string.physical_module_ids),
-                "electrical_module_ids": list(string.electrical_module_ids),
-                "free_negative_node_id": string.free_negative_node_id,
-                "free_positive_node_id": string.free_positive_node_id,
-                "nodes": [
-                    {
-                        "node_id": node.node_id,
-                        "kind": str(node.kind),
-                        "string_id": node.string_id,
-                        "module_id": node.module_id,
-                        "equipment_id": node.equipment_id,
-                    }
-                    for node in string.nodes
-                ],
-                "edges": [
-                    {
-                        "edge_id": edge.edge_id,
-                        "kind": str(edge.kind),
-                        "from_node_id": edge.from_node_id,
-                        "to_node_id": edge.to_node_id,
-                        "string_id": edge.string_id,
-                        "module_id": edge.module_id,
-                        "connection_ordinal": edge.connection_ordinal,
-                    }
-                    for edge in string.edges
-                ],
+                "string_id": item.string_id,
+                "strategy": str(item.strategy),
+                "physical_module_ids": list(item.physical_module_ids),
+                "electrical_module_ids": list(item.electrical_module_ids),
+                "free_negative_node_id": item.free_negative_node_id,
+                "free_positive_node_id": item.free_positive_node_id,
+                "nodes": [_node_payload(node) for node in item.nodes],
+                "edges": [_edge_payload(edge) for edge in item.edges],
             }
-            for string in receipt.strings
+            for item in strings
         ],
+        "equipment_nodes": [_node_payload(node) for node in equipment_nodes],
+        "equipment_edges": [_edge_payload(edge) for edge in equipment_edges],
     }
+
+
+def topology_payload(receipt: TableTopologyReceipt) -> dict[str, object]:
+    payload = _topology_basis(
+        table_id=receipt.table_id,
+        assignment_hash=receipt.assignment_hash,
+        strategy=receipt.strategy,
+        strings=receipt.strings,
+        equipment_nodes=receipt.equipment_nodes,
+        equipment_edges=receipt.equipment_edges,
+    )
+    payload.update(
+        {
+            "node_count": receipt.node_count,
+            "edge_count": receipt.edge_count,
+            "topology_hash": receipt.topology_hash,
+        }
+    )
+    return payload
 
 
 def build_table_topology(
@@ -496,42 +526,27 @@ def build_table_topology(
     strategy: WiringStrategy | str,
 ) -> TableTopologyReceipt:
     selected = WiringStrategy(strategy)
-    strings = tuple(_build_string_topology(assignment, selected) for assignment in allocation.strings)
+    strings = tuple(
+        _build_string_topology(assignment, selected)
+        for assignment in allocation.strings
+    )
     all_nodes = [node.node_id for string in strings for node in string.nodes]
     all_edges = [edge.edge_id for string in strings for edge in string.edges]
     if len(all_nodes) != len(set(all_nodes)):
-        raise ValueError("topology node identifiers must be globally unique within a table")
+        raise ValueError(
+            "topology node identifiers must be globally unique within a table"
+        )
     if len(all_edges) != len(set(all_edges)):
-        raise ValueError("topology edge identifiers must be globally unique within a table")
+        raise ValueError(
+            "topology edge identifiers must be globally unique within a table"
+        )
 
-    basis = {
-        "schema_version": TOPOLOGY_SCHEMA_VERSION,
-        "table_id": allocation.table_id,
-        "assignment_hash": allocation.assignment_hash,
-        "strategy": str(selected),
-        "strings": [
-            {
-                "string_id": item.string_id,
-                "physical_module_ids": list(item.physical_module_ids),
-                "electrical_module_ids": list(item.electrical_module_ids),
-                "free_negative_node_id": item.free_negative_node_id,
-                "free_positive_node_id": item.free_positive_node_id,
-                "nodes": [[node.node_id, str(node.kind), node.module_id] for node in item.nodes],
-                "edges": [
-                    [
-                        edge.edge_id,
-                        str(edge.kind),
-                        edge.from_node_id,
-                        edge.to_node_id,
-                        edge.module_id,
-                        edge.connection_ordinal,
-                    ]
-                    for edge in item.edges
-                ],
-            }
-            for item in strings
-        ],
-    }
+    basis = _topology_basis(
+        table_id=allocation.table_id,
+        assignment_hash=allocation.assignment_hash,
+        strategy=selected,
+        strings=strings,
+    )
     return TableTopologyReceipt(
         table_id=allocation.table_id,
         assignment_hash=allocation.assignment_hash,
@@ -706,6 +721,342 @@ def allocate_physical_inputs(
     )
 
 
+
+def _equipment_node(
+    node_id: str,
+    kind: NodeKind,
+    inverter_id: str,
+) -> TopologyNode:
+    return TopologyNode(
+        node_id=node_id,
+        kind=kind,
+        equipment_id=inverter_id,
+    )
+
+
+def attach_input_topology(
+    topology: TableTopologyReceipt,
+    input_allocation: InputAllocationReceipt,
+    profile: EquipmentProfile,
+) -> TableTopologyReceipt:
+    """Attach inverter input, MPPT and DC-bus connectivity to the table graph."""
+
+    if topology.equipment_nodes or topology.equipment_edges:
+        raise ValueError("equipment topology has already been attached")
+    if topology.table_id != input_allocation.table_id:
+        raise ValueError("topology and input allocation table identifiers differ")
+    if topology.assignment_hash != input_allocation.assignment_hash:
+        raise ValueError("topology and input allocation assignments differ")
+    if input_allocation.equipment_profile_id != profile.profile_id:
+        raise ValueError("input allocation and equipment profile do not match")
+    if input_allocation.inverter_id != profile.inverter_id:
+        raise ValueError("input allocation and inverter identifiers do not match")
+
+    topology_by_string = {item.string_id: item for item in topology.strings}
+    assigned_string_ids = {
+        item.string_id for item in input_allocation.assignments
+    }
+    if assigned_string_ids != set(topology_by_string):
+        raise ValueError(
+            "input allocation must cover every topology string exactly once"
+        )
+
+    input_by_id = {item.input_id: item for item in profile.physical_inputs}
+    equipment_nodes: list[TopologyNode] = []
+    equipment_edges: list[TopologyEdge] = []
+    node_ids: set[str] = set()
+    edge_ids: set[str] = set()
+
+    def add_node(node: TopologyNode) -> None:
+        if node.node_id in node_ids:
+            raise ValueError(
+                f"duplicate equipment node identifier: {node.node_id!r}"
+            )
+        node_ids.add(node.node_id)
+        equipment_nodes.append(node)
+
+    def add_edge(edge: TopologyEdge) -> None:
+        if edge.edge_id in edge_ids:
+            raise ValueError(
+                f"duplicate equipment edge identifier: {edge.edge_id!r}"
+            )
+        edge_ids.add(edge.edge_id)
+        equipment_edges.append(edge)
+
+    for physical_input in profile.physical_inputs:
+        add_node(
+            _equipment_node(
+                f"{physical_input.input_id}:N",
+                NodeKind.PHYSICAL_INPUT_NEGATIVE,
+                profile.inverter_id,
+            )
+        )
+        add_node(
+            _equipment_node(
+                f"{physical_input.input_id}:P",
+                NodeKind.PHYSICAL_INPUT_POSITIVE,
+                profile.inverter_id,
+            )
+        )
+
+    parallel_to_mppt: dict[str, str] = {}
+    for physical_input in profile.physical_inputs:
+        if not physical_input.isolated:
+            if physical_input.parallel_node_id is None:
+                raise ValueError(
+                    "a non-isolated physical input requires a parallel node"
+                )
+            existing_mppt = parallel_to_mppt.setdefault(
+                physical_input.parallel_node_id,
+                physical_input.mppt_id,
+            )
+            if existing_mppt != physical_input.mppt_id:
+                raise ValueError(
+                    "one parallel junction cannot feed multiple MPPTs"
+                )
+
+    for parallel_node_id in parallel_to_mppt:
+        add_node(
+            _equipment_node(
+                f"{parallel_node_id}:N",
+                NodeKind.PARALLEL_JUNCTION,
+                profile.inverter_id,
+            )
+        )
+        add_node(
+            _equipment_node(
+                f"{parallel_node_id}:P",
+                NodeKind.PARALLEL_JUNCTION,
+                profile.inverter_id,
+            )
+        )
+
+    for mppt_id in profile.mppt_ids:
+        add_node(
+            _equipment_node(
+                f"{profile.inverter_id}:{mppt_id}:N",
+                NodeKind.MPPT_INPUT,
+                profile.inverter_id,
+            )
+        )
+        add_node(
+            _equipment_node(
+                f"{profile.inverter_id}:{mppt_id}:P",
+                NodeKind.MPPT_INPUT,
+                profile.inverter_id,
+            )
+        )
+
+    bus_negative = f"{profile.dc_bus_node_id}:N"
+    bus_positive = f"{profile.dc_bus_node_id}:P"
+    add_node(
+        _equipment_node(
+            bus_negative,
+            NodeKind.INVERTER_DC_BUS,
+            profile.inverter_id,
+        )
+    )
+    add_node(
+        _equipment_node(
+            bus_positive,
+            NodeKind.INVERTER_DC_BUS,
+            profile.inverter_id,
+        )
+    )
+
+    for assignment in input_allocation.assignments:
+        physical_input = input_by_id.get(assignment.input_id)
+        if physical_input is None:
+            raise ValueError(
+                f"allocation references unknown input {assignment.input_id!r}"
+            )
+        if physical_input.mppt_id != assignment.mppt_id:
+            raise ValueError(
+                "allocation MPPT label does not match equipment profile"
+            )
+        string = topology_by_string[assignment.string_id]
+        add_edge(
+            TopologyEdge(
+                edge_id=f"{assignment.string_id}:TO:{assignment.input_id}:N",
+                kind=EdgeKind.INPUT_LINK,
+                from_node_id=string.free_negative_node_id,
+                to_node_id=f"{assignment.input_id}:N",
+                string_id=assignment.string_id,
+            )
+        )
+        add_edge(
+            TopologyEdge(
+                edge_id=f"{assignment.input_id}:P:TO:{assignment.string_id}",
+                kind=EdgeKind.INPUT_LINK,
+                from_node_id=f"{assignment.input_id}:P",
+                to_node_id=string.free_positive_node_id,
+                string_id=assignment.string_id,
+            )
+        )
+
+    for physical_input in profile.physical_inputs:
+        input_negative = f"{physical_input.input_id}:N"
+        input_positive = f"{physical_input.input_id}:P"
+        if physical_input.parallel_node_id is None:
+            target_negative = (
+                f"{profile.inverter_id}:{physical_input.mppt_id}:N"
+            )
+            target_positive = (
+                f"{profile.inverter_id}:{physical_input.mppt_id}:P"
+            )
+        else:
+            target_negative = f"{physical_input.parallel_node_id}:N"
+            target_positive = f"{physical_input.parallel_node_id}:P"
+
+        if physical_input.protective_device_node_id is None:
+            add_edge(
+                TopologyEdge(
+                    edge_id=f"{physical_input.input_id}:N:INTERNAL",
+                    kind=EdgeKind.INPUT_LINK,
+                    from_node_id=input_negative,
+                    to_node_id=target_negative,
+                )
+            )
+            add_edge(
+                TopologyEdge(
+                    edge_id=f"{physical_input.input_id}:P:INTERNAL",
+                    kind=EdgeKind.INPUT_LINK,
+                    from_node_id=target_positive,
+                    to_node_id=input_positive,
+                )
+            )
+        else:
+            fuse_negative = f"{physical_input.protective_device_node_id}:N"
+            fuse_positive = f"{physical_input.protective_device_node_id}:P"
+            add_node(
+                _equipment_node(
+                    fuse_negative,
+                    NodeKind.STRING_FUSE,
+                    profile.inverter_id,
+                )
+            )
+            add_node(
+                _equipment_node(
+                    fuse_positive,
+                    NodeKind.STRING_FUSE,
+                    profile.inverter_id,
+                )
+            )
+            add_edge(
+                TopologyEdge(
+                    edge_id=f"{physical_input.input_id}:N:TO:FUSE",
+                    kind=EdgeKind.PROTECTIVE_DEVICE_LINK,
+                    from_node_id=input_negative,
+                    to_node_id=fuse_negative,
+                )
+            )
+            add_edge(
+                TopologyEdge(
+                    edge_id=f"{physical_input.input_id}:N:FROM:FUSE",
+                    kind=EdgeKind.PROTECTIVE_DEVICE_LINK,
+                    from_node_id=fuse_negative,
+                    to_node_id=target_negative,
+                )
+            )
+            add_edge(
+                TopologyEdge(
+                    edge_id=f"{physical_input.input_id}:P:TO:FUSE",
+                    kind=EdgeKind.PROTECTIVE_DEVICE_LINK,
+                    from_node_id=target_positive,
+                    to_node_id=fuse_positive,
+                )
+            )
+            add_edge(
+                TopologyEdge(
+                    edge_id=f"{physical_input.input_id}:P:FROM:FUSE",
+                    kind=EdgeKind.PROTECTIVE_DEVICE_LINK,
+                    from_node_id=fuse_positive,
+                    to_node_id=input_positive,
+                )
+            )
+
+    for parallel_node_id, mppt_id in parallel_to_mppt.items():
+        add_edge(
+            TopologyEdge(
+                edge_id=f"{parallel_node_id}:N:TO:{mppt_id}",
+                kind=EdgeKind.PARALLEL_LINK,
+                from_node_id=f"{parallel_node_id}:N",
+                to_node_id=f"{profile.inverter_id}:{mppt_id}:N",
+            )
+        )
+        add_edge(
+            TopologyEdge(
+                edge_id=f"{mppt_id}:P:TO:{parallel_node_id}",
+                kind=EdgeKind.PARALLEL_LINK,
+                from_node_id=f"{profile.inverter_id}:{mppt_id}:P",
+                to_node_id=f"{parallel_node_id}:P",
+            )
+        )
+
+    for mppt_id in profile.mppt_ids:
+        add_edge(
+            TopologyEdge(
+                edge_id=f"{profile.inverter_id}:{mppt_id}:N:TO:DC-BUS",
+                kind=EdgeKind.MPPT_LINK,
+                from_node_id=f"{profile.inverter_id}:{mppt_id}:N",
+                to_node_id=bus_negative,
+            )
+        )
+        add_edge(
+            TopologyEdge(
+                edge_id=f"DC-BUS:P:TO:{profile.inverter_id}:{mppt_id}",
+                kind=EdgeKind.MPPT_LINK,
+                from_node_id=bus_positive,
+                to_node_id=f"{profile.inverter_id}:{mppt_id}:P",
+            )
+        )
+
+    string_node_ids = {
+        node.node_id for string in topology.strings for node in string.nodes
+    }
+    all_node_ids = string_node_ids | node_ids
+    missing_endpoints = sorted(
+        {
+            endpoint
+            for edge in equipment_edges
+            for endpoint in (edge.from_node_id, edge.to_node_id)
+            if endpoint not in all_node_ids
+        }
+    )
+    if missing_endpoints:
+        raise ValueError(
+            "equipment topology references missing nodes: "
+            f"{missing_endpoints}"
+        )
+
+    all_edge_ids = {
+        edge.edge_id for string in topology.strings for edge in string.edges
+    }
+    duplicate_edges = sorted(all_edge_ids & edge_ids)
+    duplicate_nodes = sorted(string_node_ids & node_ids)
+    if duplicate_nodes or duplicate_edges:
+        raise ValueError(
+            "equipment topology collides with string topology identifiers; "
+            f"nodes={duplicate_nodes}, edges={duplicate_edges}"
+        )
+
+    basis = _topology_basis(
+        table_id=topology.table_id,
+        assignment_hash=topology.assignment_hash,
+        strategy=topology.strategy,
+        strings=topology.strings,
+        equipment_nodes=equipment_nodes,
+        equipment_edges=equipment_edges,
+    )
+    return replace(
+        topology,
+        node_count=topology.node_count + len(equipment_nodes),
+        edge_count=topology.edge_count + len(equipment_edges),
+        topology_hash=_hash_payload(basis),
+        equipment_nodes=tuple(equipment_nodes),
+        equipment_edges=tuple(equipment_edges),
+    )
+
 def input_spec_by_string(
     receipt: InputAllocationReceipt,
     profile: EquipmentProfile,
@@ -747,6 +1098,7 @@ __all__ = [
     "allocate_physical_inputs",
     "allocate_strings",
     "allocation_payload",
+    "attach_input_topology",
     "build_table_topology",
     "electrical_module_order",
     "equipment_profile_payload",

@@ -27,6 +27,7 @@ from array_topology import (
     allocate_physical_inputs,
     allocate_strings,
     allocation_payload,
+    attach_input_topology,
     build_table_topology,
     equipment_profile_payload,
     input_allocation_payload,
@@ -190,7 +191,7 @@ def build_complete_table(
         explicit_module_groups=explicit_module_groups,
         limits=limits,
     )
-    topology = build_table_topology(
+    string_topology = build_table_topology(
         allocation,
         strategy,
     )
@@ -198,6 +199,11 @@ def build_complete_table(
         allocation,
         equipment_profile,
         explicit_input_by_string=explicit_input_by_string,
+    )
+    topology = attach_input_topology(
+        string_topology,
+        input_allocation,
+        equipment_profile,
     )
     routing = build_table_routes(
         geometry,

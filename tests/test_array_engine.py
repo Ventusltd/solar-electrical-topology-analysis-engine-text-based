@@ -20,7 +20,7 @@ from array_routing import (
     ModuleTerminalLayout,
     RoutingConfig,
 )
-from array_topology import WiringStrategy, uniform_equipment_profile
+from array_topology import NodeKind, WiringStrategy, uniform_equipment_profile
 
 
 @pytest.fixture(scope="module")
@@ -194,6 +194,37 @@ def test_home_run_segments_preserve_same_string_pole_identity(
             segment.support_path_id
             for segment in string.negative_route.segments
         }
+
+
+def test_every_route_endpoint_is_an_authoritative_topology_node() -> None:
+    build = reference_24_by_30_build()
+    node_ids = {
+        node.node_id
+        for string in build.topology.strings
+        for node in string.nodes
+    } | {
+        node.node_id for node in build.topology.equipment_nodes
+    }
+
+    for string in build.routing.strings:
+        for route in (
+            string.positive_route,
+            string.negative_route,
+            *string.interconnect_routes,
+        ):
+            assert route.from_node_id in node_ids
+            assert route.to_node_id in node_ids
+
+
+def test_reference_topology_contains_input_mppt_and_bus_terminals() -> None:
+    build = reference_24_by_30_build()
+    kinds = [node.kind for node in build.topology.equipment_nodes]
+
+    assert kinds.count(NodeKind.PHYSICAL_INPUT_NEGATIVE) == 24
+    assert kinds.count(NodeKind.PHYSICAL_INPUT_POSITIVE) == 24
+    assert kinds.count(NodeKind.MPPT_INPUT) == 24
+    assert kinds.count(NodeKind.INVERTER_DC_BUS) == 2
+    assert len(build.topology.equipment_edges) == 120
 
 
 def test_installed_and_procurement_length_layers_are_receipted() -> None:
