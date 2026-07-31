@@ -60,7 +60,7 @@ class OrderedCircuitCalculationReceipt:
     total_resistance_ohm: float
     voltage_drop_v: float
     resistive_loss_w: float
-    resistance_registry_hash: str
+    resistance_evidence_set_hash: str
     input_evidence_floor: EvidenceClass
     warnings: tuple[str, ...] = ()
     schema_version: str = CALCULATION_RECEIPT_SCHEMA_VERSION
@@ -127,7 +127,9 @@ def calculation_receipt_payload(
         "ordered_segment_ids": list(receipt.ordered_segment_ids),
         "current_a": receipt.current_a,
         "current_evidence": _evidence_payload(receipt.current_evidence),
-        "resistance_registry_hash": receipt.resistance_registry_hash,
+        "resistance_evidence_set_hash": (
+            receipt.resistance_evidence_set_hash
+        ),
         "segment_results": [
             _segment_payload(result)
             for result in receipt.segment_results
