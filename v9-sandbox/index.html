@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>V9 Solar DC Computation Engine</title>
-  <meta name="description" content="Computation-first solar PV DC string, MPPT, segment and voltage debug engine.">
+  <meta name="description" content="Historical computation-first solar PV DC string, MPPT, segment and voltage debug engine with explicit ideal-bulk resistance limits.">
   <style>
     :root{color-scheme:dark;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#071018;color:#e8f4ff}
     *{box-sizing:border-box}body{margin:0;padding:20px}main{max-width:1500px;margin:auto;display:grid;grid-template-columns:minmax(300px,430px) 1fr;gap:18px}
@@ -12,6 +12,7 @@
     .field{display:grid;grid-template-columns:1fr 130px;gap:10px;align-items:center;margin:9px 0}.full{grid-template-columns:1fr}.full input,.full textarea,.full select{width:100%}
     input,select,textarea,button{font:inherit;background:#061018;color:#fff;border:1px solid #3c5b70;border-radius:5px;padding:8px}textarea{min-height:70px}button{cursor:pointer}button.primary{border-color:#00d5ff;color:#00e5ff;font-weight:700}
     .status{font-weight:700}.pass{color:#59ff76}.fail{color:#ff5d66}.warning{color:#ffd166}.info{color:#84caff}
+    .authority-warning{border-left:5px solid #ffd166;background:#241c08;color:#ffe7a3}.authority-warning strong{display:block;color:#ffd166;margin-bottom:8px}
     dl{display:grid;grid-template-columns:1fr auto;gap:6px 14px;margin:0}dt{color:#9bb2c2}dd{margin:0;text-align:right}pre{white-space:pre-wrap;overflow:auto;max-height:480px;background:#04090d;padding:12px;border-radius:6px;font-size:.78rem}
     table{width:100%;border-collapse:collapse;font-size:.82rem}th,td{padding:7px;border-bottom:1px solid #233847;text-align:left}.report-actions{display:flex;gap:8px;flex-wrap:wrap}.small{font-size:.82rem;color:#9bb2c2}
     @media(max-width:900px){main{grid-template-columns:1fr}body{padding:10px}.field{grid-template-columns:1fr}.field input,.field select{width:100%}}
@@ -20,7 +21,14 @@
 <body>
 <main>
   <aside>
-    <section><h1>V9 Solar DC Computation Engine</h1><p>Computation first. No plan view. No side view. All governing logic lives in <code>v9-sandbox/debug/</code>.</p></section>
+    <section><h1>V9 Solar DC Computation Engine</h1><p>Historical/reference computation workbench. No plan view. No side view. Governing legacy logic lives in <code>v9-sandbox/debug/</code>; V10 is the canonical candidate authority.</p></section>
+    <section class="authority-warning" id="legacyResistanceAuthority">
+      <strong>RESISTANCE AUTHORITY · HISTORICAL LOWER-BOUND SCREEN</strong>
+      Ideal bulk-copper screening calculation using nominal metallic area.
+      Not a finished-cable declared resistance and not an IEC 60228
+      maximum-resistance calculation. Exported V9 reports repeat this
+      classification as <code>ideal_bulk_estimate</code>.
+    </section>
     <form id="engineForm">
       <section><h2>Inverter allocation</h2>
         <label class="field">MPPT count<input id="mpptCount" type="number" min="1" max="100" value="12"></label>
