@@ -28,7 +28,7 @@ from solar_topology.resistance_evidence import (
     ResolvedConductorResistance,
     register_conductor_resistance,
     resistance_evidence_hash,
-    resistance_registry_hash,
+    resistance_records_hash,
     strongest_resistance_record,
 )
 from solar_topology.segments import TopologyInputs, archetype_strings
@@ -113,6 +113,7 @@ def test_default_products_use_explicit_standard_maximum_evidence() -> None:
         )
         assert resistance.source_revision == "edition-not-yet-encoded"
         assert resistance.r20_ohm_per_m == product.r20_ohm_per_m
+        assert "resistance_evidence" not in product.as_dict()
 
 
 def test_resistance_hash_changes_with_basis_source_or_value() -> None:
@@ -151,12 +152,16 @@ def test_strongest_record_does_not_allow_weak_override() -> None:
     assert strongest_resistance_record((assumed, manufacturer, measured)) is measured
 
 
-def test_calculation_receipt_exports_resistance_basis_and_registry_hash() -> None:
+def test_calculation_receipt_exports_applied_resistance_evidence_hash() -> None:
     receipt = _calculate(_rows())
     payload = calculation_receipt_payload(receipt)
+    expected = resistance_records_hash(
+        result.resistance_evidence for result in receipt.segment_results
+    )
 
-    assert receipt.resistance_registry_hash == resistance_registry_hash()
-    assert payload["resistance_registry_hash"] == resistance_registry_hash()
+    assert receipt.resistance_evidence_set_hash == expected
+    assert receipt.resistance_registry_hash == expected
+    assert payload["resistance_evidence_set_hash"] == expected
     assert receipt.segment_results
     assert all(
         result.resistance_evidence.basis
@@ -171,6 +176,28 @@ def test_calculation_receipt_exports_resistance_basis_and_registry_hash() -> Non
         assert evidence["temperature_coefficient_per_c"] == pytest.approx(
             0.00393
         )
+
+
+def test_unrelated_registry_product_cannot_change_existing_receipt() -> None:
+    before = _calculate(_rows())
+    register_conductor_resistance(
+        ResolvedConductorResistance(
+            product_id="unrelated-registry-test-product",
+            r20_ohm_per_m=0.009,
+            basis=ResistanceBasis.MANUFACTURER_DECLARED,
+            value_kind=ResistanceValueKind.MANUFACTURER_MAXIMUM,
+            source_reference="unrelated-test-datasheet",
+            source_revision="unrelated-v1",
+            verification_state=VerificationState.VERIFIED,
+        )
+    )
+    after = _calculate(_rows())
+
+    assert after.resistance_evidence_set_hash == (
+        before.resistance_evidence_set_hash
+    )
+    assert after.receipt_id == before.receipt_id
+    assert after.total_resistance_ohm == before.total_resistance_ohm
 
 
 def test_r20_override_is_calculated_but_evidence_is_downgraded() -> None:
