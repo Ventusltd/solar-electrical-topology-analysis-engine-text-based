@@ -349,9 +349,9 @@ def calculate_complete_circuit(
         result.connector_resistance_ohm
         for result in segment_results
     )
-    total_resistance_ohm = (
-        total_conductor_resistance_ohm
-        + total_connector_resistance_ohm
+    total_resistance_ohm = math.fsum(
+        result.total_resistance_ohm
+        for result in segment_results
     )
 
     return OrderedCircuitCalculationReceipt(
