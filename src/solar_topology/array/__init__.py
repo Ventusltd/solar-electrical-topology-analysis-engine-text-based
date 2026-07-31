@@ -1,0 +1,125 @@
+"""Installed public API for the Build 025 whole-table array authority.
+
+This package is the supported import surface for geometry, topology, routing,
+installed-length and strategy-comparison receipts. During the Build 025.5
+migration, the implementation modules remain top-level compatibility modules
+that are explicitly included in the wheel. Callers should import from this
+package rather than from those compatibility module names.
+"""
+
+from array_engine import (
+    BUILD_025_SCHEMA_VERSION,
+    STRATEGY_COMPARISON_SCHEMA_VERSION,
+    Build025Receipt,
+    MetricDelta,
+    StrategyComparisonReceipt,
+    build025_payload,
+    build_complete_table,
+    compare_reference_24_by_30,
+    compare_wiring_strategies,
+    reference_24_by_30_build,
+    strategy_comparison_payload,
+)
+from array_route_types import (
+    ConductorRoute,
+    ConductorScope,
+    InstalledLengthPolicy,
+    InstalledLengthReceipt,
+    InstallationMethod,
+    InverterPlacement,
+    ModuleTerminalLayout,
+    RouteClass,
+    RoutePolarity,
+    RouteSegment,
+    RoutingConfig,
+    StringRouteMetrics,
+    StringRoutingReceipt,
+    TableRouteMetrics,
+    TableRoutingReceipt,
+)
+from array_topology import (
+    DEFAULT_BUILD_025_LIMITS,
+    Build025Limits,
+    EquipmentProfile,
+    InputAllocationReceipt,
+    NodeKind,
+    StringAllocationReceipt,
+    TableTopologyReceipt,
+    WiringStrategy,
+    allocate_physical_inputs,
+    allocate_strings,
+    attach_input_topology,
+    build_table_topology,
+    uniform_equipment_profile,
+)
+from geometry_authority import (
+    ModuleDimensions,
+    ModulePlacement,
+    Orientation,
+    Point2D,
+    TableBounds,
+    TableGeometryReceipt,
+    TableLayoutRequest,
+    generate_table_geometry,
+    receipt_as_dict,
+    reference_24_by_30_table,
+)
+
+
+ARRAY_AUTHORITY_STATUS = "canonical_candidate"
+ARRAY_AUTHORITY_MIGRATION_STAGE = "build-025.5-installed-api"
+
+
+__all__ = [
+    "ARRAY_AUTHORITY_MIGRATION_STAGE",
+    "ARRAY_AUTHORITY_STATUS",
+    "BUILD_025_SCHEMA_VERSION",
+    "STRATEGY_COMPARISON_SCHEMA_VERSION",
+    "Build025Limits",
+    "Build025Receipt",
+    "ConductorRoute",
+    "ConductorScope",
+    "DEFAULT_BUILD_025_LIMITS",
+    "EquipmentProfile",
+    "InputAllocationReceipt",
+    "InstalledLengthPolicy",
+    "InstalledLengthReceipt",
+    "InstallationMethod",
+    "InverterPlacement",
+    "MetricDelta",
+    "ModuleDimensions",
+    "ModulePlacement",
+    "ModuleTerminalLayout",
+    "NodeKind",
+    "Orientation",
+    "Point2D",
+    "RouteClass",
+    "RoutePolarity",
+    "RouteSegment",
+    "RoutingConfig",
+    "StrategyComparisonReceipt",
+    "StringAllocationReceipt",
+    "StringRouteMetrics",
+    "StringRoutingReceipt",
+    "TableBounds",
+    "TableGeometryReceipt",
+    "TableLayoutRequest",
+    "TableRouteMetrics",
+    "TableRoutingReceipt",
+    "TableTopologyReceipt",
+    "WiringStrategy",
+    "allocate_physical_inputs",
+    "allocate_strings",
+    "attach_input_topology",
+    "build025_payload",
+    "build_complete_table",
+    "build_table_topology",
+    "compare_reference_24_by_30",
+    "compare_wiring_strategies",
+    "generate_table_geometry",
+    "receipt_as_dict",
+    "reference_24_by_30_build",
+    "reference_24_by_30_table",
+    "strategy_comparison_payload",
+    "uniform_equipment_profile",
+]
