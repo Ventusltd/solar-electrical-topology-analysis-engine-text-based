@@ -109,7 +109,7 @@ def test_default_products_use_explicit_standard_maximum_evidence() -> None:
         assert resistance.evidence_class is EvidenceClass.EXTERNAL_REFERENCE
         assert (
             resistance.verification_state
-            is VerificationState.STANDARDS_REVIEW_REQUIRED
+            == VerificationState.STANDARDS_REVIEW_REQUIRED
         )
         assert resistance.source_revision == "edition-not-yet-encoded"
         assert resistance.r20_ohm_per_m == product.r20_ohm_per_m
