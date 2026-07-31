@@ -68,6 +68,16 @@ def _operating_state():
     )
 
 
+def _exact_operating_state():
+    return OperatingState(
+        state_id="fixture:exact-operating-state",
+        current_a=Interval.exact(17.35, "A"),
+        current_evidence=_evidence("fixture:exact-current"),
+        string_vmp_v=Interval.exact(1100.0, "V"),
+        string_vmp_evidence=_evidence("fixture:exact-vmp"),
+    )
+
+
 def test_interval_requires_ordered_finite_values_and_units():
     assert Interval.exact(10.0, "A") == Interval(10.0, 10.0, 10.0, "A")
     with pytest.raises(ValueError, match="lower <= nominal <= upper"):
@@ -129,6 +139,34 @@ def test_uncertainty_contains_nominal_and_reports_voltage_drop_percentage():
     )
     assert receipt.voltage_drop_percent.lower < receipt.voltage_drop_percent.upper
     assert uncertainty_receipt_hash(receipt).startswith("sha256:")
+
+
+@pytest.mark.parametrize("modules", range(1, 62))
+def test_exact_uncertainty_collapses_to_nominal_across_module_counts(modules):
+    rows = _rows(modules)
+    model, traversal = _model_and_traversal(rows)
+
+    receipt = calculate_complete_circuit_with_uncertainty(
+        model,
+        traversal,
+        operating_state=_exact_operating_state(),
+    )
+
+    nominal = receipt.nominal_receipt
+    assert receipt.total_resistance_ohm == Interval.exact(
+        nominal.total_resistance_ohm,
+        "ohm",
+    )
+    assert receipt.voltage_drop_v == Interval.exact(
+        nominal.voltage_drop_v,
+        "V",
+    )
+    assert receipt.resistive_loss_w == Interval.exact(
+        nominal.resistive_loss_w,
+        "W",
+    )
+    assert receipt.voltage_drop_percent.lower == receipt.voltage_drop_percent.nominal
+    assert receipt.voltage_drop_percent.nominal == receipt.voltage_drop_percent.upper
 
 
 def test_uncertainty_receipt_is_deterministic_under_source_row_reordering():
