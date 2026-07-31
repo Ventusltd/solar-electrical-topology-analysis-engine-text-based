@@ -5,7 +5,6 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 import math
 
-from .evidence import VerificationState
 from .resistance_evidence import (
     ResistanceBasis,
     ResistanceValueKind,
@@ -102,7 +101,7 @@ register_conductor_resistance(
             "IEC 60228 Class 5 metal-coated copper maximum-resistance table"
         ),
         source_revision="edition-not-yet-encoded",
-        verification_state=VerificationState.STANDARDS_REVIEW_REQUIRED,
+        verification_state="standards_review_required",
         temperature_coefficient_per_c=0.00393,
         temperature_coefficient_basis=(
             "copper linear temperature correction from 20 C"
@@ -123,7 +122,7 @@ register_conductor_resistance(
             "IEC 60228 Class 5 metal-coated copper maximum-resistance table"
         ),
         source_revision="edition-not-yet-encoded",
-        verification_state=VerificationState.STANDARDS_REVIEW_REQUIRED,
+        verification_state="standards_review_required",
         temperature_coefficient_per_c=0.00393,
         temperature_coefficient_basis=(
             "copper linear temperature correction from 20 C"
