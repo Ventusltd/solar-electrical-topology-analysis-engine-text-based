@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solar Topology Engine · Build Dashboard</title>
+<style>
+:root{color-scheme:dark;--bg:#05090d;--panel:#0b141c;--line:#203342;--text:#e7f4fb;--muted:#8fa8b8;--good:#48e39b;--active:#42cfff;--future:#657887;--warn:#ffc857}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0,#102636 0,#05090d 42%);font:15px/1.45 system-ui,-apple-system,sans-serif;color:var(--text)}
+header,main{max-width:1180px;margin:auto;padding:24px}header{padding-top:38px}.kicker{letter-spacing:.16em;font-size:12px;color:var(--active);font-weight:800}h1{font-size:clamp(28px,5vw,58px);margin:.2em 0}.sub{color:var(--muted);max-width:780px}.status{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0}.pill{border:1px solid var(--line);border-radius:999px;padding:8px 13px;background:#09131a}.green{color:var(--good);border-color:#236448}.blue{color:var(--active);border-color:#235a71}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.card{background:linear-gradient(180deg,#0d1821,#091118);border:1px solid var(--line);border-radius:14px;padding:18px;min-height:130px}.card strong{font-size:28px;display:block}.card small{color:var(--muted)}.bar{height:12px;background:#101d25;border:1px solid var(--line);border-radius:20px;overflow:hidden;margin:16px 0}.fill{height:100%;width:50%;background:linear-gradient(90deg,var(--good),var(--active))}.builds{margin-top:22px}.build{display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:center;padding:15px;border-bottom:1px solid var(--line);background:#091219}.build:first-child{border-radius:12px 12px 0 0}.build:last-child{border-radius:0 0 12px 12px}.num{font-size:21px;font-weight:900}.done .num{color:var(--good)}.active .num{color:var(--active)}.future{opacity:.68}.badge{font-size:12px;border:1px solid currentColor;border-radius:999px;padding:5px 9px}.links{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}a,button{color:var(--text);background:#0d1c26;border:1px solid #2e5165;border-radius:9px;padding:10px 13px;text-decoration:none;cursor:pointer}button:hover,a:hover{border-color:var(--active)}pre{white-space:pre-wrap;color:#b9d6e5;background:#05090d;border:1px solid var(--line);padding:14px;border-radius:10px}.hidden{display:none}@media(max-width:600px){.build{grid-template-columns:58px 1fr}.badge{grid-column:2}}
+</style>
+</head>
+<body>
+<header>
+<div class="kicker">GLOBALGRID2050 · ENGINE RECOVERY</div>
+<h1>V10 Build Dashboard</h1>
+<p class="sub">Public progress view for the solar electrical topology engine. The browser remains downstream of the validated engineering kernel.</p>
+<div class="status"><span class="pill green">● VALIDATION GREEN</span><span class="pill blue">BUILD 023 COMPLETE GATE</span><span class="pill">MAIN</span></div>
+</header>
+<main>
+<section class="grid">
+<div class="card"><small>Python</small><strong>136</strong><small>tests passed</small></div>
+<div class="card"><small>V8 JavaScript</small><strong>13 / 13</strong><small>regression tests</small></div>
+<div class="card"><small>V9 debug</small><strong>10 / 10</strong><small>tests passed</small></div>
+<div class="card"><small>V10 JavaScript</small><strong>13 / 13</strong><small>kernel tests</small></div>
+</section>
+<div class="bar" aria-label="Build progress"><div class="fill"></div></div>
+<section class="builds" id="builds"></section>
+<div class="links">
+<a href="./index.html">Open V6 workbench</a>
+<a href="./v10-development/">Open V10 files</a>
+<a href="./validation/V10_VALIDATION_RECEIPT.md">Validation receipt</a>
+<button id="toggle">Show technical state</button>
+</div>
+<pre id="technical" class="hidden">Validated source commit: 67be1d2eca3ba49ef0231cf357585721aa65074f
+Validation receipt commit: 66ffca9c486e2451bc990db645cde4955ca6d07c
+Build 023 authority: CircuitModel + validation + traversal + deterministic hash + topology receipt
+Next: Build 024 kernel authority decision</pre>
+</main>
+<script>
+const data=[
+[20,'Validation hardening','complete'],[21,'Public API contract','complete'],[22,'Independent capability audit','complete'],[23,'Canonical object and topology closure','complete'],[24,'Kernel authority','active'],[25,'Route and installation physics','future'],[26,'Distributed and transient boundary','future'],[27,'Reporting and browser projection','future'],[28,'Standards cartridge registry','future'],[29,'Fleet aggregation and data laws','future'],[30,'Electrical acceptance studies','future'],[31,'EMC, lightning and SPD studies','future'],[32,'Arc fault and rapid shutdown','future'],[33,'Uncertainty and Monte Carlo','future'],[34,'Investor-grade report DNA','future'],[35,'Final thin client','future']];
+const labels={complete:'COMPLETE',active:'ACTIVE',future:'QUEUED'};
+document.querySelector('#builds').innerHTML=data.map(([n,t,s])=>`<div class="build ${s==='complete'?'done':s}"><div class="num">${String(n).padStart(3,'0')}</div><div><strong>${t}</strong><small>${s==='active'?'Authoritative calculation entry point and method ownership':'Engineering build stage'}</small></div><span class="badge">${labels[s]}</span></div>`).join('');
+document.querySelector('#toggle').onclick=()=>document.querySelector('#technical').classList.toggle('hidden');
+</script>
+</body>
+</html>
