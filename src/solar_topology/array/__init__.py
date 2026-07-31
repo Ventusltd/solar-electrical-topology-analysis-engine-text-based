@@ -1,13 +1,39 @@
 """Installed public API for the Build 025 whole-table array authority.
 
-This package is the supported import surface for geometry, topology, routing,
-installed-length and strategy-comparison receipts. During the Build 025.5
-migration, the implementation modules remain top-level compatibility modules
-that are explicitly included in the wheel. Callers should import from this
-package rather than from those compatibility module names.
+Build 025.5 places every implementation module inside this package. The original
+repository-root module names remain compatibility imports only. Internal aliases
+are installed in dependency order so the unchanged, already validated Build 025
+module bodies retain object identity and deterministic receipt behaviour while
+all production logic is owned by the installed package.
 """
 
-from array_engine import (
+from __future__ import annotations
+
+from importlib import import_module
+import sys
+from types import ModuleType
+
+
+def _authoritative_module(name: str) -> ModuleType:
+    module = import_module(f".{name}", __name__)
+    # Replace, rather than setdefault, so importing an old root compatibility
+    # module first cannot leave a partially initialised module in the graph.
+    sys.modules[name] = module
+    return module
+
+
+# Dependency order is part of the migration contract.
+_geometry_authority = _authoritative_module("geometry_authority")
+_table_string_assignment = _authoritative_module("table_string_assignment")
+_table_string_hashing = _authoritative_module("table_string_hashing")
+_table_string_validation = _authoritative_module("table_string_validation")
+_array_topology = _authoritative_module("array_topology")
+_array_route_types = _authoritative_module("array_route_types")
+_array_route_geometry = _authoritative_module("array_route_geometry")
+_array_routing = _authoritative_module("array_routing")
+_array_engine = _authoritative_module("array_engine")
+
+from .array_engine import (  # noqa: E402
     BUILD_025_SCHEMA_VERSION,
     STRATEGY_COMPARISON_SCHEMA_VERSION,
     Build025Receipt,
@@ -20,7 +46,7 @@ from array_engine import (
     reference_24_by_30_build,
     strategy_comparison_payload,
 )
-from array_route_types import (
+from .array_route_types import (  # noqa: E402
     ConductorRoute,
     ConductorScope,
     InstalledLengthPolicy,
@@ -37,7 +63,7 @@ from array_route_types import (
     TableRouteMetrics,
     TableRoutingReceipt,
 )
-from array_topology import (
+from .array_topology import (  # noqa: E402
     DEFAULT_BUILD_025_LIMITS,
     Build025Limits,
     EquipmentProfile,
@@ -52,7 +78,7 @@ from array_topology import (
     build_table_topology,
     uniform_equipment_profile,
 )
-from geometry_authority import (
+from .geometry_authority import (  # noqa: E402
     ModuleDimensions,
     ModulePlacement,
     Orientation,
@@ -67,13 +93,25 @@ from geometry_authority import (
 
 
 ARRAY_AUTHORITY_STATUS = "canonical_candidate"
-ARRAY_AUTHORITY_MIGRATION_STAGE = "build-025.5-installed-api"
+ARRAY_AUTHORITY_MIGRATION_STAGE = "build-025.5-package-authority"
+COMPATIBILITY_MODULES = (
+    "geometry_authority",
+    "table_string_assignment",
+    "table_string_hashing",
+    "table_string_validation",
+    "array_topology",
+    "array_route_types",
+    "array_route_geometry",
+    "array_routing",
+    "array_engine",
+)
 
 
 __all__ = [
     "ARRAY_AUTHORITY_MIGRATION_STAGE",
     "ARRAY_AUTHORITY_STATUS",
     "BUILD_025_SCHEMA_VERSION",
+    "COMPATIBILITY_MODULES",
     "STRATEGY_COMPARISON_SCHEMA_VERSION",
     "Build025Limits",
     "Build025Receipt",
