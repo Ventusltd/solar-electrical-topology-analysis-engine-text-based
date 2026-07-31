@@ -227,6 +227,12 @@ from .formulas import (
     two_wire_parameters,
 )
 from .products import ConductorSpec, EXTERNAL_STRING_6MM2, FACTORY_LEAD_4MM2
+from .resistance_qualification import (
+    RESISTANCE_QUALIFICATION_SCHEMA_VERSION,
+    ResistanceSourceAssessment,
+    ResistanceSourceStatus,
+    assess_resistance_source,
+)
 from .segments import (
     FeasibilityResult,
     Point3D,
