@@ -85,14 +85,8 @@ def test_partial_final_row_is_supported() -> None:
     assert receipt.placements[-1].column_index == 2
 
 
-@pytest.mark.parametrize(
-    "request",
-    [
-        TableLayoutRequest,
-    ],
-)
-def test_public_request_type_exists(request: object) -> None:
-    assert request is TableLayoutRequest
+def test_public_request_type_exists() -> None:
+    assert TableLayoutRequest.__name__ == "TableLayoutRequest"
 
 
 def test_invalid_capacity_is_rejected() -> None:
