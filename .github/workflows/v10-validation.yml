@@ -2,6 +2,17 @@ name: V10 Engine Validation
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - "src/solar_topology/**"
+      - "tests/**"
+      - "scripts/run_v10_validation.py"
+      - "v8-leapfrog/**"
+      - "v9-sandbox/debug/**"
+      - "v10-development/src/**"
+      - "v10-development/tests/**"
+      - "v10-development/package.json"
+      - ".github/workflows/v10-validation.yml"
   push:
     branches:
       - main
@@ -20,7 +31,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: v10-engine-validation
+  group: v10-engine-validation-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -56,7 +67,10 @@ jobs:
         run: python scripts/run_v10_validation.py
 
       - name: Commit paired validation receipts
-        if: always()
+        if: >-
+          always() &&
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/main'
         run: |
           git config user.name "GridBot"
           git config user.email "gridbot@users.noreply.github.com"
