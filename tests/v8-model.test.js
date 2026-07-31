@@ -2,6 +2,7 @@
 
 const assert = require('node:assert/strict');
 const model = require('../v8-leapfrog/model.js');
+const authority = require('../v8-leapfrog/authority-reconciliation.js');
 
 function close(actual, expected, tolerance = 1e-9) {
   return Math.abs(actual - expected) <= tolerance;
@@ -153,6 +154,34 @@ assert.equal(
   west.nearRouteM
 );
 
+const authorityGolden = authority.runGoldenTests();
+assert.equal(
+  authorityGolden.allPassed,
+  true,
+  JSON.stringify(authorityGolden.tests, null, 2)
+);
+
+const reconciliation = authority.calculate();
+assert.ok(close(reconciliation.fieldInstalledReductionM, 798.288));
+assert.ok(close(reconciliation.factoryFittedIncreaseM, 845.088));
+assert.ok(close(reconciliation.totalCircuitChangeM, 46.8));
+assert.ok(
+  close(
+    reconciliation.absoluteWindingAreaReductionPercent,
+    79.801546,
+    1e-6
+  )
+);
+assert.equal(
+  authority.BUILD_025_REFERENCE.geometryDimensionality,
+  'plan_2d'
+);
+assert.equal(
+  authority.BUILD_025_REFERENCE.terminalGeometryEvidence,
+  'generic_unresolved'
+);
+
 console.log(
-  `V8 regression tests passed: ${golden.passed}/${golden.total}`
+  `V8 regression tests passed: ${golden.passed}/${golden.total}; ` +
+  `authority reconciliation ${authorityGolden.passed}/${authorityGolden.total}`
 );
