@@ -20,9 +20,9 @@ from .circuit_traversal import OrderedCircuitTraversal
 from .evidence import EvidenceDescriptor
 
 
-UNCERTAINTY_SCHEMA_VERSION = "globalgrid2050.solar-dc.uncertainty.v10.1"
+UNCERTAINTY_SCHEMA_VERSION = "globalgrid2050.solar-dc.uncertainty.v10.2"
 UNCERTAINTY_METHOD_VERSION = (
-    "globalgrid2050.solar-dc.complete-circuit-interval-propagation.v10.2"
+    "globalgrid2050.solar-dc.complete-circuit-interval-propagation.v10.3"
 )
 
 
@@ -164,10 +164,15 @@ def _resistance_bounds(
     length: Interval,
     r20: Interval,
     temperature: Interval,
+    *,
+    temperature_coefficient_per_c: float,
 ) -> Interval:
-    lower_factor = 1 + ALPHA_CU_20_PER_C * (temperature.lower - 20.0)
-    nominal_factor = 1 + ALPHA_CU_20_PER_C * (temperature.nominal - 20.0)
-    upper_factor = 1 + ALPHA_CU_20_PER_C * (temperature.upper - 20.0)
+    alpha = float(temperature_coefficient_per_c)
+    if not math.isfinite(alpha) or alpha <= 0:
+        raise ValueError("temperature coefficient must be finite and positive")
+    lower_factor = 1 + alpha * (temperature.lower - 20.0)
+    nominal_factor = 1 + alpha * (temperature.nominal - 20.0)
+    upper_factor = 1 + alpha * (temperature.upper - 20.0)
     if lower_factor <= 0:
         raise ValueError("temperature interval creates a non-positive resistance factor")
     return Interval(
@@ -196,6 +201,9 @@ def uncertainty_receipt_payload(
         "receipt_id": receipt.receipt_id,
         "validated_circuit_hash": receipt.nominal_receipt.validated_circuit_hash,
         "nominal_calculation_receipt_id": receipt.nominal_receipt.receipt_id,
+        "resistance_registry_hash": (
+            receipt.nominal_receipt.resistance_registry_hash
+        ),
         "operating_state": {
             "state_id": receipt.operating_state.state_id,
             "current_a": _interval_payload(receipt.operating_state.current_a),
@@ -260,6 +268,8 @@ def calculate_complete_circuit_with_uncertainty(
 
     Correlation and probability are deliberately not inferred. The returned
     extrema are conservative combinations of the supplied independent bounds.
+    Conductor temperature coefficients follow each segment's resolved resistance
+    evidence; connector bounds retain the existing visible copper-alpha model.
     """
 
     if not isinstance(operating_state, OperatingState):
@@ -308,7 +318,14 @@ def calculate_complete_circuit_with_uncertainty(
         )
         connector_count = int(_number(attributes, "connector_count", segment_id))
 
-        conductor = _resistance_bounds(length, r20, temperature)
+        conductor = _resistance_bounds(
+            length,
+            r20,
+            temperature,
+            temperature_coefficient_per_c=(
+                nominal_result.resistance_evidence.temperature_coefficient_per_c
+            ),
+        )
         connector_unit = _resistance_bounds(
             Interval.exact(float(connector_count), "count"),
             Interval(
@@ -318,6 +335,7 @@ def calculate_complete_circuit_with_uncertainty(
                 "ohm/count",
             ),
             temperature,
+            temperature_coefficient_per_c=ALPHA_CU_20_PER_C,
         )
         connector = Interval(
             connector_unit.lower,
@@ -387,6 +405,7 @@ def calculate_complete_circuit_with_uncertainty(
     base_payload = {
         "method_version": UNCERTAINTY_METHOD_VERSION,
         "nominal_receipt_id": nominal.receipt_id,
+        "resistance_registry_hash": nominal.resistance_registry_hash,
         "operating_state_id": operating_state.state_id,
         "segment_ids": list(nominal.ordered_segment_ids),
         "resistance": _interval_payload(total_r),
@@ -409,8 +428,13 @@ def calculate_complete_circuit_with_uncertainty(
         voltage_drop_v=voltage_drop,
         resistive_loss_w=loss,
         voltage_drop_percent=drop_percent,
-        warnings=(
-            "Declared interval bounds; not a probability distribution or confidence interval.",
-            "Candidate steady-state result; not a standards-compliance conclusion.",
+        warnings=tuple(
+            sorted(
+                {
+                    *nominal.warnings,
+                    "Declared interval bounds; not a probability distribution or confidence interval.",
+                    "Candidate steady-state result; not a standards-compliance conclusion.",
+                }
+            )
         ),
     )
