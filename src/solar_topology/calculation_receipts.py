@@ -14,7 +14,7 @@ CALCULATION_RECEIPT_SCHEMA_VERSION = (
     "globalgrid2050.solar-dc.calculation-receipt.v10.1"
 )
 COMPLETE_CIRCUIT_METHOD_VERSION = (
-    "globalgrid2050.solar-dc.complete-circuit-r-vdrop-loss.v10.1"
+    "globalgrid2050.solar-dc.complete-circuit-r-vdrop-loss.v10.2"
 )
 
 
