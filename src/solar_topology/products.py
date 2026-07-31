@@ -17,14 +17,19 @@ from .resistance_evidence import (
 
 @dataclass(frozen=True)
 class ConductorSpec:
-    """Finished-cable geometry kept separate from resistance authority."""
+    """Finished-cable geometry kept separate from resistance authority.
+
+    ``provenance`` is retained as a legacy cartridge field for backward hash
+    compatibility. It does not determine resistance authority when an explicit
+    ``resistance_evidence`` record is present.
+    """
 
     product_id: str
     nominal_csa_mm2: float
     conductor_diameter_mm: float
     cable_od_mm: float
     r20_ohm_per_m: float
-    provenance: str = "assumed"
+    provenance: str = "oem_declared"
     resistance_evidence: ResolvedConductorResistance | None = None
 
     @property
@@ -138,7 +143,7 @@ FACTORY_LEAD_4MM2 = ConductorSpec(
     conductor_diameter_mm=2.45,
     cable_od_mm=5.5,
     r20_ohm_per_m=5.09e-3,
-    provenance="assumed",
+    provenance="oem_declared",
     resistance_evidence=_FACTORY_LEAD_4MM2_RESISTANCE,
 )
 
@@ -149,7 +154,7 @@ EXTERNAL_STRING_6MM2 = ConductorSpec(
     conductor_diameter_mm=3.00,
     cable_od_mm=6.1,
     r20_ohm_per_m=3.39e-3,
-    provenance="assumed",
+    provenance="oem_declared",
     resistance_evidence=_EXTERNAL_STRING_6MM2_RESISTANCE,
 )
 
