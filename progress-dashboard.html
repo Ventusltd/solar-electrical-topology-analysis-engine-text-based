@@ -3,45 +3,96 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Solar Topology Engine · Build Dashboard</title>
+<meta name="description" content="Live public engineering progress dashboard for the GlobalGrid2050 solar electrical topology analysis engine.">
+<title>Solar Topology Engine · Engineering Control Dashboard</title>
 <style>
-:root{color-scheme:dark;--bg:#05090d;--panel:#0b141c;--line:#203342;--text:#e7f4fb;--muted:#8fa8b8;--good:#48e39b;--active:#42cfff;--future:#657887;--warn:#ffc857}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0,#102636 0,#05090d 42%);font:15px/1.45 system-ui,-apple-system,sans-serif;color:var(--text)}
-header,main{max-width:1180px;margin:auto;padding:24px}header{padding-top:38px}.kicker{letter-spacing:.16em;font-size:12px;color:var(--active);font-weight:800}h1{font-size:clamp(28px,5vw,58px);margin:.2em 0}.sub{color:var(--muted);max-width:780px}.status{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0}.pill{border:1px solid var(--line);border-radius:999px;padding:8px 13px;background:#09131a}.green{color:var(--good);border-color:#236448}.blue{color:var(--active);border-color:#235a71}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.card{background:linear-gradient(180deg,#0d1821,#091118);border:1px solid var(--line);border-radius:14px;padding:18px;min-height:130px}.card strong{font-size:28px;display:block}.card small{color:var(--muted)}.bar{height:12px;background:#101d25;border:1px solid var(--line);border-radius:20px;overflow:hidden;margin:16px 0}.fill{height:100%;width:50%;background:linear-gradient(90deg,var(--good),var(--active))}.builds{margin-top:22px}.build{display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:center;padding:15px;border-bottom:1px solid var(--line);background:#091219}.build:first-child{border-radius:12px 12px 0 0}.build:last-child{border-radius:0 0 12px 12px}.num{font-size:21px;font-weight:900}.done .num{color:var(--good)}.active .num{color:var(--active)}.future{opacity:.68}.badge{font-size:12px;border:1px solid currentColor;border-radius:999px;padding:5px 9px}.links{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}a,button{color:var(--text);background:#0d1c26;border:1px solid #2e5165;border-radius:9px;padding:10px 13px;text-decoration:none;cursor:pointer}button:hover,a:hover{border-color:var(--active)}pre{white-space:pre-wrap;color:#b9d6e5;background:#05090d;border:1px solid var(--line);padding:14px;border-radius:10px}.hidden{display:none}@media(max-width:600px){.build{grid-template-columns:58px 1fr}.badge{grid-column:2}}
+:root{color-scheme:dark;--bg:#04080c;--panel:#0a141c;--panel2:#0d1b25;--line:#203544;--text:#eaf7fd;--muted:#91aaba;--good:#48e39b;--active:#42cfff;--future:#728592;--warn:#ffc857;--danger:#ff7185}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 15% 0,#123047 0,#071019 30%,var(--bg) 65%);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text)}
+header,main,footer{max-width:1240px;margin:auto;padding:24px}header{padding-top:38px}.kicker{letter-spacing:.17em;font-size:12px;color:var(--active);font-weight:850}h1{font-size:clamp(31px,6vw,66px);line-height:1.03;margin:.18em 0}.sub{color:var(--muted);max-width:850px;font-size:17px}.status,.actions,.legend{display:flex;gap:10px;flex-wrap:wrap}.status{margin:24px 0}.pill,.badge{border:1px solid var(--line);border-radius:999px;padding:7px 12px;background:#09131a;font-weight:750;font-size:12px}.green{color:var(--good);border-color:#246b4c}.blue{color:var(--active);border-color:#286a86}.amber{color:var(--warn);border-color:#745d22}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}.card,.panel{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:15px;box-shadow:0 18px 45px #0005}.card{padding:18px;min-height:128px}.card strong{font-size:30px;display:block}.card small,.muted{color:var(--muted)}.section-title{display:flex;justify-content:space-between;gap:18px;align-items:end;margin:34px 0 12px}.section-title h2{margin:0;font-size:23px}.section-title p{margin:0;color:var(--muted)}.progress-shell{height:15px;background:#101d25;border:1px solid var(--line);border-radius:20px;overflow:hidden}.progress-fill{height:100%;width:31.25%;background:linear-gradient(90deg,var(--good),var(--active))}.progress-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-top:8px}.builds{overflow:hidden;border:1px solid var(--line);border-radius:14px}.build{display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:center;padding:15px;background:#091219;border-bottom:1px solid var(--line)}.build:last-child{border-bottom:0}.num{font-size:21px;font-weight:900}.done .num{color:var(--good)}.active .num{color:var(--active)}.future{opacity:.68}.build strong{display:block}.build small{color:var(--muted)}.badge{padding:5px 9px}.architecture{display:grid;grid-template-columns:repeat(8,minmax(105px,1fr));gap:8px}.layer{padding:14px 10px;text-align:center;border:1px solid var(--line);border-radius:11px;background:#09131a}.layer.ready{border-color:#286a4f;color:var(--good)}.layer.active{border-color:#26718d;color:var(--active)}.timeline{padding:8px 18px}.event{display:grid;grid-template-columns:150px 1fr;gap:18px;padding:14px 0;border-bottom:1px solid var(--line)}.event:last-child{border-bottom:0}.event code{color:var(--active);font-size:12px;word-break:break-all}.event strong{display:block;margin-bottom:3px}.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.fact{padding:16px;border-left:3px solid var(--active);background:#08131b;border-radius:7px}.fact.good{border-color:var(--good)}.fact.warn{border-color:var(--warn)}a,button{color:var(--text);background:#0d1c26;border:1px solid #2e5165;border-radius:9px;padding:10px 13px;text-decoration:none;cursor:pointer;font:inherit}button:hover,a:hover{border-color:var(--active)}pre{white-space:pre-wrap;color:#bdd9e7;background:#04090d;border:1px solid var(--line);padding:16px;border-radius:11px}.hidden{display:none}footer{color:var(--muted);font-size:13px;padding-bottom:42px}@media(max-width:900px){.architecture{grid-template-columns:repeat(4,1fr)}}@media(max-width:620px){header,main,footer{padding:18px}.build{grid-template-columns:55px 1fr}.build .badge{grid-column:2;justify-self:start}.architecture{grid-template-columns:repeat(2,1fr)}.event{grid-template-columns:1fr}.section-title{display:block}.section-title p{margin-top:5px}}
 </style>
 </head>
 <body>
 <header>
-<div class="kicker">GLOBALGRID2050 · ENGINE RECOVERY</div>
-<h1>V10 Build Dashboard</h1>
-<p class="sub">Public progress view for the solar electrical topology engine. The browser remains downstream of the validated engineering kernel.</p>
-<div class="status"><span class="pill green">● VALIDATION GREEN</span><span class="pill blue">BUILD 023 COMPLETE GATE</span><span class="pill">MAIN</span></div>
+<div class="kicker">GLOBALGRID2050 · ENGINEERING CONTROL ROOM</div>
+<h1>Solar Topology Engine</h1>
+<p class="sub">A public view of the backend recovery and rebuild: what is authoritative, what has passed validation, what is being built now, and how the browser remains downstream of the engineering kernel.</p>
+<div class="status"><span class="pill green">● VALIDATION GREEN</span><span class="pill blue">BUILD 024 ACTIVE</span><span class="pill">MAIN BRANCH</span><span class="pill amber">CANDIDATE ENGINEERING · NOT COMPLIANCE CERTIFICATION</span></div>
+<div class="actions"><a href="./index.html">Open interactive topology workbench</a><a href="#roadmap">View roadmap</a><a href="#history">See recent development</a><button id="toggle">Technical state</button></div>
 </header>
 <main>
-<section class="grid">
-<div class="card"><small>Python</small><strong>136</strong><small>tests passed</small></div>
-<div class="card"><small>V8 JavaScript</small><strong>13 / 13</strong><small>regression tests</small></div>
-<div class="card"><small>V9 debug</small><strong>10 / 10</strong><small>tests passed</small></div>
-<div class="card"><small>V10 JavaScript</small><strong>13 / 13</strong><small>kernel tests</small></div>
+<section class="grid" aria-label="Validation summary">
+<div class="card"><small>Total validated tests</small><strong>176</strong><small>across Python, V8, V9 and V10</small></div>
+<div class="card"><small>Python authority suite</small><strong>140</strong><small>tests passed</small></div>
+<div class="card"><small>Legacy continuity</small><strong>23 / 23</strong><small>V8 and V9 checks passed</small></div>
+<div class="card"><small>V10 JavaScript kernel</small><strong>13 / 13</strong><small>tests passed</small></div>
+<div class="card"><small>Latest validated source</small><strong style="font-size:18px">94020c1</strong><small>kernel authority gate tests</small></div>
+<div class="card"><small>Validation receipt</small><strong style="font-size:18px">c42f234</strong><small>green receipt on 31 July 2026</small></div>
 </section>
-<div class="bar" aria-label="Build progress"><div class="fill"></div></div>
+
+<div class="section-title"><div><h2>Recovery programme</h2><p>Five of sixteen defined engineering stages are complete or active.</p></div><strong>31.25%</strong></div>
+<div class="progress-shell" aria-label="Recovery programme progress"><div class="progress-fill"></div></div>
+<div class="progress-meta"><span>Build 020 · validation hardening</span><span>Build 035 · final thin client</span></div>
+
+<div class="section-title"><div><h2>Authority stack</h2><p>The build order follows the physics rather than the browser.</p></div></div>
+<section class="architecture">
+<div class="layer ready">Physics</div><div class="layer ready">Geometry</div><div class="layer ready">Objects</div><div class="layer ready">Topology</div><div class="layer active">Computation</div><div class="layer">Evidence</div><div class="layer">Reporting</div><div class="layer">Visualisation</div>
+</section>
+
+<div class="section-title" id="roadmap"><div><h2>Build roadmap</h2><p>Click a stage to reveal its engineering purpose.</p></div></div>
 <section class="builds" id="builds"></section>
-<div class="links">
-<a href="./index.html">Open V6 workbench</a>
-<a href="./v10-development/">Open V10 files</a>
-<a href="./validation/V10_VALIDATION_RECEIPT.md">Validation receipt</a>
-<button id="toggle">Show technical state</button>
-</div>
-<pre id="technical" class="hidden">Validated source commit: 67be1d2eca3ba49ef0231cf357585721aa65074f
-Validation receipt commit: 66ffca9c486e2451bc990db645cde4955ca6d07c
-Build 023 authority: CircuitModel + validation + traversal + deterministic hash + topology receipt
-Next: Build 024 kernel authority decision</pre>
+
+<div class="section-title"><div><h2>What is now real</h2><p>Capabilities already present in the recovered main branch.</p></div></div>
+<section class="facts">
+<div class="fact good"><strong>Canonical circuit authority</strong><br><span class="muted">Immutable objects, terminals and connections with deterministic payloads and hashes.</span></div>
+<div class="fact good"><strong>Graph-derived electrical order</strong><br><span class="muted">Traversal does not trust browser order, tuple order or source segment indices.</span></div>
+<div class="fact good"><strong>Calculation receipt gate</strong><br><span class="muted">Resistance, voltage drop and loss are bound to validated topology and evidence.</span></div>
+<div class="fact good"><strong>Kernel authority protection</strong><br><span class="muted">Altered totals, formula drift, malformed hashes and segment-order mismatch are rejected.</span></div>
+<div class="fact"><strong>Geometry-derived quantities</strong><br><span class="muted">Route length, resistance, inductance, capacitance, energy and propagation calculations exist.</span></div>
+<div class="fact warn"><strong>Browser is a projection</strong><br><span class="muted">The public workbench remains useful for exploration but is not yet the final authoritative thin client.</span></div>
+</section>
+
+<div class="section-title" id="history"><div><h2>Recent development</h2><p>The latest visible milestones on main.</p></div></div>
+<section class="panel timeline">
+<div class="event"><code>19228b4</code><div><strong>Build 024 activated</strong><span class="muted">Kernel authority and method ownership recorded.</span></div></div>
+<div class="event"><code>c42f234</code><div><strong>Green validation receipt</strong><span class="muted">140 Python, 13 V8, 10 V9 and 13 V10 tests passed.</span></div></div>
+<div class="event"><code>94020c1</code><div><strong>Kernel authority regression tests</strong><span class="muted">Receipt tampering and calculation drift are explicitly blocked.</span></div></div>
+<div class="event"><code>ac83038</code><div><strong>Steady-state authority gate</strong><span class="muted">A single guarded route now decides whether calculation output is authoritative.</span></div></div>
+<div class="event"><code>398c14e</code><div><strong>Build 023 restore point</strong><span class="muted">Canonical topology authority recorded green.</span></div></div>
+<div class="event"><code>a2cc595</code><div><strong>First public build dashboard</strong><span class="muted">Backend progress became externally visible.</span></div></div>
+</section>
+
+<pre id="technical" class="hidden">Current programme: Build 024 — Kernel authority
+Latest validated source commit: 94020c1dd2aa0a09c1f39c9587a5e64c810c222b
+Validation receipt commit: c42f234d97c070e78fa88712648cfb27c9a5c3a2
+Build 023 restore point: 398c14ea13317170757adb8f5ccd5258f93f4dfe
+Build 024 authority record: 19228b423f9adeff179af9ea16f30be8bd4d8985
+Validated test count: Python 140 · V8 13 · V9 10 · V10 JS 13
+Next engineering increments: public authority API export, end-to-end cartridge-to-receipt fixture, restore point, then Build 025 route and installation physics.</pre>
 </main>
+<footer>Dashboard snapshot generated from authenticated repository state. Engineering outputs remain evidence-bearing candidate results until applicable project evidence, standards and competent-person review are complete.</footer>
 <script>
-const data=[
-[20,'Validation hardening','complete'],[21,'Public API contract','complete'],[22,'Independent capability audit','complete'],[23,'Canonical object and topology closure','complete'],[24,'Kernel authority','active'],[25,'Route and installation physics','future'],[26,'Distributed and transient boundary','future'],[27,'Reporting and browser projection','future'],[28,'Standards cartridge registry','future'],[29,'Fleet aggregation and data laws','future'],[30,'Electrical acceptance studies','future'],[31,'EMC, lightning and SPD studies','future'],[32,'Arc fault and rapid shutdown','future'],[33,'Uncertainty and Monte Carlo','future'],[34,'Investor-grade report DNA','future'],[35,'Final thin client','future']];
-const labels={complete:'COMPLETE',active:'ACTIVE',future:'QUEUED'};
-document.querySelector('#builds').innerHTML=data.map(([n,t,s])=>`<div class="build ${s==='complete'?'done':s}"><div class="num">${String(n).padStart(3,'0')}</div><div><strong>${t}</strong><small>${s==='active'?'Authoritative calculation entry point and method ownership':'Engineering build stage'}</small></div><span class="badge">${labels[s]}</span></div>`).join('');
+const builds=[
+{n:20,t:'Validation hardening',s:'complete',d:'Import gates, deterministic diagnostics and recovery checks.'},
+{n:21,t:'Public API contract',s:'complete',d:'Explicit canonical, provisional and compatibility classifications.'},
+{n:22,t:'Independent capability audit',s:'complete',d:'Adopt, adapt and repair decisions across recovered modules.'},
+{n:23,t:'Canonical object and topology closure',s:'complete',d:'Circuit model, validation, traversal, hash and topology authority receipt.'},
+{n:24,t:'Kernel authority',s:'active',d:'Single authoritative steady-state entry point, method ownership and anti-drift gates.'},
+{n:25,t:'Route and installation physics',s:'future',d:'Installation-aware geometry and route conditions.'},
+{n:26,t:'Distributed and transient boundary',s:'future',d:'Define where lumped models stop and distributed physics begins.'},
+{n:27,t:'Reporting and browser projection',s:'future',d:'Bind public visualisation to signed kernel outputs.'},
+{n:28,t:'Standards cartridge registry',s:'future',d:'Versioned engineering study methods and applicability.'},
+{n:29,t:'Fleet aggregation and data laws',s:'future',d:'Scale validated string results across inverter and fleet levels.'},
+{n:30,t:'Electrical acceptance studies',s:'future',d:'Voltage, loss, thermal and acceptance criteria.'},
+{n:31,t:'EMC, lightning and SPD studies',s:'future',d:'Field geometry, surge boundaries and protection evidence.'},
+{n:32,t:'Arc fault and rapid shutdown',s:'future',d:'Safety-study objects, states and limitations.'},
+{n:33,t:'Uncertainty and Monte Carlo',s:'future',d:'Propagate evidence ranges rather than hiding assumptions.'},
+{n:34,t:'Investor-grade report DNA',s:'future',d:'Traceable outputs suitable for technical due diligence.'},
+{n:35,t:'Final thin client',s:'future',d:'Browser becomes a transparent projection of the authoritative kernel.'}
+];
+const label={complete:'COMPLETE',active:'ACTIVE',future:'QUEUED'};
+const root=document.querySelector('#builds');
+root.innerHTML=builds.map(b=>`<div class="build ${b.s==='complete'?'done':b.s}" tabindex="0" role="button" aria-expanded="false"><div class="num">${String(b.n).padStart(3,'0')}</div><div><strong>${b.t}</strong><small class="summary">${b.s==='active'?'Current engineering build':b.s==='complete'?'Validated programme stage':'Queued after authority dependencies'}</small><small class="detail hidden">${b.d}</small></div><span class="badge">${label[b.s]}</span></div>`).join('');
+root.querySelectorAll('.build').forEach(row=>{const toggle=()=>{row.querySelector('.summary').classList.toggle('hidden');row.querySelector('.detail').classList.toggle('hidden');row.setAttribute('aria-expanded',row.getAttribute('aria-expanded')!=='true')};row.addEventListener('click',toggle);row.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}})});
 document.querySelector('#toggle').onclick=()=>document.querySelector('#technical').classList.toggle('hidden');
 </script>
 </body>
