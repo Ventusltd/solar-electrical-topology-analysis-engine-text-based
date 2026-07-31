@@ -26,11 +26,17 @@ from solar_topology.resistance_evidence import (
     ResistanceBasis,
     ResistanceValueKind,
     ResolvedConductorResistance,
+    register_conductor_resistance,
     resistance_evidence_hash,
     resistance_registry_hash,
     strongest_resistance_record,
 )
 from solar_topology.segments import TopologyInputs, archetype_strings
+from solar_topology.uncertainty import (
+    Interval,
+    OperatingState,
+    calculate_complete_circuit_with_uncertainty,
+)
 
 
 def _rows(modules: int = 6):
@@ -45,7 +51,7 @@ def _rows(modules: int = 6):
     return SequentialCartridge().build_segments(inputs, definition)
 
 
-def _calculate(rows):
+def _model_and_traversal(rows):
     model = adapt_segment_chain_to_circuit(rows)
     start, end = circuit_boundary_terminal_ids(model)
     traversal = verify_ordered_circuit(
@@ -55,16 +61,24 @@ def _calculate(rows):
         expected_segment_ids=source_segment_ids(rows),
     )
     assert traversal.valid
-    current_evidence = canonical_evidence_descriptor(
+    return model, traversal
+
+
+def _current_evidence():
+    return canonical_evidence_descriptor(
         EvidenceClass.MANUFACTURER_DECLARED,
         verification_state=VerificationState.CANDIDATE,
         source_reference="resistance-evidence-test-current",
     )
+
+
+def _calculate(rows):
+    model, traversal = _model_and_traversal(rows)
     return calculate_complete_circuit(
         model,
         traversal,
         current_a=17.35,
-        current_evidence=current_evidence,
+        current_evidence=_current_evidence(),
     )
 
 
@@ -185,6 +199,72 @@ def test_r20_override_is_calculated_but_evidence_is_downgraded() -> None:
     assert any(
         "downgraded to assumed" in warning
         for warning in overridden.warnings
+    )
+
+
+def test_uncertainty_uses_resolved_product_temperature_coefficient() -> None:
+    record = register_conductor_resistance(
+        ResolvedConductorResistance(
+            product_id="test-measured-alpha-product",
+            r20_ohm_per_m=0.004,
+            basis=ResistanceBasis.INDEPENDENTLY_MEASURED,
+            value_kind=ResistanceValueKind.MEASURED,
+            source_reference="laboratory-four-wire-test",
+            source_revision="test-2026-07-31",
+            verification_state=VerificationState.VERIFIED,
+            temperature_coefficient_per_c=0.0042,
+            temperature_coefficient_basis="measured_product_fit",
+            measurement_conditions="four-wire measurement at 20 C",
+        )
+    )
+    source = _rows(modules=1)[0]
+    row = dataclasses.replace(
+        source,
+        conductor_product_id=record.product_id,
+        r20_ohm_per_m=record.r20_ohm_per_m,
+        temperature_c=70.0,
+        connector_count=0,
+        connector_resistance_ohm_each=0.0,
+        provenance="measured",
+        source_reference=record.source_reference,
+    )
+    model, traversal = _model_and_traversal((row,))
+    nominal = calculate_complete_circuit(
+        model,
+        traversal,
+        current_a=17.35,
+        current_evidence=_current_evidence(),
+    )
+    uncertain = calculate_complete_circuit_with_uncertainty(
+        model,
+        traversal,
+        operating_state=OperatingState(
+            state_id="measured-alpha-exact-state",
+            current_a=Interval.exact(17.35, "A"),
+            current_evidence=_current_evidence(),
+            string_vmp_v=Interval.exact(1100.0, "V"),
+            string_vmp_evidence=canonical_evidence_descriptor(
+                EvidenceClass.MANUFACTURER_DECLARED,
+                verification_state=VerificationState.CANDIDATE,
+                source_reference="resistance-evidence-test-vmp",
+            ),
+        ),
+    )
+    expected = (
+        row.conductor_length_m
+        * record.r20_ohm_per_m
+        * (1 + record.temperature_coefficient_per_c * (70.0 - 20.0))
+    )
+
+    assert nominal.segment_results[0].conductor_resistance_ohm == pytest.approx(
+        expected
+    )
+    assert uncertain.segment_results[0].conductor_resistance_ohm == (
+        Interval.exact(expected, "ohm")
+    )
+    assert uncertain.total_resistance_ohm == Interval.exact(
+        nominal.total_resistance_ohm,
+        "ohm",
     )
 
 
