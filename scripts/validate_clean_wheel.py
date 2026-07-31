@@ -80,11 +80,17 @@ import sys
 
 import array_engine
 import geometry_authority
+import solar_topology as topology_api
 import solar_topology.array as array_api
+import solar_topology.resistance_qualification as qualification
 
 source_root = Path(os.environ["SOURCE_ROOT"]).resolve()
 module_paths = {
+    "solar_topology": Path(topology_api.__file__).resolve(),
     "solar_topology.array": Path(array_api.__file__).resolve(),
+    "solar_topology.resistance_qualification": Path(
+        qualification.__file__
+    ).resolve(),
     "array_engine": Path(array_engine.__file__).resolve(),
     "geometry_authority": Path(geometry_authority.__file__).resolve(),
 }
@@ -106,6 +112,48 @@ for name in ("array_engine", "geometry_authority"):
         raise AssertionError(f"{name} did not resolve inside packaged array authority")
 if array_api.ARRAY_AUTHORITY_MIGRATION_STAGE != "build-025.5-package-authority":
     raise AssertionError("installed array API reports the wrong migration stage")
+
+qualification_exports = (
+    "RESISTANCE_QUALIFICATION_SCHEMA_VERSION",
+    "ResistanceSourceAssessment",
+    "ResistanceSourceStatus",
+    "assess_resistance_source",
+)
+for name in qualification_exports:
+    if name not in topology_api.__all__:
+        raise AssertionError(f"qualification export missing from package API: {name}")
+    if topology_api.public_api_status(name) != topology_api.ApiStatus.PROVISIONAL:
+        raise AssertionError(f"qualification export is not explicitly provisional: {name}")
+if topology_api.assess_resistance_source is not qualification.assess_resistance_source:
+    raise AssertionError("top-level qualification function is not the module authority")
+if topology_api.ResistanceSourceStatus is not qualification.ResistanceSourceStatus:
+    raise AssertionError("top-level qualification status is not the module authority")
+
+qualification_results = {}
+for product in (
+    topology_api.FACTORY_LEAD_4MM2,
+    topology_api.EXTERNAL_STRING_6MM2,
+):
+    assessment = topology_api.assess_resistance_source(
+        product.resolved_resistance
+    )
+    if assessment.status != topology_api.ResistanceSourceStatus.CANDIDATE:
+        raise AssertionError(
+            f"generic product {product.product_id} was unexpectedly promoted"
+        )
+    if assessment.reasons != (
+        "SOURCE_REVISION_PLACEHOLDER",
+        "VERIFICATION_NOT_VERIFIED",
+    ):
+        raise AssertionError(
+            f"unexpected qualification reasons for {product.product_id}: "
+            f"{assessment.reasons!r}"
+        )
+    qualification_results[product.product_id] = {
+        "status": str(assessment.status),
+        "record_hash": assessment.record_hash,
+        "reasons": list(assessment.reasons),
+    }
 
 first = array_api.compare_reference_24_by_30()
 second = array_api.compare_reference_24_by_30()
@@ -156,6 +204,7 @@ payload = {
     "migration_stage": array_api.ARRAY_AUTHORITY_MIGRATION_STAGE,
     "comparison_hash": first.comparison_hash,
     "module_paths": {name: str(path) for name, path in module_paths.items()},
+    "qualification": qualification_results,
     "metrics": actual,
 }
 print(json.dumps(payload, sort_keys=True))
