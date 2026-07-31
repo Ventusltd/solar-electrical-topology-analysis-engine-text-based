@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>V8 Leapfrog · 24-String Inverter Cartridge</title>
+  <meta name="description" content="V8 geometry-faithful 24-string inverter topology drawing with deterministic terminal coordinates and no invented cable routes.">
+  <link rel="stylesheet" href="./styles.css">
+  <style>
+    body{overflow:auto}.layout{grid-template-columns:minmax(0,1fr)}.workbench{min-width:0}.toolbar{display:flex;gap:10px;flex-wrap:wrap;padding:14px 0}.toolbar button,.toolbar a{width:auto}.toolbar button.active{background:#0ca6c8;color:#031018;border-color:#58dcff}.diagram-shell{position:relative;overflow:hidden;border:1px solid #29445a;background:#03070b;min-height:72vh}.diagram-shell svg{display:block;touch-action:none;user-select:none}.floating-tools{position:absolute;z-index:4;left:14px;top:14px;display:flex;gap:6px;background:#07111bcc;border:1px solid #29445a;padding:8px}.floating-tools button{width:auto;margin:0}.string-readout{padding:14px;border-left:4px solid #29dfff;background:#071923;color:#cdefff}.legend24{display:flex;gap:14px;flex-wrap:wrap;font:12px ui-monospace,monospace;color:#9db2c3}.legend24 span::before{content:'';display:inline-block;width:20px;height:3px;margin-right:6px;vertical-align:middle;background:var(--swatch)}@media(max-width:700px){.diagram-shell{min-height:68vh}.floating-tools{position:sticky;top:0}.toolbar button,.toolbar a{flex:1 1 145px;text-align:center}}
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <div class="kicker">GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING · V8 CARTRIDGE</div>
+    <h1>24-String Inverter Geometry</h1>
+    <p>Exactly the V8 visual language, extended to twenty-four complete strings. Every module, terminal, series link and inverter home-run is generated from deterministic coordinates. No decorative or invented cable routing.</p>
+    <div class="navlinks">
+      <a href="./">V8 comparison</a>
+      <a href="../v10-development/">V10 workbench</a>
+      <a href="../progress-dashboard.html">Progress dashboard</a>
+    </div>
+  </div>
+  <div class="status-stack">
+    <div class="status-badge">24 STRINGS · 12 MPPT · 2 INPUTS</div>
+    <div class="status-badge testing">GEOMETRY-DERIVED DRAWING</div>
+    <div class="status-badge error">SCREENING · NOT AS-BUILT</div>
+  </div>
+</header>
+<div class="reliance"><strong>DRAWING AUTHORITY</strong>Physical module positions remain fixed. Sequential and leapfrog change electrical connection order only. External conductors run only between declared string free terminals and declared inverter input terminals.</div>
+<main class="layout">
+  <section class="workbench">
+    <section class="section">
+      <h2>Complete inverter cartridge</h2>
+      <div class="section-body">
+        <div class="toolbar">
+          <button id="leapfrogBtn" class="active">Leapfrog</button>
+          <button id="sequentialBtn">Sequential</button>
+          <button id="eastBtn" class="active">East face</button>
+          <button id="westBtn" class="active">West face</button>
+          <a class="button" href="./">Return to V8</a>
+        </div>
+        <div class="legend24">
+          <span style="--swatch:#ffb84d">inverter / selected string</span>
+          <span style="--swatch:#5fdcff">east strings</span>
+          <span style="--swatch:#b88cff">west strings</span>
+          <span style="--swatch:#d8e3ea">series connections</span>
+        </div>
+      </div>
+      <div class="diagram-shell" id="shell">
+        <div class="floating-tools">
+          <button id="zoomOut">−</button><button id="fit">FIT</button><button id="zoomIn">+</button><span id="zoomLabel" style="padding:7px 6px;font-family:ui-monospace,monospace;color:#5fdcff">100%</span>
+        </div>
+        <svg id="diagram" role="img" aria-label="Twenty-four PV strings connected to twelve MPPT inputs"></svg>
+      </div>
+      <div id="readout" class="string-readout">Select a string to inspect its deterministic electrical order and inverter input.</div>
+    </section>
+  </section>
+</main>
+<script>
+(() => {
+  'use strict';
+  const NS='http://www.w3.org/2000/svg';
+  const svg=document.getElementById('diagram');
+  const shell=document.getElementById('shell');
+  const readout=document.getElementById('readout');
+  let topology='leapfrog';
+  let showEast=true,showWest=true;
+  let selected=1;
+  let view={x:0,y:0,k:1};
+  let drag=null;
+
+  const config={strings:24,modules:30,moduleW:22,moduleH:28,moduleGap:3,rowGap:44,inverterX:42,rowX:270,top:92};
+  const totalRowW=config.modules*(config.moduleW+config.moduleGap)-config.moduleGap;
+  const worldW=config.rowX+totalRowW+90;
+  const worldH=config.top+(config.strings-1)*config.rowGap+120;
+
+  function el(name,attrs={},text=''){
+    const node=document.createElementNS(NS,name);
+    Object.entries(attrs).forEach(([k,v])=>node.setAttribute(k,String(v)));
+    if(text)node.textContent=text;
+    return node;
+  }
+  function sequence(n,mode){
+    if(mode==='sequential')return Array.from({length:n},(_,i)=>i+1);
+    const out=[];
+    for(let i=1;i<=n;i+=2)out.push(i);
+    for(let i=n%2===0?n:n-1;i>=2;i-=2)out.push(i);
+    return out;
+  }
+  function moduleX(number){return config.rowX+(number-1)*(config.moduleW+config.moduleGap)}
+  function terminal(number,polarity,y){
+    const x=moduleX(number);
+    return {x:x+(polarity==='-'?7:config.moduleW-7),y:y+10};
+  }
+  function addPath(group,d,stroke,width=1.6,extra={}){
+    group.appendChild(el('path',{d,fill:'none',stroke:'#03070b','stroke-width':width+3,'stroke-linecap':'round','stroke-linejoin':'round',...extra}));
+    group.appendChild(el('path',{d,fill:'none',stroke,'stroke-width':width,'stroke-linecap':'round','stroke-linejoin':'round',...extra}));
+  }
+  function stringFace(index){return index<=12?'east':'west'}
+  function inputLabel(index){return `MPPT ${Math.ceil(index/2)} · input ${index%2?1:2}`}
+  function rowColour(index){return stringFace(index)==='east'?'#5fdcff':'#b88cff'}
+
+  function draw(){
+    svg.innerHTML='';
+    svg.setAttribute('viewBox',`0 0 ${worldW} ${worldH}`);
+    svg.setAttribute('width',worldW);
+    svg.setAttribute('height',worldH);
+    svg.style.width=worldW+'px';
+    svg.style.height=worldH+'px';
+    svg.style.transformOrigin='0 0';
+
+    const root=el('g');svg.appendChild(root);
+    root.appendChild(el('text',{x:34,y:38,fill:'#dce8f1','font-size':22,'font-family':'ui-monospace,monospace'},'INVERTER INPUTS'));
+    root.appendChild(el('rect',{x:38,y:62,width:92,height:worldH-112,rx:5,fill:'#ffb84d',stroke:'#ffe0a8','stroke-width':2}));
+
+    for(let s=1;s<=config.strings;s++){
+      const face=stringFace(s);
+      if((face==='east'&&!showEast)||(face==='west'&&!showWest))continue;
+      const y=config.top+(s-1)*config.rowGap;
+      const colour=rowColour(s);
+      const highlight=s===selected;
+      const g=el('g',{'data-string':s,style:'cursor:pointer'});
+      root.appendChild(g);
+
+      const negY=y+7,posY=y+25;
+      g.appendChild(el('line',{x1:128,y1:negY,x2:config.rowX-8,y2:negY,stroke:'#d8e3ea','stroke-width':highlight?3:1.3}));
+      g.appendChild(el('line',{x1:128,y1:posY,x2:config.rowX-8,y2:posY,stroke:'#d8e3ea','stroke-width':highlight?3:1.3}));
+      g.appendChild(el('line',{x1:112,y1:negY,x2:128,y2:negY,stroke:'#192632','stroke-width':3}));
+      g.appendChild(el('line',{x1:112,y1:posY,x2:128,y2:posY,stroke:'#192632','stroke-width':3}));
+      g.appendChild(el('text',{x:142,y:y+13,fill:highlight?'#ffcf7b':colour,'font-size':11,'font-family':'ui-monospace,monospace'},`${s}−`));
+      g.appendChild(el('text',{x:142,y:y+31,fill:highlight?'#ffcf7b':colour,'font-size':11,'font-family':'ui-monospace,monospace'},`${s}+`));
+
+      for(let m=1;m<=config.modules;m++){
+        const x=moduleX(m);
+        g.appendChild(el('rect',{x,y,width:config.moduleW,height:config.moduleH,fill:highlight?'#61451d':face==='east'?'#123d4d':'#34254d',stroke:highlight?'#ffb84d':colour,'stroke-width':highlight?2:1}));
+      }
+
+      const seq=sequence(config.modules,topology);
+      for(let i=0;i<seq.length-1;i++){
+        const from=terminal(seq[i],'+',y),to=terminal(seq[i+1],'-',y);
+        const outward=topology==='sequential'||(seq[i]%2===1&&seq[i+1]%2===1);
+        const lane=y+(outward?-10:38);
+        const d=`M ${from.x} ${from.y} C ${from.x} ${lane}, ${to.x} ${lane}, ${to.x} ${to.y}`;
+        addPath(g,d,highlight?'#ffb84d':'#d8e3ea',highlight?2.6:1.35);
+      }
+
+      const freeNeg=terminal(seq[0],'-',y);
+      const freePos=terminal(seq[seq.length-1],'+',y);
+      const negPath=`M ${freeNeg.x} ${freeNeg.y} L ${config.rowX-18} ${negY} L 128 ${negY}`;
+      const posLane=topology==='sequential'?y+34:posY;
+      const posPath=`M ${freePos.x} ${freePos.y} L ${freePos.x} ${posLane} L ${config.rowX-18} ${posLane} L ${config.rowX-18} ${posY} L 128 ${posY}`;
+      addPath(g,negPath,highlight?'#ffb84d':'#d8e3ea',highlight?2.8:1.5);
+      addPath(g,posPath,highlight?'#ffb84d':'#d8e3ea',highlight?2.8:1.5);
+      g.addEventListener('click',()=>{selected=s;draw();updateReadout();});
+    }
+
+    root.appendChild(el('text',{x:42,y:worldH-20,fill:'#9db2c3','font-size':14,'font-family':'ui-monospace,monospace'},`${topology.toUpperCase()} · 24 strings · 12 MPPT · deterministic terminal coordinates`));
+    applyView();
+  }
+
+  function updateReadout(){
+    const seq=sequence(config.modules,topology);
+    readout.innerHTML=`<strong>String ${selected}</strong> · ${stringFace(selected).toUpperCase()} · ${inputLabel(selected)} · ${topology.toUpperCase()}<br>Electrical order: ${seq.map(n=>'M'+n).join(' → ')}<br>Free terminals: M${seq[0]}− and M${seq[seq.length-1]}+. External conductors terminate only at the declared inverter input pair.`;
+  }
+  function applyView(){
+    svg.style.transform=`translate(${view.x}px,${view.y}px) scale(${view.k})`;
+    document.getElementById('zoomLabel').textContent=Math.round(view.k*100)+'%';
+  }
+  function fit(){
+    const sx=shell.clientWidth/worldW,sy=shell.clientHeight/worldH;
+    view.k=Math.min(sx,sy)*.96;view.x=(shell.clientWidth-worldW*view.k)/2;view.y=8;applyView();
+  }
+  document.getElementById('zoomIn').onclick=()=>{view.k=Math.min(3,view.k*1.2);applyView()};
+  document.getElementById('zoomOut').onclick=()=>{view.k=Math.max(.25,view.k/1.2);applyView()};
+  document.getElementById('fit').onclick=fit;
+  document.getElementById('leapfrogBtn').onclick=()=>{topology='leapfrog';document.getElementById('leapfrogBtn').classList.add('active');document.getElementById('sequentialBtn').classList.remove('active');draw();updateReadout()};
+  document.getElementById('sequentialBtn').onclick=()=>{topology='sequential';document.getElementById('sequentialBtn').classList.add('active');document.getElementById('leapfrogBtn').classList.remove('active');draw();updateReadout()};
+  document.getElementById('eastBtn').onclick=()=>{showEast=!showEast;document.getElementById('eastBtn').classList.toggle('active',showEast);draw()};
+  document.getElementById('westBtn').onclick=()=>{showWest=!showWest;document.getElementById('westBtn').classList.toggle('active',showWest);draw()};
+  shell.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,vx:view.x,vy:view.y};shell.setPointerCapture(e.pointerId)});
+  shell.addEventListener('pointermove',e=>{if(!drag)return;view.x=drag.vx+e.clientX-drag.x;view.y=drag.vy+e.clientY-drag.y;applyView()});
+  shell.addEventListener('pointerup',()=>drag=null);
+  shell.addEventListener('wheel',e=>{e.preventDefault();view.k=Math.max(.25,Math.min(3,view.k*(e.deltaY<0?1.1:.9)));applyView()},{passive:false});
+  window.addEventListener('resize',fit);
+  draw();updateReadout();requestAnimationFrame(fit);
+})();
+</script>
+</body>
+</html>
