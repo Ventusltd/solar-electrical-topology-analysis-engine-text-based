@@ -26,6 +26,16 @@ def test_reference_assignment_passes_independent_validation() -> None:
     assert result.issues == ()
 
 
+def test_asserted_assignment_hash_is_independently_recalculated() -> None:
+    geometry, assignment = _reference_receipts()
+    altered_assignment = replace(assignment, assignment_hash="sha256:not-the-content")
+
+    result = validate_table_string_assignment(geometry, altered_assignment)
+
+    assert result.valid is False
+    assert {issue.code for issue in result.issues} == {"ASSIGNMENT_HASH_MISMATCH"}
+
+
 def test_cross_string_duplicate_and_omission_are_detected() -> None:
     geometry, assignment = _reference_receipts()
     first = assignment.strings[0]
@@ -43,6 +53,7 @@ def test_cross_string_duplicate_and_omission_are_detected() -> None:
     issue_codes = {issue.code for issue in result.issues}
 
     assert result.valid is False
+    assert "ASSIGNMENT_HASH_MISMATCH" in issue_codes
     assert "DUPLICATE_MODULE_ASSIGNMENT" in issue_codes
     assert "OMITTED_MODULES" in issue_codes
     assert "PHYSICAL_ORDER_MISMATCH" in issue_codes
@@ -55,7 +66,10 @@ def test_geometry_binding_mismatch_is_detected() -> None:
     result = validate_table_string_assignment(geometry, altered_assignment)
 
     assert result.valid is False
-    assert {issue.code for issue in result.issues} == {"GEOMETRY_HASH_MISMATCH"}
+    assert {issue.code for issue in result.issues} == {
+        "ASSIGNMENT_HASH_MISMATCH",
+        "GEOMETRY_HASH_MISMATCH",
+    }
 
 
 def test_collapsed_free_terminal_identifiers_are_detected() -> None:
@@ -75,5 +89,6 @@ def test_collapsed_free_terminal_identifiers_are_detected() -> None:
     issue_codes = {issue.code for issue in result.issues}
 
     assert result.valid is False
+    assert "ASSIGNMENT_HASH_MISMATCH" in issue_codes
     assert "COLLAPSED_FREE_TERMINALS" in issue_codes
     assert "DUPLICATE_FREE_TERMINAL_ID" in issue_codes
