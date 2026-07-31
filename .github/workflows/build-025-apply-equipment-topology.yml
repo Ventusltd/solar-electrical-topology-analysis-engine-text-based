@@ -1,9 +1,7 @@
 name: Apply Build 025 equipment topology patch
 
 on:
-  push:
-    branches:
-      - agent/build-025-array-engine
+  pull_request:
     paths:
       - ".build025/equipment-topology.patch.gz.b64"
       - ".github/workflows/build-025-apply-equipment-topology.yml"
