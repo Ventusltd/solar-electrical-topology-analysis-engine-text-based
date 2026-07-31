@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run all declared V10 recovery baselines and write paired receipts."""
+"""Run all declared V10 execution gates and write artifact-ready evidence."""
 
 from __future__ import annotations
 
@@ -38,6 +38,11 @@ COMMANDS = (
         "v10-javascript",
         ["npm", "test"],
         ROOT / "v10-development",
+    ),
+    (
+        "clean-wheel",
+        [sys.executable, "scripts/validate_clean_wheel.py"],
+        ROOT,
     ),
 )
 
@@ -88,7 +93,7 @@ def run_command(name: str, command: list[str], cwd: Path) -> dict:
 
 def markdown_report(payload: dict) -> str:
     lines = [
-        "# V10 Validation Receipt",
+        "# V10 Validation Execution Envelope",
         "",
         f"Generated UTC: `{payload['generated_utc']}`  ",
         f"Repository head: `{payload['git_sha']}`  ",
@@ -128,12 +133,12 @@ def markdown_report(payload: dict) -> str:
             "## Gate",
             "",
             (
-                "All declared Python, V8, V9 and V10 JavaScript suites passed."
+                "All declared Python, V8, V9, V10 JavaScript and clean-wheel suites passed."
                 if payload["pass"]
                 else "One or more declared suites failed; authority promotion is blocked."
             ),
             "",
-            "This receipt records execution only. It does not by itself promote an implementation to engineering authority.",
+            "This execution envelope records one run. It does not change deterministic engineering receipts or promote an implementation by itself.",
             "",
         ]
     )
@@ -147,7 +152,7 @@ def main() -> int:
         for name, command, cwd in COMMANDS
     ]
     payload = {
-        "schema_version": "globalgrid2050.v10-validation-receipt.v1",
+        "schema_version": "globalgrid2050.v10-validation-execution-envelope.v2",
         "generated_utc": utc_now(),
         "repository": "Ventusltd/solar-electrical-topology-analysis-engine-text-based",
         "git_sha": os.environ.get("GITHUB_SHA", "local-or-unknown"),
@@ -160,7 +165,14 @@ def main() -> int:
         encoding="utf-8",
     )
     MARKDOWN_PATH.write_text(markdown_report(payload), encoding="utf-8")
-    print(json.dumps({"pass": payload["pass"], "reports": [str(MARKDOWN_PATH), str(JSON_PATH)]}))
+    print(
+        json.dumps(
+            {
+                "pass": payload["pass"],
+                "reports": [str(MARKDOWN_PATH), str(JSON_PATH)],
+            }
+        )
+    )
     return 0 if payload["pass"] else 1
 
 
