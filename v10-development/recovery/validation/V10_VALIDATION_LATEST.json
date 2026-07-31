@@ -1,60 +1,18 @@
 {
-  "generated_utc": "2026-07-31T20:08:38Z",
-  "git_sha": "4375b4e2e70d722f5dafbf5df174f5a490d3b605",
-  "pass": false,
-  "repository": "Ventusltd/solar-electrical-topology-analysis-engine-text-based",
-  "results": [
-    {
-      "command": [
-        "/opt/hostedtoolcache/Python/3.11.15/x64/bin/python",
-        "-m",
-        "pytest",
-        "-q"
-      ],
-      "cwd": ".",
-      "duration_seconds": 12.039,
-      "name": "python",
-      "output": "........................................................................ [ 29%]\n........................................................................ [ 59%]\n........................................................................ [ 88%]\n...........................                                              [100%]\n243 passed in 11.24s\n",
-      "pass": true,
-      "return_code": 0
-    },
-    {
-      "command": [
-        "node",
-        "--test",
-        "tests/v8-model.test.js"
-      ],
-      "cwd": ".",
-      "duration_seconds": 0.063,
-      "name": "v8",
-      "output": "TAP version 13\n# node:internal/assert/utils:281\n#     throw err;\n#     ^\n# AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n#   assert.ok(\n#     close(\n#       reconciliation.absoluteWindingAreaReductionPercent,\n#       79.801546,\n#       1e-6\n#     )\n#   )\n#     at Object.<anonymous> (/home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js:168:8)\n#     at Module._compile (node:internal/modules/cjs/loader:1521:14)\n#     at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)\n#     at Module.load (node:internal/modules/cjs/loader:1266:32)\n#     at Module._load (node:internal/modules/cjs/loader:1091:12)\n#     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)\n#     at node:internal/main/run_main_module:28:49 {\n#   generatedMessage: true,\n#   code: 'ERR_ASSERTION',\n#   actual: false,\n#   expected: true,\n#   operator: '=='\n# }\n# Node.js v20.20.2\n# Subtest: /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js\nnot ok 1 - /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js\n  ---\n  duration_ms: 35.094771\n  location: '/home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js:1:1'\n  failureType: 'testCodeFailure'\n  exitCode: 1\n  signal: ~\n  error: 'test failed'\n  code: 'ERR_TEST_FAILURE'\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 0\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 38.341024\n",
-      "pass": false,
-      "return_code": 1
-    },
-    {
-      "command": [
-        "node",
-        "v9-sandbox/debug/run-tests.mjs"
-      ],
-      "cwd": ".",
-      "duration_seconds": 0.027,
-      "name": "v9",
-      "output": "{\n  \"schema\": \"globalgrid2050.solar-dc-debug-test-report.v1\",\n  \"generatedAt\": \"2026-07-31T20:08:38.607Z\",\n  \"passed\": 10,\n  \"failed\": 0,\n  \"results\": [\n    {\n      \"name\": \"sequential order\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"leapfrog order for 30 modules\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"custom order accepts module numbers above four\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"invalid custom order is rejected\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"MPPT allocation caps active strings at 24\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"12 MPPT by two inputs produces 24 strings\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"corrected Voc default exceeds 1500 V\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"copper resistance at 20 C\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"segment count is modules plus one\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    },\n    {\n      \"name\": \"deterministic result excluding timestamp\",\n      \"status\": \"pass\",\n      \"detail\": \"ok\"\n    }\n  ],\n  \"reviewQuestions\": [\n    \"Does each formula use the correct physical quantity and temperature basis?\",\n    \"Does the electrical order pass through every module exactly once?\",\n    \"Are known routes, factory leads and provisional extensions separated?\",\n    \"Are screening estimates clearly distinguished from construction quantities?\",\n    \"Which missing physical objects block trusted EMC or transient studies?\"\n  ]\n}\n",
-      "pass": true,
-      "return_code": 0
-    },
-    {
-      "command": [
-        "npm",
-        "test"
-      ],
-      "cwd": "v10-development",
-      "duration_seconds": 0.152,
-      "name": "v10-javascript",
-      "output": "\n> test\n> node --test tests/*.test.mjs\n\nTAP version 13\n# Subtest: JavaScript matches the shared 20 C steady-state formula fixture\nok 1 - JavaScript matches the shared 20 C steady-state formula fixture\n  ---\n  duration_ms: 1.160616\n  ...\n# Subtest: quantity rejects unsupported units and propagates weakest provenance\nok 2 - quantity rejects unsupported units and propagates weakest provenance\n  ---\n  duration_ms: 1.269939\n  ...\n# Subtest: kernel computes geometry-derived resistance, voltage drop and power loss\nok 3 - kernel computes geometry-derived resistance, voltage drop and power loss\n  ---\n  duration_ms: 0.95901\n  ...\n# Subtest: kernel preserves uncertainty intervals through resistance and voltage drop\nok 4 - kernel preserves uncertainty intervals through resistance and voltage drop\n  ---\n  duration_ms: 0.306068\n  ...\n# Subtest: cold Voc candidate calculation is traceable and interval bounded\nok 5 - cold Voc candidate calculation is traceable and interval bounded\n  ---\n  duration_ms: 0.605934\n  ...\n# Subtest: kernel output is deterministic for identical JSON input\nok 6 - kernel output is deterministic for identical JSON input\n  ---\n  duration_ms: 1.001336\n  ...\n# Subtest: sequential order is deterministic\nok 7 - sequential order is deterministic\n  ---\n  duration_ms: 1.548666\n  ...\n# Subtest: mirrored sequential order is deterministic\nok 8 - mirrored sequential order is deterministic\n  ---\n  duration_ms: 0.144303\n  ...\n# Subtest: canonical leapfrog order is a complete permutation\nok 9 - canonical leapfrog order is a complete permutation\n  ---\n  duration_ms: 0.253801\n  ...\n# Subtest: custom order rejects duplicates and omissions\nok 10 - custom order rejects duplicates and omissions\n  ---\n  duration_ms: 0.306244\n  ...\n# Subtest: sequential path for 30 modules equals 29 pitches\nok 11 - sequential path for 30 modules equals 29 pitches\n  ---\n  duration_ms: 1.31693\n  ...\n# Subtest: canonical leapfrog path for 30 modules equals 57 pitches\nok 12 - canonical leapfrog path for 30 modules equals 57 pitches\n  ---\n  duration_ms: 0.186328\n  ...\n# Subtest: geometry output is deterministic\nok 13 - geometry output is deterministic\n  ---\n  duration_ms: 0.355591\n  ...\n1..13\n# tests 13\n# suites 0\n# pass 13\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 58.093117\n",
-      "pass": true,
-      "return_code": 0
-    }
+  "artifact_name_pattern": "v10-validation-<commit-sha>",
+  "execution_authority": "github_actions_check_and_artifact",
+  "repository_file_status": "POINTER_NOT_EXECUTION_RESULT",
+  "schema_version": "globalgrid2050.v10-validation-repository-pointer.v2",
+  "superseded_committed_execution": {
+    "git_sha": "4375b4e2e70d722f5dafbf5df174f5a490d3b605",
+    "pass": false,
+    "reason": "The V8 reconciliation percentage expectation was rounded too tightly. The implementation and regression expectation were corrected in commit 26bb0bc9ee1e1e97d0782aa76455605bb5d242f4."
+  },
+  "workflow": ".github/workflows/v10-validation.yml",
+  "workflow_artifacts": [
+    "V10_VALIDATION_LATEST.json",
+    "V10_VALIDATION_LATEST.md"
   ],
-  "schema_version": "globalgrid2050.v10-validation-receipt.v1"
+  "workflow_commit": "17e761bd191e10284ee18aabf9f195ec658a83fb",
+  "note": "This repository file no longer records the latest execution. Each qualifying pull request or main-branch push generates a commit-specific GitHub Actions check and a retained validation artifact. Runtime timestamps and execution output are intentionally kept outside deterministic source history."
 }
