@@ -15,9 +15,10 @@ from .calculation_receipts import (
 
 
 KERNEL_AUTHORITY_SCHEMA_VERSION = (
-    "globalgrid2050.solar-dc.kernel-authority.v10.1"
+    "globalgrid2050.solar-dc.kernel-authority.v10.2"
 )
 REQUIRED_STEADY_STATE_FORMULA_IDS = (
+    "V10-R-000:R20=resolved_evidence_bound_product_property",
     "V10-R-001:Rconductor=R20*L*(1+alpha20*(T-20C))",
     "V10-R-002:Rcontacts=N*R20contact*(1+alpha20*(T-20C))",
     "V10-V-001:dV=I*R",
@@ -75,6 +76,8 @@ def assess_steady_state_receipt(
         reasons.append("FORMULA_CONTRACT_MISMATCH")
     if not receipt.validated_circuit_hash.startswith("sha256:"):
         reasons.append("MISSING_VALIDATED_CIRCUIT_HASH")
+    if not receipt.resistance_evidence_set_hash.startswith("sha256:"):
+        reasons.append("MISSING_RESISTANCE_EVIDENCE_SET_HASH")
     if not receipt.ordered_segment_ids:
         reasons.append("EMPTY_ORDERED_SEGMENT_SET")
     if tuple(result.segment_id for result in receipt.segment_results) != tuple(
