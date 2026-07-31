@@ -73,6 +73,12 @@ class OrderedCircuitCalculationReceipt:
         "V10-P-001:Ploss=I^2*R",
     )
 
+    @property
+    def resistance_registry_hash(self) -> str:
+        """Deprecated compatibility alias for pre-v10.3 callers."""
+
+        return self.resistance_evidence_set_hash
+
 
 def _evidence_payload(descriptor: EvidenceDescriptor) -> dict[str, object]:
     return {
