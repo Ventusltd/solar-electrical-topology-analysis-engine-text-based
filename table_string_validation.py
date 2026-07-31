@@ -9,6 +9,7 @@ from table_string_assignment import (
     STRING_ORDER_BASIS,
     TableStringAssignmentReceipt,
 )
+from table_string_hashing import calculate_assignment_hash
 
 
 @dataclass(frozen=True, slots=True)
@@ -37,6 +38,8 @@ def validate_table_string_assignment(
     def add(code: str, message: str) -> None:
         issues.append(StringAssignmentValidationIssue(code=code, message=message))
 
+    if assignment.assignment_hash != calculate_assignment_hash(assignment):
+        add("ASSIGNMENT_HASH_MISMATCH", "assignment content does not match its asserted hash")
     if assignment.table_id != geometry.table_id:
         add("TABLE_ID_MISMATCH", "assignment table_id does not match geometry")
     if assignment.geometry_hash != geometry.geometry_hash:
