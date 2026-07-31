@@ -10,6 +10,12 @@ from solar_topology.kernel_authority import (
     KernelAuthorityStatus,
     assess_steady_state_receipt,
 )
+from solar_topology.resistance_evidence import (
+    ResistanceBasis,
+    ResistanceValueKind,
+    ResolvedConductorResistance,
+    resistance_records_hash,
+)
 
 
 def _evidence() -> EvidenceDescriptor:
@@ -22,14 +28,28 @@ def _evidence() -> EvidenceDescriptor:
     )
 
 
+def _resistance_evidence() -> ResolvedConductorResistance:
+    return ResolvedConductorResistance(
+        product_id="product-1",
+        r20_ohm_per_m=0.003,
+        basis=ResistanceBasis.MANUFACTURER_DECLARED,
+        value_kind=ResistanceValueKind.MANUFACTURER_NOMINAL,
+        source_reference="fixture-resistance",
+        source_revision="build024-v1",
+        verification_state="verified",
+    )
+
+
 def _receipt() -> OrderedCircuitCalculationReceipt:
     evidence = _evidence()
+    resistance = _resistance_evidence()
     segment = SegmentCalculationResult(
         segment_id="segment-1",
         segment_type="external_positive",
         conductor_product_id="product-1",
         conductor_length_m=10.0,
         r20_ohm_per_m=0.003,
+        resistance_evidence=resistance,
         temperature_c=20.0,
         conductor_resistance_ohm=0.03,
         connector_count=2,
@@ -57,6 +77,7 @@ def _receipt() -> OrderedCircuitCalculationReceipt:
         total_resistance_ohm=0.032,
         voltage_drop_v=0.32,
         resistive_loss_w=3.2,
+        resistance_evidence_set_hash=resistance_records_hash((resistance,)),
         input_evidence_floor=EvidenceClass.MANUFACTURER_DECLARED,
     )
 
