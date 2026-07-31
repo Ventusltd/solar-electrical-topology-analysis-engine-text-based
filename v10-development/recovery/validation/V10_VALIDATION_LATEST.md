@@ -1,17 +1,17 @@
 # V10 Validation Receipt
 
-Generated UTC: `2026-07-31T02:10:03Z`  
-Repository head: `d6cee687441dbac6bd9ec20342ce93d89a71b936`  
-Overall result: `PASS`  
+Generated UTC: `2026-07-31T10:29:47Z`  
+Repository head: `f26ffef450beb815b964005f4011e7d698e0231e`  
+Overall result: `FAIL`  
 Schema version: `globalgrid2050.v10-validation-receipt.v1`
 
 ## Declared suites
 
 ### python
 
-Result: `PASS`  
-Return code: `0`  
-Duration: `4.805 s`  
+Result: `FAIL`  
+Return code: `2`  
+Duration: `1.312 s`  
 Working directory: `.`  
 Command:
 
@@ -22,16 +22,21 @@ Command:
 Output:
 
 ```text
-........................................................................ [ 51%]
-....................................................................     [100%]
-140 passed in 4.09s
+
+==================================== ERRORS ====================================
+______________ ERROR collecting tests/test_geometry_authority.py _______________
+tests/test_geometry_authority.py::test_public_request_type_exists: 'request' is a reserved name and cannot be used in @pytest.mark.parametrize
+=========================== short test summary info ============================
+ERROR tests/test_geometry_authority.py - Failed: tests/test_geometry_authority.py::test_public_request_type_exists: 'request' is a reserved name and cannot be used in @pytest.mark.parametrize
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.83s
 ```
 
 ### v8
 
 Result: `PASS`  
 Return code: `0`  
-Duration: `0.075 s`  
+Duration: `0.071 s`  
 Working directory: `.`  
 Command:
 
@@ -47,7 +52,7 @@ TAP version 13
 # Subtest: /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js
 ok 1 - /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js
   ---
-  duration_ms: 36.678674
+  duration_ms: 33.742569
   ...
 1..1
 # tests 1
@@ -57,14 +62,14 @@ ok 1 - /home/runner/work/solar-electrical-topology-analysis-engine-text-based/so
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 41.261647
+# duration_ms 38.490655
 ```
 
 ### v9
 
 Result: `PASS`  
 Return code: `0`  
-Duration: `0.04 s`  
+Duration: `0.036 s`  
 Working directory: `.`  
 Command:
 
@@ -77,7 +82,7 @@ Output:
 ```text
 {
   "schema": "globalgrid2050.solar-dc-debug-test-report.v1",
-  "generatedAt": "2026-07-31T02:10:03.630Z",
+  "generatedAt": "2026-07-31T10:29:46.991Z",
   "passed": 10,
   "failed": 0,
   "results": [
@@ -146,7 +151,7 @@ Output:
 
 Result: `PASS`  
 Return code: `0`  
-Duration: `0.233 s`  
+Duration: `0.227 s`  
 Working directory: `v10-development`  
 Command:
 
@@ -165,67 +170,67 @@ TAP version 13
 # Subtest: JavaScript matches the shared 20 C steady-state formula fixture
 ok 1 - JavaScript matches the shared 20 C steady-state formula fixture
   ---
-  duration_ms: 2.50775
+  duration_ms: 2.699254
   ...
 # Subtest: quantity rejects unsupported units and propagates weakest provenance
 ok 2 - quantity rejects unsupported units and propagates weakest provenance
   ---
-  duration_ms: 1.411543
+  duration_ms: 1.510547
   ...
 # Subtest: kernel computes geometry-derived resistance, voltage drop and power loss
 ok 3 - kernel computes geometry-derived resistance, voltage drop and power loss
   ---
-  duration_ms: 1.066484
+  duration_ms: 1.236839
   ...
 # Subtest: kernel preserves uncertainty intervals through resistance and voltage drop
 ok 4 - kernel preserves uncertainty intervals through resistance and voltage drop
   ---
-  duration_ms: 0.327023
+  duration_ms: 0.335916
   ...
 # Subtest: cold Voc candidate calculation is traceable and interval bounded
 ok 5 - cold Voc candidate calculation is traceable and interval bounded
   ---
-  duration_ms: 0.715335
+  duration_ms: 0.688033
   ...
 # Subtest: kernel output is deterministic for identical JSON input
 ok 6 - kernel output is deterministic for identical JSON input
   ---
-  duration_ms: 1.085282
+  duration_ms: 1.11511
   ...
 # Subtest: sequential order is deterministic
 ok 7 - sequential order is deterministic
   ---
-  duration_ms: 2.579587
+  duration_ms: 2.654952
   ...
 # Subtest: mirrored sequential order is deterministic
 ok 8 - mirrored sequential order is deterministic
   ---
-  duration_ms: 0.275467
+  duration_ms: 0.228266
   ...
 # Subtest: canonical leapfrog order is a complete permutation
 ok 9 - canonical leapfrog order is a complete permutation
   ---
-  duration_ms: 0.423395
+  duration_ms: 0.410686
   ...
 # Subtest: custom order rejects duplicates and omissions
 ok 10 - custom order rejects duplicates and omissions
   ---
-  duration_ms: 0.480379
+  duration_ms: 0.517265
   ...
 # Subtest: sequential path for 30 modules equals 29 pitches
 ok 11 - sequential path for 30 modules equals 29 pitches
   ---
-  duration_ms: 2.127339
+  duration_ms: 2.385389
   ...
 # Subtest: canonical leapfrog path for 30 modules equals 57 pitches
 ok 12 - canonical leapfrog path for 30 modules equals 57 pitches
   ---
-  duration_ms: 0.258281
+  duration_ms: 0.30598
   ...
 # Subtest: geometry output is deterministic
 ok 13 - geometry output is deterministic
   ---
-  duration_ms: 0.512526
+  duration_ms: 0.684517
   ...
 1..13
 # tests 13
@@ -235,11 +240,11 @@ ok 13 - geometry output is deterministic
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 88.056744
+# duration_ms 88.073361
 ```
 
 ## Gate
 
-All declared Python, V8, V9 and V10 JavaScript suites passed.
+One or more declared suites failed; authority promotion is blocked.
 
 This receipt records execution only. It does not by itself promote an implementation to engineering authority.
