@@ -168,8 +168,8 @@ assert.ok(close(reconciliation.totalCircuitChangeM, 46.8));
 assert.ok(
   close(
     reconciliation.absoluteWindingAreaReductionPercent,
-    79.801546,
-    1e-6
+    79.801548963,
+    1e-9
   )
 );
 assert.equal(
