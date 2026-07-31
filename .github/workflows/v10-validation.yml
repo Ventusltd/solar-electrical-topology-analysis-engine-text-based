@@ -28,7 +28,7 @@ on:
       - ".github/workflows/v10-validation.yml"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: v10-engine-validation-${{ github.ref }}
@@ -61,29 +61,21 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Run all declared suites and write receipts
+      - name: Run all declared suites and write execution evidence
         id: validation
         continue-on-error: true
         run: python scripts/run_v10_validation.py
 
-      - name: Commit paired validation receipts
-        if: >-
-          always() &&
-          github.event_name == 'push' &&
-          github.ref == 'refs/heads/main'
-        run: |
-          git config user.name "GridBot"
-          git config user.email "gridbot@users.noreply.github.com"
-          git add \
-            v10-development/recovery/validation/V10_VALIDATION_LATEST.md \
+      - name: Upload validation execution envelope
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v10-validation-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 90
+          path: |
+            v10-development/recovery/validation/V10_VALIDATION_LATEST.md
             v10-development/recovery/validation/V10_VALIDATION_LATEST.json
-          if git diff --cached --quiet; then
-            echo "Validation receipts are unchanged"
-          else
-            git commit -m "test: record V10 validation receipt"
-            git pull --rebase origin main
-            git push origin HEAD:main
-          fi
 
       - name: Enforce validation gate
         if: always()
