@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "solar-electrical-topology-engine"
-version = "0.3.0"
-description = "Unit-safe segment and Parquet core for solar DC string topology"
+version = "0.4.0"
+description = "Geometry-authoritative topology, routing and evidence kernel for solar DC systems"
 requires-python = ">=3.11"
 dependencies = [
     "duckdb>=1.4,<2",
@@ -14,7 +14,27 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-test = ["pytest>=8"]
+test = [
+    "build>=1.2",
+    "pytest>=8",
+]
+
+[tool.setuptools]
+py-modules = [
+    "geometry_authority",
+    "array_topology",
+    "array_route_types",
+    "array_route_geometry",
+    "array_routing",
+    "array_engine",
+    "table_string_assignment",
+    "table_string_hashing",
+    "table_string_validation",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["solar_topology*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
