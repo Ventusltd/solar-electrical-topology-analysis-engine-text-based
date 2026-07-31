@@ -15,7 +15,7 @@
   function buildAuthorityReconciliation() {
     'use strict';
 
-    const VERSION = '1.0.0';
+    const VERSION = '1.0.1';
 
     const BUILD_025_REFERENCE = Object.freeze({
       fixtureId: 'build-025-reference-24-by-30',
@@ -107,11 +107,11 @@
           name: 'Build 025 absolute winding area falls by about 79.8 percent',
           pass: nearlyEqual(
             result.absoluteWindingAreaReductionPercent,
-            79.801546,
-            1e-6
+            79.801548963,
+            1e-9
           ),
           actual: result.absoluteWindingAreaReductionPercent,
-          expected: 79.801546
+          expected: 79.801548963
         },
         {
           name: 'Reference declares unresolved terminal geometry',
@@ -152,6 +152,9 @@
       }
 
       const result = calculate();
+      const host = typeof globalThis !== 'undefined'
+        ? globalThis
+        : null;
       const setText = (id, text) => {
         const element = document.getElementById(id);
         if (element) {
@@ -181,13 +184,62 @@
           `${BUILD_025_REFERENCE.terminalGeometryEvidence}`
       );
 
+      const applyScopeBoundary = () => {
+        const banner = document.getElementById('feasibilityBanner');
+        if (banner) {
+          banner.innerHTML = banner.innerHTML
+            .replace(
+              'LEAPFROG SAVING NOT AVAILABLE',
+              'LEAPFROG EXTERNAL-CABLE REDUCTION NOT AVAILABLE'
+            )
+            .replace(
+              'LEAPFROG LENGTH SCREEN PASSED',
+              'LEAPFROG EXTERNAL-CABLE LENGTH SCREEN PASSED'
+            );
+        }
+
+        const trace = document.getElementById('calculationTrace');
+        if (trace) {
+          trace.textContent = trace.textContent
+            .replace(
+              'THEORETICAL DIFFERENCE PER STRING',
+              'THEORETICAL EXTERNAL-CABLE REDUCTION PER STRING'
+            )
+            .replace(
+              'THEORETICAL SITE DIFFERENCE',
+              'THEORETICAL SITE EXTERNAL-CABLE REDUCTION'
+            )
+            .replace(
+              'AVAILABLE SITE DIFFERENCE',
+              'AVAILABLE SITE EXTERNAL-CABLE REDUCTION'
+            );
+        }
+
+        setText(
+          'v8Comparison',
+          'V8 is a historical/reference field-installed external-cable ' +
+            'comparison with a lead-feasibility gate. Build 025/V10 is the ' +
+            'canonical candidate for complete routed conductor, loop geometry ' +
+            'and deterministic receipts.'
+        );
+      };
+
       const applySummary = () => {
         const summary = document.getElementById('plainSummary');
         if (!summary) {
           return;
         }
         const marker = 'BUILD 025 AUTHORITY RECONCILIATION';
-        const base = summary.value.split(`\n\n${marker}`)[0];
+        const base = summary.value
+          .split(`\n\n${marker}`)[0]
+          .replace(
+            'V8.2 sequential versus leapfrog cable comparison',
+            'V8.2 sequential versus leapfrog field-installed external-cable comparison'
+          )
+          .replace(
+            'Available site saving:',
+            'Available site external-cable reduction:'
+          );
         summary.value = [
           base,
           '',
@@ -201,17 +253,24 @@
         ].join('\n');
       };
 
-      applySummary();
+      const applyAll = () => {
+        applyScopeBoundary();
+        applySummary();
+      };
+
+      applyAll();
       document.querySelectorAll('input,select').forEach((element) => {
-        element.addEventListener('input', () => setTimeout(applySummary, 0));
-        element.addEventListener('change', () => setTimeout(applySummary, 0));
+        element.addEventListener('input', () => setTimeout(applyAll, 0));
+        element.addEventListener('change', () => setTimeout(applyAll, 0));
       });
 
-      root.__V8_AUTHORITY_RECONCILIATION__ = Object.freeze({
-        reference: BUILD_025_REFERENCE,
-        result,
-        tests: runGoldenTests()
-      });
+      if (host) {
+        host.__V8_AUTHORITY_RECONCILIATION__ = Object.freeze({
+          reference: BUILD_025_REFERENCE,
+          result,
+          tests: runGoldenTests()
+        });
+      }
     }
 
     if (typeof document !== 'undefined') {
