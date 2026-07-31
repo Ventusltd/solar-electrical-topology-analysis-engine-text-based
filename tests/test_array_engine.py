@@ -348,3 +348,34 @@ def test_terminal_geometry_outside_module_envelope_is_rejected() -> None:
 
     with pytest.raises(ValueError, match="outside module"):
         reference_24_by_30_build(routing_config=invalid)
+
+
+def test_terminal_geometry_provenance_is_part_of_routing_receipt() -> None:
+    assumed = reference_24_by_30_build(
+        routing_config=RoutingConfig(
+            terminal_layout=ModuleTerminalLayout(
+                evidence_class="assumed",
+                source_reference="source-A",
+            )
+        )
+    )
+    measured = reference_24_by_30_build(
+        routing_config=RoutingConfig(
+            terminal_layout=ModuleTerminalLayout(
+                evidence_class="measured",
+                source_reference="source-B",
+            )
+        )
+    )
+
+    assert assumed.geometry.geometry_hash == measured.geometry.geometry_hash
+    assert (
+        assumed.routing.strings[0].positive_route.route_hash
+        == measured.routing.strings[0].positive_route.route_hash
+    )
+    assert assumed.routing.routing_hash != measured.routing.routing_hash
+    assert assumed.receipt_hash != measured.receipt_hash
+    assert (
+        measured.routing.routing_config.terminal_layout.source_reference
+        == "source-B"
+    )

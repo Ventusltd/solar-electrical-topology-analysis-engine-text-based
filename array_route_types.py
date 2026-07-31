@@ -12,7 +12,7 @@ from geometry_authority import Point2D
 from array_topology import WiringStrategy
 
 
-ROUTING_SCHEMA_VERSION = "globalgrid2050.solar-dc.table-routing.v1"
+ROUTING_SCHEMA_VERSION = "globalgrid2050.solar-dc.table-routing.v2"
 LENGTH_RECEIPT_SCHEMA_VERSION = "globalgrid2050.solar-dc.installed-length.v1"
 ROUTING_METHOD_VERSION = "explicit-polyline-table-routing.v1"
 LOOP_AREA_METHOD_VERSION = "closed-path-winding-area.v1"
@@ -247,6 +247,7 @@ class TableRoutingReceipt:
     input_allocation_hash: str
     strategy: WiringStrategy
     inverter: InverterPlacement
+    routing_config: RoutingConfig
     strings: tuple[StringRoutingReceipt, ...]
     metrics: TableRouteMetrics
     routing_hash: str

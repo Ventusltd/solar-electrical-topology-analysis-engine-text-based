@@ -419,6 +419,7 @@ def build_table_routes(
         input_allocation_hash=input_allocation.allocation_hash,
         strategy=topology.strategy,
         inverter=inverter,
+        routing_config=config,
         strings=strings,
         metrics=_table_metrics(strings),
         routing_hash="",
