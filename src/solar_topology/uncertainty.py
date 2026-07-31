@@ -22,7 +22,7 @@ from .evidence import EvidenceDescriptor
 
 UNCERTAINTY_SCHEMA_VERSION = "globalgrid2050.solar-dc.uncertainty.v10.1"
 UNCERTAINTY_METHOD_VERSION = (
-    "globalgrid2050.solar-dc.complete-circuit-interval-propagation.v10.1"
+    "globalgrid2050.solar-dc.complete-circuit-interval-propagation.v10.2"
 )
 
 
@@ -340,22 +340,39 @@ def calculate_complete_circuit_with_uncertainty(
             )
         )
 
+    total_nominal_resistance = math.fsum(
+        result.total_resistance_ohm.nominal for result in results
+    )
+    if total_nominal_resistance != nominal.total_resistance_ohm:
+        raise AssertionError(
+            "uncertainty and nominal calculations use different resistance accumulation"
+        )
     total_r = Interval(
         math.fsum(result.total_resistance_ohm.lower for result in results),
-        nominal.total_resistance_ohm,
+        total_nominal_resistance,
         math.fsum(result.total_resistance_ohm.upper for result in results),
         "ohm",
     )
     current = operating_state.current_a
+    voltage_drop_nominal = current.nominal * total_r.nominal
+    if voltage_drop_nominal != nominal.voltage_drop_v:
+        raise AssertionError(
+            "uncertainty and nominal calculations use different voltage-drop accumulation"
+        )
     voltage_drop = Interval(
         current.lower * total_r.lower,
-        nominal.voltage_drop_v,
+        voltage_drop_nominal,
         current.upper * total_r.upper,
         "V",
     )
+    loss_nominal = current.nominal**2 * total_r.nominal
+    if loss_nominal != nominal.resistive_loss_w:
+        raise AssertionError(
+            "uncertainty and nominal calculations use different loss accumulation"
+        )
     loss = Interval(
         current.lower**2 * total_r.lower,
-        nominal.resistive_loss_w,
+        loss_nominal,
         current.upper**2 * total_r.upper,
         "W",
     )
