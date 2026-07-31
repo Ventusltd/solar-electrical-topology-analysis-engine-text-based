@@ -6,7 +6,7 @@
   <title>V8 Leapfrog DC String Cable Comparison</title>
   <meta
     name="description"
-    content="V8 comparison of sequential and leapfrog PV string cable schedules."
+    content="V8 field-installed external-cable comparison with Build 025 total-conductor reconciliation."
   >
   <link rel="stylesheet" href="./styles.css">
 </head>
@@ -14,13 +14,15 @@
   <header class="topbar">
     <div>
       <div class="kicker">
-        GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING · V8.2
+        GLOBALGRID2050 · OPEN ELECTRICAL ENGINEERING · V8.2 · AUTHORITY REFINEMENT
       </div>
-      <h1>Leapfrog DC String Cable Comparison</h1>
+      <h1>Leapfrog Field-Installed DC Cable Comparison</h1>
       <p>
-        Compares conventional sequential stringing with leapfrog stringing
-        for every archetype string and for the actual site string count.
-        V6 and V7 remain untouched comparison workbenches.
+        Compares the field-installed external DC string cable required by
+        conventional sequential and leapfrog arrangements for every
+        archetype string and the actual site string count. It does not
+        represent total circuit conductor until the factory-fitted module
+        interconnect consequence is reconciled through Build 025.
       </p>
       <div class="navlinks">
         <a href="../">Open V6 complete-circuit engine</a>
@@ -39,17 +41,19 @@
         TESTS PENDING
       </div>
       <div class="status-badge error">
-        DEVELOPMENT · USE AT YOUR OWN RISK
+        HISTORICAL/REFERENCE · NOT CANONICAL V10
       </div>
     </div>
   </header>
 
   <div class="reliance">
-    <strong>ENGINEERING SCREENING OUTPUT</strong>
-    This tool does not prove as-built wiring, routing feasibility,
-    installed cable quantities, compliance, procurement readiness or
-    protection coordination. Inputs and outputs require project evidence
-    and competent-person review.
+    <strong>FIELD-INSTALLED EXTERNAL-CABLE SCREENING ONLY</strong>
+    V8 excludes the longer factory-fitted interconnect path created by
+    leapfrog. A reduction shown here is not total copper saving. The Build
+    025 reconciliation below reports field-installed, factory-fitted and
+    total circuit conductor separately. This tool does not prove as-built
+    wiring, routing feasibility, installed quantities, compliance,
+    procurement readiness or protection coordination.
   </div>
 
   <main class="layout">
@@ -143,8 +147,8 @@
         </label>
         <div class="note">
           Inverter distance changes the unavoidable positive-and-negative
-          base pair. It does not change the one-row-span return eliminated
-          by feasible leapfrog wiring.
+          base pair. It does not change the one-row-span external return
+          removed from the field installation by feasible leapfrog wiring.
         </div>
       </section>
 
@@ -220,8 +224,10 @@
           >
         </label>
         <div class="provenance">
-          Fleet saving is calculated from actual total site strings, not
-          by assuming every inverter carries the 24-string archetype.
+          Fleet reduction is calculated from actual total site strings,
+          not by assuming every inverter carries the 24-string archetype.
+          Resistance, voltage-drop and loss differences apply only to this
+          represented external 6 mm² conductor portion.
         </div>
       </section>
 
@@ -277,8 +283,8 @@
         </label>
         <div class="note">
           Without a measured override, required leapfrog reach is two
-          module pitches. Savings are unavailable when the lead-length
-          screen fails.
+          module pitches. External-cable reduction is unavailable when the
+          lead-length screen fails.
         </div>
       </section>
 
@@ -317,7 +323,7 @@
           Technical commentary
         </button>
         <button class="tab" data-tab="comparisonTab">
-          V6 / V7 / V8
+          Version authority
         </button>
       </div>
 
@@ -344,86 +350,131 @@
             <small id="metricAverageStrings">—</small>
           </article>
           <article>
-            <span>Sequential external cable</span>
+            <span>Sequential field-installed external cable</span>
             <strong id="metricSequential" class="red">—</strong>
             <small>per archetype inverter</small>
           </article>
           <article>
-            <span>Leapfrog external cable</span>
+            <span>Leapfrog field-installed external cable</span>
             <strong id="metricLeapfrog">—</strong>
             <small>theoretical per archetype inverter</small>
           </article>
           <article>
-            <span>Available cable saving / archetype</span>
+            <span>Available external-cable reduction / archetype</span>
             <strong id="metricSavingInverter" class="green">—</strong>
-            <small>gated by module-lead reach</small>
+            <small>field-installed portion; lead-gated</small>
           </article>
           <article>
-            <span>Available site cable saving</span>
+            <span>Available site external-cable reduction</span>
             <strong id="metricSavingFleet" class="green">—</strong>
-            <small>row span × actual site strings</small>
+            <small>not total conductor or copper saving</small>
           </article>
           <article>
-            <span>Available resistance reduction</span>
+            <span>External-cable resistance reduction</span>
             <strong id="metricResistanceSaving" class="green">—</strong>
-            <small>per string</small>
+            <small>per string; excludes factory interconnects</small>
           </article>
           <article>
-            <span>Available voltage-drop reduction</span>
+            <span>External-cable voltage-drop reduction</span>
             <strong id="metricVoltageSaving" class="green">—</strong>
             <small>per string at entered current</small>
           </article>
           <article>
-            <span>Available loss reduction / archetype</span>
+            <span>External-cable loss reduction / archetype</span>
             <strong id="metricLossSaving" class="green">—</strong>
-            <small>sum across 24 strings</small>
+            <small>excludes factory-fitted conductor increase</small>
           </article>
           <article>
-            <span>Available loss reduction / site</span>
+            <span>External-cable loss reduction / site</span>
             <strong id="metricFleetLossSaving" class="green">—</strong>
-            <small>sum across actual site strings</small>
+            <small>external 6 mm² portion only</small>
           </article>
           <article>
-            <span>Available installed cost difference</span>
+            <span>Field-installation cost difference</span>
             <strong id="metricCostSaving" class="amber">—</strong>
-            <small>only when £/m is entered and feasible</small>
+            <small>external cable only when £/m is entered</small>
           </article>
         </div>
 
         <div class="decomposition">
           <article class="compare-card leapfrog">
-            <span>Unavoidable base pair</span>
+            <span>Unavoidable external base pair</span>
             <strong id="decompBasePair">—</strong>
             <small>
-              Both modes retain + and − cable from the common string end.
+              Both modes retain + and − external cable from the common end.
             </small>
           </article>
           <article class="compare-card sequential">
-            <span>Sequential additional return</span>
+            <span>Sequential external return</span>
             <strong id="decompSequentialReturn">—</strong>
             <small>One full row span per archetype string.</small>
           </article>
           <article class="compare-card difference">
-            <span>Leapfrog additional return</span>
+            <span>Leapfrog external return</span>
             <strong id="decompLeapfrogReturn">—</strong>
             <small>Zero only when the lead screen passes.</small>
           </article>
           <article class="compare-card sequential">
-            <span>Sequential total</span>
+            <span>Sequential external total</span>
             <strong id="decompSequentialTotal">—</strong>
             <small>Base pair plus row returns.</small>
           </article>
           <article class="compare-card leapfrog">
-            <span>Leapfrog total</span>
+            <span>Leapfrog external total</span>
             <strong id="decompLeapfrogTotal">—</strong>
-            <small>Theoretical base-pair total.</small>
+            <small>Theoretical external base-pair total.</small>
           </article>
           <article class="compare-card difference">
-            <span>Available difference</span>
+            <span>Available external reduction</span>
             <strong id="decompDifference">—</strong>
             <small>Unavailable where leapfrog fails.</small>
           </article>
         </div>
+
+        <section class="section">
+          <h2>Build 025 authority reconciliation · 24 × 30 reference fixture</h2>
+          <div class="section-body">
+            <p>
+              V8 calculates only the field-installed external-cable
+              consequence. Build 025 traces the complete routed circuit and
+              therefore includes the increased factory-fitted interconnect
+              path. These four quantities must be read together.
+            </p>
+            <div class="decomposition">
+              <article class="compare-card leapfrog">
+                <span>Field-installed conductor</span>
+                <strong id="authorityFieldInstalledReduction" class="green">—</strong>
+                <small>sequential minus leapfrog</small>
+              </article>
+              <article class="compare-card sequential">
+                <span>Factory-fitted conductor</span>
+                <strong id="authorityFactoryFittedIncrease" class="red">—</strong>
+                <small>leapfrog minus sequential</small>
+              </article>
+              <article class="compare-card difference">
+                <span>Total circuit conductor</span>
+                <strong id="authorityTotalCircuitChange" class="red">—</strong>
+                <small>leapfrog minus sequential</small>
+              </article>
+              <article class="compare-card leapfrog">
+                <span>Absolute winding area</span>
+                <strong id="authorityLoopAreaReduction" class="green">—</strong>
+                <small>geometry benefit in the reference fixture</small>
+              </article>
+              <article class="compare-card difference">
+                <span>Geometry evidence</span>
+                <strong id="authorityGeometryBasis" class="amber">—</strong>
+                <small>fixture-specific, not universal</small>
+              </article>
+            </div>
+            <p class="note">
+              The Build 025 loop-area result uses plan coordinates and
+              unresolved coincident module-terminal offsets. It is a
+              deterministic fixture result, not a universal OEM-module or
+              site percentage.
+            </p>
+          </div>
+        </section>
 
         <section class="section">
           <h2>Module-lead evidence gate</h2>
@@ -466,7 +517,7 @@
         </section>
 
         <section class="section">
-          <h2>Band schedule · sequential versus leapfrog</h2>
+          <h2>Band schedule · sequential versus leapfrog external cable</h2>
           <div class="table-wrap">
             <table>
               <thead>
@@ -477,12 +528,12 @@
                   <th>Near route m</th>
                   <th>Seq + m</th>
                   <th>Seq − m</th>
-                  <th>Seq total m</th>
+                  <th>Seq external total m</th>
                   <th>Leap + m</th>
                   <th>Leap − m</th>
-                  <th>Leap total m</th>
-                  <th>Theoretical difference m</th>
-                  <th>Available difference m</th>
+                  <th>Leap external total m</th>
+                  <th>Theoretical external reduction m</th>
+                  <th>Available external reduction m</th>
                 </tr>
               </thead>
               <tbody id="bandSchedule"></tbody>
@@ -499,12 +550,12 @@
                 <tr>
                   <th>Distance m</th>
                   <th>Base pair m/archetype</th>
-                  <th>Sequential m/archetype</th>
-                  <th>Leapfrog m/archetype</th>
-                  <th>Theoretical difference m</th>
-                  <th>Available difference m</th>
-                  <th>Available site saving km</th>
-                  <th>Available loss saving kW/archetype</th>
+                  <th>Sequential external m/archetype</th>
+                  <th>Leapfrog external m/archetype</th>
+                  <th>Theoretical external reduction m</th>
+                  <th>Available external reduction m</th>
+                  <th>Available site external reduction km</th>
+                  <th>Available external loss reduction kW/archetype</th>
                 </tr>
               </thead>
               <tbody id="scenarioSchedule"></tbody>
@@ -522,13 +573,14 @@
 
       <div id="diagramTab" class="tabpane">
         <section class="section">
-          <h2>Why leapfrog removes the far-end EPC return</h2>
+          <h2>Why leapfrog removes the far-end field-installed return</h2>
           <div class="section-body">
             <p>
               Sequential wiring places the two free string terminals at
               opposite physical ends. Leapfrog brings both to the
-              inverter-side end. The diagram is a topology explanation;
-              feasibility is controlled separately by the lead gate.
+              inverter-side end. The diagram explains the external routing
+              consequence only; it does not account for the longer
+              factory-fitted module interconnect path.
             </p>
           </div>
           <div class="diagram-wrap">
@@ -547,7 +599,7 @@
           <div class="section-body">
             <p>
               Every string is listed separately so positive and negative
-              external cable lengths remain auditable.
+              field-installed external-cable lengths remain auditable.
             </p>
           </div>
           <div class="table-wrap">
@@ -563,11 +615,11 @@
                   <th>Seq − m</th>
                   <th>Leap + m</th>
                   <th>Leap − m</th>
-                  <th>Theoretical save m</th>
-                  <th>Available save m</th>
-                  <th>Available ΔR Ω</th>
-                  <th>Available ΔV V</th>
-                  <th>Available ΔP W</th>
+                  <th>Theoretical external reduction m</th>
+                  <th>Available external reduction m</th>
+                  <th>External ΔR Ω</th>
+                  <th>External ΔV V</th>
+                  <th>External ΔP W</th>
                 </tr>
               </thead>
               <tbody id="stringSchedule"></tbody>
@@ -586,20 +638,28 @@
               not the string voltage, current, module count or MPPT duty.
             </p>
             <p>
-              Sequential wiring requires an unavoidable base pair plus one
-              additional row-length return conductor per string. Feasible
-              leapfrog wiring retains the base pair and removes the row
-              return.
+              Sequential wiring requires an unavoidable external base pair
+              plus one additional field-installed row-length return conductor
+              per string. Feasible leapfrog wiring retains the external base
+              pair and removes that field-installed return.
             </p>
             <p>
-              Factory module leads are in circuit under both topologies.
-              They are not saved copper. Only external EPC-installed cable
-              differs unless extension leads are required.
+              Factory module leads remain in circuit under both topologies,
+              but the total factory-fitted interconnect path is not the same.
+              Build 025 shows that the increased factory-fitted path can exceed
+              the field-installed reduction, producing a small increase in
+              total circuit conductor while substantially reducing EPC cable.
             </p>
             <p>
               The lead screen uses two module pitches unless measured route
               evidence is entered. When it fails, V8 refuses to report the
-              theoretical cable difference as an available saving.
+              theoretical external-cable difference as available.
+            </p>
+            <p>
+              V8 resistance, voltage-drop and loss differences apply only to
+              the represented external 6 mm² conductor. They are not complete
+              circuit results and must not be promoted as total-system loss
+              reduction.
             </p>
             <p>
               Site totals use actual total string count. The 24-string
@@ -612,7 +672,7 @@
 
       <div id="comparisonTab" class="tabpane">
         <section class="section">
-          <h2>V6 / V7 / V8 responsibilities</h2>
+          <h2>Version responsibilities and authority</h2>
           <div class="section-body">
             <div class="comparison-grid">
               <article>
@@ -628,9 +688,15 @@
                 <p id="v8Comparison"></p>
               </article>
             </div>
+            <p class="note">
+              V6, V7 and V8 are historical or reference workbenches. Passing
+              their tests proves reproducibility. V10 is the canonical
+              candidate authority chain for geometry, topology, routing and
+              receipts.
+            </p>
             <textarea
               id="plainSummary"
-              rows="14"
+              rows="22"
               readonly
               style="width:100%;margin-top:12px;background:#03070b;
               color:#d7ecff;border:1px solid #263747;padding:10px;
@@ -643,12 +709,14 @@
   </main>
 
   <footer class="footer">
-    V8.2 is an independent development build. V6 and V7 remain separately
-    available. The fleet Parquet/DuckDB cartridge migration is governed by
-    the recovery instructions and is not yet claimed as complete.
+    V8.2 is a historical/reference field-installed external-cable model.
+    It remains reproducible but is not the canonical total-conductor or
+    electromagnetic authority. Build 025/V10 provides the current complete
+    routing and receipt reconciliation.
   </footer>
 
   <script src="./model.js"></script>
   <script src="./app.js"></script>
+  <script src="./authority-reconciliation.js"></script>
 </body>
 </html>
