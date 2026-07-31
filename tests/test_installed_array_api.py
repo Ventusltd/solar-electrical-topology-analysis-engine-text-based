@@ -1,7 +1,12 @@
 from __future__ import annotations
 
+import sys
+
 import pytest
 
+import array_engine
+import geometry_authority
+import solar_topology.array as array_api
 from solar_topology.array import (
     ARRAY_AUTHORITY_MIGRATION_STAGE,
     ARRAY_AUTHORITY_STATUS,
@@ -13,7 +18,7 @@ from solar_topology.array import (
 
 def test_installed_array_api_exposes_build_025_authority() -> None:
     assert ARRAY_AUTHORITY_STATUS == "canonical_candidate"
-    assert ARRAY_AUTHORITY_MIGRATION_STAGE == "build-025.5-installed-api"
+    assert ARRAY_AUTHORITY_MIGRATION_STAGE == "build-025.5-package-authority"
 
     build = reference_24_by_30_build(strategy=WiringStrategy.LEAPFROG)
 
@@ -21,6 +26,24 @@ def test_installed_array_api_exposes_build_025_authority() -> None:
     assert len(build.routing.strings) == 24
     assert build.routing.metrics.total_circuit_conductor_length_m > 0
     assert build.receipt_hash.startswith("sha256:")
+
+
+def test_legacy_module_names_resolve_to_packaged_authority() -> None:
+    assert array_engine is sys.modules[
+        "solar_topology.array.array_engine"
+    ]
+    assert geometry_authority is sys.modules[
+        "solar_topology.array.geometry_authority"
+    ]
+    assert (
+        array_engine.compare_reference_24_by_30
+        is array_api.compare_reference_24_by_30
+    )
+    assert geometry_authority.Point2D is array_api.Point2D
+    assert "/solar_topology/array/" in array_engine.__file__.replace("\\", "/")
+    assert "/solar_topology/array/" in geometry_authority.__file__.replace(
+        "\\", "/"
+    )
 
 
 def test_installed_array_api_reconciles_strategy_accounting() -> None:
