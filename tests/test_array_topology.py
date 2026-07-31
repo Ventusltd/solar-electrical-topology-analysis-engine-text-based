@@ -135,6 +135,7 @@ def test_each_string_has_terminals_connectors_and_free_ends() -> None:
         WiringStrategy.LEAPFROG,
     )
     string = receipt.strings[0]
+    membership = allocation.strings[0]
 
     assert sum(
         node.kind is NodeKind.MODULE_NEGATIVE_TERMINAL
@@ -164,8 +165,14 @@ def test_each_string_has_terminals_connectors_and_free_ends() -> None:
         edge.kind is EdgeKind.CONNECTOR_MATE
         for edge in string.edges
     ) == 29
-    assert string.free_negative_node_id.endswith(":FREE:N")
-    assert string.free_positive_node_id.endswith(":FREE:P")
+    assert (
+        string.free_negative_node_id
+        == membership.negative_free_terminal.terminal_id
+    )
+    assert (
+        string.free_positive_node_id
+        == membership.positive_free_terminal.terminal_id
+    )
 
 
 def test_strategy_changes_topology_not_physical_membership() -> None:
