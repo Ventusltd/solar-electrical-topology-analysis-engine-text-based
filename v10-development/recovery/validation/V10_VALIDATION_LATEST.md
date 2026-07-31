@@ -1,8 +1,8 @@
 # V10 Validation Receipt
 
-Generated UTC: `2026-07-31T20:05:09Z`  
-Repository head: `ee1bcac62a73ebec01e71b4840a956d50ac85c01`  
-Overall result: `PASS`  
+Generated UTC: `2026-07-31T20:07:10Z`  
+Repository head: `cc3f55c30df4e9c1f6c86ec2a760beeb2ebd3c79`  
+Overall result: `FAIL`  
 Schema version: `globalgrid2050.v10-validation-receipt.v1`
 
 ## Declared suites
@@ -11,7 +11,7 @@ Schema version: `globalgrid2050.v10-validation-receipt.v1`
 
 Result: `PASS`  
 Return code: `0`  
-Duration: `17.96 s`  
+Duration: `17.592 s`  
 Working directory: `.`  
 Command:
 
@@ -26,14 +26,14 @@ Output:
 ........................................................................ [ 59%]
 ........................................................................ [ 88%]
 ...........................                                              [100%]
-243 passed in 17.67s
+243 passed in 17.09s
 ```
 
 ### v8
 
-Result: `PASS`  
-Return code: `0`  
-Duration: `0.072 s`  
+Result: `FAIL`  
+Return code: `1`  
+Duration: `0.08 s`  
 Working directory: `.`  
 Command:
 
@@ -45,28 +45,89 @@ Output:
 
 ```text
 TAP version 13
-# V8 regression tests passed: 13/13
+# node:assert:90
+#   throw new AssertionError(obj);
+#   ^
+# AssertionError [ERR_ASSERTION]: [
+#   {
+#     "name": "Build 025 field-installed reduction is 798.288 m",
+#     "pass": true,
+#     "actual": 798.288,
+#     "expected": 798.288
+#   },
+#   {
+#     "name": "Build 025 factory-fitted increase is 845.088 m",
+#     "pass": true,
+#     "actual": 845.088,
+#     "expected": 845.088
+#   },
+#   {
+#     "name": "Build 025 total circuit conductor increases by 46.800 m",
+#     "pass": true,
+#     "actual": 46.80000000000018,
+#     "expected": 46.8
+#   },
+#   {
+#     "name": "Build 025 absolute winding area falls by about 79.8 percent",
+#     "pass": false,
+#     "actual": 79.80154896272015,
+#     "expected": 79.801546
+#   },
+#   {
+#     "name": "Reference declares unresolved terminal geometry",
+#     "pass": true,
+#     "actual": "generic_unresolved",
+#     "expected": "generic_unresolved"
+#   },
+#   {
+#     "name": "Reference declares plan-coordinate geometry",
+#     "pass": true,
+#     "actual": "plan_2d",
+#     "expected": "plan_2d"
+#   }
+# ]
+# false !== true
+#     at Object.<anonymous> (/home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js:158:8)
+#     at Module._compile (node:internal/modules/cjs/loader:1521:14)
+#     at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+#     at Module.load (node:internal/modules/cjs/loader:1266:32)
+#     at Module._load (node:internal/modules/cjs/loader:1091:12)
+#     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
+#     at node:internal/main/run_main_module:28:49 {
+#   generatedMessage: false,
+#   code: 'ERR_ASSERTION',
+#   actual: false,
+#   expected: true,
+#   operator: 'strictEqual'
+# }
+# Node.js v20.20.2
 # Subtest: /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js
-ok 1 - /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js
+not ok 1 - /home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js
   ---
-  duration_ms: 35.400695
+  duration_ms: 43.028282
+  location: '/home/runner/work/solar-electrical-topology-analysis-engine-text-based/solar-electrical-topology-analysis-engine-text-based/tests/v8-model.test.js:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
   ...
 1..1
 # tests 1
 # suites 0
-# pass 1
-# fail 0
+# pass 0
+# fail 1
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 40.181781
+# duration_ms 47.494614
 ```
 
 ### v9
 
 Result: `PASS`  
 Return code: `0`  
-Duration: `0.038 s`  
+Duration: `0.039 s`  
 Working directory: `.`  
 Command:
 
@@ -79,7 +140,7 @@ Output:
 ```text
 {
   "schema": "globalgrid2050.solar-dc-debug-test-report.v1",
-  "generatedAt": "2026-07-31T20:05:08.908Z",
+  "generatedAt": "2026-07-31T20:07:10.639Z",
   "passed": 10,
   "failed": 0,
   "results": [
@@ -148,7 +209,7 @@ Output:
 
 Result: `PASS`  
 Return code: `0`  
-Duration: `0.225 s`  
+Duration: `0.223 s`  
 Working directory: `v10-development`  
 Command:
 
@@ -167,67 +228,67 @@ TAP version 13
 # Subtest: JavaScript matches the shared 20 C steady-state formula fixture
 ok 1 - JavaScript matches the shared 20 C steady-state formula fixture
   ---
-  duration_ms: 2.831318
+  duration_ms: 1.659475
   ...
 # Subtest: quantity rejects unsupported units and propagates weakest provenance
 ok 2 - quantity rejects unsupported units and propagates weakest provenance
   ---
-  duration_ms: 1.541619
+  duration_ms: 1.997846
   ...
 # Subtest: kernel computes geometry-derived resistance, voltage drop and power loss
 ok 3 - kernel computes geometry-derived resistance, voltage drop and power loss
   ---
-  duration_ms: 1.100457
+  duration_ms: 1.508848
   ...
 # Subtest: kernel preserves uncertainty intervals through resistance and voltage drop
 ok 4 - kernel preserves uncertainty intervals through resistance and voltage drop
   ---
-  duration_ms: 0.355251
+  duration_ms: 0.465804
   ...
 # Subtest: cold Voc candidate calculation is traceable and interval bounded
 ok 5 - cold Voc candidate calculation is traceable and interval bounded
   ---
-  duration_ms: 0.712215
+  duration_ms: 0.995062
   ...
 # Subtest: kernel output is deterministic for identical JSON input
 ok 6 - kernel output is deterministic for identical JSON input
   ---
-  duration_ms: 1.09705
+  duration_ms: 1.592665
   ...
 # Subtest: sequential order is deterministic
 ok 7 - sequential order is deterministic
   ---
-  duration_ms: 2.835585
+  duration_ms: 2.260693
   ...
 # Subtest: mirrored sequential order is deterministic
 ok 8 - mirrored sequential order is deterministic
   ---
-  duration_ms: 0.289249
+  duration_ms: 0.244309
   ...
 # Subtest: canonical leapfrog order is a complete permutation
 ok 9 - canonical leapfrog order is a complete permutation
   ---
-  duration_ms: 0.434038
+  duration_ms: 0.374836
   ...
 # Subtest: custom order rejects duplicates and omissions
 ok 10 - custom order rejects duplicates and omissions
   ---
-  duration_ms: 0.594336
+  duration_ms: 0.472604
   ...
 # Subtest: sequential path for 30 modules equals 29 pitches
 ok 11 - sequential path for 30 modules equals 29 pitches
   ---
-  duration_ms: 1.745307
+  duration_ms: 1.731904
   ...
 # Subtest: canonical leapfrog path for 30 modules equals 57 pitches
 ok 12 - canonical leapfrog path for 30 modules equals 57 pitches
   ---
-  duration_ms: 0.206003
+  duration_ms: 0.285051
   ...
 # Subtest: geometry output is deterministic
 ok 13 - geometry output is deterministic
   ---
-  duration_ms: 0.545695
+  duration_ms: 0.585624
   ...
 1..13
 # tests 13
@@ -237,11 +298,11 @@ ok 13 - geometry output is deterministic
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 87.282013
+# duration_ms 85.074171
 ```
 
 ## Gate
 
-All declared Python, V8, V9 and V10 JavaScript suites passed.
+One or more declared suites failed; authority promotion is blocked.
 
 This receipt records execution only. It does not by itself promote an implementation to engineering authority.
