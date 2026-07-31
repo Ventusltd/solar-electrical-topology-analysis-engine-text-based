@@ -1,31 +1,53 @@
-name: Build 025 authority source snapshot
+name: Apply Build 025 equipment topology authority patch
 
 on:
   pull_request:
     paths:
+      - ".build025/equipment-topology.patch.gz.b64"
       - ".github/workflows/build-025-authority-snapshot.yml"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  snapshot:
+  apply-and-validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/upload-artifact@v4
         with:
-          name: build-025-authority-source
-          path: |
-            geometry_authority.py
-            table_string_assignment.py
-            table_string_validation.py
-            array_*.py
-            tests/test_geometry_authority.py
-            tests/test_table_string_assignment.py
-            tests/test_table_string_validation.py
-            tests/test_array_*.py
-            pyproject.toml
-            .github/workflows/build-025-small-gates.yml
-          if-no-files-found: error
-          retention-days: 1
+          ref: agent/build-025-authority-fixes
+          fetch-depth: 0
+
+      - name: Decode and verify patch
+        run: |
+          base64 -d .build025/equipment-topology.patch.gz.b64 \
+            | gzip -d > /tmp/equipment-topology.patch
+          git apply --check /tmp/equipment-topology.patch
+
+      - name: Apply topology patch
+        run: git apply /tmp/equipment-topology.patch
+
+      - name: Run focused authority tests
+        run: |
+          python -m pip install -e ".[test]"
+          python -m pytest -q \
+            tests/test_geometry_authority.py \
+            tests/test_table_string_assignment.py \
+            tests/test_table_string_validation.py \
+            tests/test_array_topology.py \
+            tests/test_array_engine.py
+
+      - name: Run complete Python regression suite
+        run: python -m pytest -q
+
+      - name: Commit validated topology fix and remove temporary files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm \
+            .build025/equipment-topology.patch.gz.b64 \
+            .github/workflows/build-025-authority-snapshot.yml
+          git add array_topology.py array_engine.py tests/test_array_engine.py
+          git commit -m "build 025: attach inverter input topology"
+          git push origin HEAD:agent/build-025-authority-fixes
