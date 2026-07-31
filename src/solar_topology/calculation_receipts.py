@@ -8,13 +8,17 @@ import json
 
 from .circuit import EvidenceClass
 from .evidence import EvidenceDescriptor
+from .resistance_evidence import (
+    ResolvedConductorResistance,
+    resistance_evidence_payload,
+)
 
 
 CALCULATION_RECEIPT_SCHEMA_VERSION = (
-    "globalgrid2050.solar-dc.calculation-receipt.v10.1"
+    "globalgrid2050.solar-dc.calculation-receipt.v10.2"
 )
 COMPLETE_CIRCUIT_METHOD_VERSION = (
-    "globalgrid2050.solar-dc.complete-circuit-r-vdrop-loss.v10.2"
+    "globalgrid2050.solar-dc.complete-circuit-r-vdrop-loss.v10.3"
 )
 
 
@@ -25,6 +29,7 @@ class SegmentCalculationResult:
     conductor_product_id: str
     conductor_length_m: float
     r20_ohm_per_m: float
+    resistance_evidence: ResolvedConductorResistance
     temperature_c: float
     conductor_resistance_ohm: float
     connector_count: int
@@ -55,11 +60,13 @@ class OrderedCircuitCalculationReceipt:
     total_resistance_ohm: float
     voltage_drop_v: float
     resistive_loss_w: float
+    resistance_registry_hash: str
     input_evidence_floor: EvidenceClass
     warnings: tuple[str, ...] = ()
     schema_version: str = CALCULATION_RECEIPT_SCHEMA_VERSION
     method_version: str = COMPLETE_CIRCUIT_METHOD_VERSION
     formula_ids: tuple[str, ...] = (
+        "V10-R-000:R20=resolved_evidence_bound_product_property",
         "V10-R-001:Rconductor=R20*L*(1+alpha20*(T-20C))",
         "V10-R-002:Rcontacts=N*R20contact*(1+alpha20*(T-20C))",
         "V10-V-001:dV=I*R",
@@ -85,6 +92,9 @@ def _segment_payload(result: SegmentCalculationResult) -> dict[str, object]:
         "conductor_product_id": result.conductor_product_id,
         "conductor_length_m": result.conductor_length_m,
         "r20_ohm_per_m": result.r20_ohm_per_m,
+        "resistance_evidence": resistance_evidence_payload(
+            result.resistance_evidence
+        ),
         "temperature_c": result.temperature_c,
         "conductor_resistance_ohm": result.conductor_resistance_ohm,
         "connector_count": result.connector_count,
@@ -117,6 +127,7 @@ def calculation_receipt_payload(
         "ordered_segment_ids": list(receipt.ordered_segment_ids),
         "current_a": receipt.current_a,
         "current_evidence": _evidence_payload(receipt.current_evidence),
+        "resistance_registry_hash": receipt.resistance_registry_hash,
         "segment_results": [
             _segment_payload(result)
             for result in receipt.segment_results
