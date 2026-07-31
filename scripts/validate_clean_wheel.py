@@ -3,10 +3,8 @@
 
 from __future__ import annotations
 
-import json
 import os
 from pathlib import Path
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -78,6 +76,7 @@ import json
 import math
 import os
 from pathlib import Path
+import sys
 
 import array_engine
 import geometry_authority
@@ -92,6 +91,21 @@ module_paths = {
 for name, path in module_paths.items():
     if path.is_relative_to(source_root):
         raise AssertionError(f"{name} resolved from repository source: {path}")
+
+if array_engine is not sys.modules["solar_topology.array.array_engine"]:
+    raise AssertionError("legacy array_engine import is not the packaged authority")
+if geometry_authority is not sys.modules[
+    "solar_topology.array.geometry_authority"
+]:
+    raise AssertionError(
+        "legacy geometry_authority import is not the packaged authority"
+    )
+for name in ("array_engine", "geometry_authority"):
+    normalised = str(module_paths[name]).replace("\\\\", "/")
+    if "/solar_topology/array/" not in normalised:
+        raise AssertionError(f"{name} did not resolve inside packaged array authority")
+if array_api.ARRAY_AUTHORITY_MIGRATION_STAGE != "build-025.5-package-authority":
+    raise AssertionError("installed array API reports the wrong migration stage")
 
 first = array_api.compare_reference_24_by_30()
 second = array_api.compare_reference_24_by_30()
@@ -154,8 +168,6 @@ print(json.dumps(payload, sort_keys=True))
         child_env["PYTHONNOUSERSITE"] = "1"
         child_env["SOURCE_ROOT"] = str(ROOT)
         run([str(python), str(probe)], cwd=probe_dir, env=child_env)
-
-        shutil.rmtree(dist, ignore_errors=True)
 
     return 0
 
