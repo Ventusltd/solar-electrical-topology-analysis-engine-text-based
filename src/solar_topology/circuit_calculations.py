@@ -23,6 +23,11 @@ from .evidence import (
     segment_provenance_descriptor,
     weakest_evidence_class,
 )
+from .resistance_evidence import (
+    ResistanceBasis,
+    resistance_registry_hash,
+    resolve_conductor_resistance,
+)
 
 
 ALPHA_CU_20_PER_C = 0.00393
@@ -113,10 +118,12 @@ def _receipt_id(
     circuit_hash: str,
     current_a: float,
     current_evidence: EvidenceDescriptor,
+    registry_hash: str,
 ) -> str:
     payload = {
         "method_version": COMPLETE_CIRCUIT_METHOD_VERSION,
         "validated_circuit_hash": circuit_hash,
+        "resistance_registry_hash": registry_hash,
         "current_a": current_a,
         "current_evidence": {
             "evidence_class": str(current_evidence.evidence_class),
@@ -149,7 +156,9 @@ def calculate_complete_circuit(
     """Calculate R, voltage drop and I²R loss only after independent proof.
 
     Source segment attributes are read from the canonical circuit model in
-    graph-derived order. No user-entered total length is accepted.
+    graph-derived order. No user-entered total length is accepted. R20 remains
+    the numeric segment input, but its product basis and provenance are resolved
+    independently and included in every calculation result.
     """
 
     if (
@@ -195,6 +204,7 @@ def calculate_complete_circuit(
         )
 
     circuit_hash = validated_circuit_hash(model)
+    registry_hash = resistance_registry_hash()
     segment_objects = _segment_object_by_id(model)
     if set(segment_objects) != set(traversal.ordered_segment_ids):
         missing = sorted(
@@ -213,7 +223,8 @@ def calculate_complete_circuit(
         current_evidence.evidence_class
     ]
     warnings: set[str] = {
-        "Candidate steady-state result; not a standards-compliance conclusion."
+        "Candidate steady-state result; not a standards-compliance conclusion.",
+        "Connector temperature correction retains the existing copper-alpha approximation pending a connector-specific evidence model.",
     }
 
     for segment_id in traversal.ordered_segment_ids:
@@ -256,6 +267,12 @@ def calculate_complete_circuit(
             segment_id,
             strictly_positive=True,
         )
+        resistance_evidence = resolve_conductor_resistance(
+            product_id=conductor_product_id,
+            r20_ohm_per_m=r20_ohm_per_m,
+            legacy_provenance=provenance,
+            legacy_source_reference=source_reference,
+        )
         temperature_c = _finite_number(
             attributes,
             "temperature_c",
@@ -273,25 +290,34 @@ def calculate_complete_circuit(
             minimum=0.0,
         )
 
-        temperature_factor = (
+        conductor_temperature_factor = (
             1
-            + ALPHA_CU_20_PER_C * (temperature_c - 20.0)
+            + resistance_evidence.temperature_coefficient_per_c
+            * (temperature_c - 20.0)
         )
-        if temperature_factor <= 0:
+        connector_temperature_factor = (
+            1 + ALPHA_CU_20_PER_C * (temperature_c - 20.0)
+        )
+        if conductor_temperature_factor <= 0:
             raise ValueError(
                 f"segment {segment_id!r} has non-positive "
-                "temperature correction factor"
+                "conductor temperature correction factor"
+            )
+        if connector_temperature_factor <= 0:
+            raise ValueError(
+                f"segment {segment_id!r} has non-positive "
+                "connector temperature correction factor"
             )
 
         conductor_resistance_ohm = (
             conductor_length_m
             * r20_ohm_per_m
-            * temperature_factor
+            * conductor_temperature_factor
         )
         connector_resistance_ohm = (
             connector_count
             * connector_resistance_ohm_each
-            * temperature_factor
+            * connector_temperature_factor
         )
         total_resistance_ohm = (
             conductor_resistance_ohm
@@ -301,7 +327,17 @@ def calculate_complete_circuit(
             provenance,
             source_reference=source_reference,
         )
-        evidence_classes.append(source_evidence.evidence_class)
+        evidence_classes.extend(
+            (
+                source_evidence.evidence_class,
+                resistance_evidence.evidence_class,
+            )
+        )
+        warnings.update(resistance_evidence.warnings)
+        if resistance_evidence.basis is ResistanceBasis.IDEAL_BULK_ESTIMATE:
+            warnings.add(
+                "Ideal bulk-copper resistance is a lower-bound screening estimate, not a finished-cable declared value."
+            )
 
         warning_text = attributes.get("warnings")
         if isinstance(warning_text, str):
@@ -318,6 +354,7 @@ def calculate_complete_circuit(
                 conductor_product_id=conductor_product_id,
                 conductor_length_m=conductor_length_m,
                 r20_ohm_per_m=r20_ohm_per_m,
+                resistance_evidence=resistance_evidence,
                 temperature_c=temperature_c,
                 conductor_resistance_ohm=(
                     conductor_resistance_ohm
@@ -361,6 +398,7 @@ def calculate_complete_circuit(
                 circuit_hash,
                 current_a,
                 current_evidence,
+                registry_hash,
             )
         ),
         circuit_model_id=model.model_id,
@@ -382,6 +420,7 @@ def calculate_complete_circuit(
         total_resistance_ohm=total_resistance_ohm,
         voltage_drop_v=current_a * total_resistance_ohm,
         resistive_loss_w=current_a**2 * total_resistance_ohm,
+        resistance_registry_hash=registry_hash,
         input_evidence_floor=weakest_evidence_class(
             evidence_classes
         ),
