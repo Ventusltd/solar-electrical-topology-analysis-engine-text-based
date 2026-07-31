@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 import sys
 
 import pytest
@@ -10,10 +11,14 @@ import solar_topology.array as array_api
 from solar_topology.array import (
     ARRAY_AUTHORITY_MIGRATION_STAGE,
     ARRAY_AUTHORITY_STATUS,
+    COMPATIBILITY_MODULES,
     WiringStrategy,
     compare_reference_24_by_30,
     reference_24_by_30_build,
 )
+
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_installed_array_api_exposes_build_025_authority() -> None:
@@ -44,6 +49,16 @@ def test_legacy_module_names_resolve_to_packaged_authority() -> None:
     assert "/solar_topology/array/" in geometry_authority.__file__.replace(
         "\\", "/"
     )
+
+
+def test_compatibility_files_cannot_contain_independent_authority() -> None:
+    for module_name in COMPATIBILITY_MODULES:
+        for path in (ROOT / f"{module_name}.py", ROOT / "src" / f"{module_name}.py"):
+            text = path.read_text(encoding="utf-8")
+            non_empty = [line for line in text.splitlines() if line.strip()]
+            assert len(non_empty) <= 2, f"{path} contains more than a compatibility shim"
+            assert f"solar_topology.array.{module_name}" in text
+            assert "import *" in text
 
 
 def test_installed_array_api_reconciles_strategy_accounting() -> None:
