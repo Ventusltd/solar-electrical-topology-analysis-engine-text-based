@@ -13,6 +13,13 @@ ROOT = Path(__file__).resolve().parents[1]
 TS004_INTEGRATION_SCHEMA_VERSION = (
     "globalgrid2050.solar-dc.ts004-integration.v1"
 )
+V10_RESULT = (
+    ROOT
+    / "v10-development"
+    / "recovery"
+    / "validation"
+    / "V10_VALIDATION_LATEST.json"
+)
 
 GATES: tuple[tuple[str, tuple[str, ...]], ...] = (
     (
@@ -38,9 +45,27 @@ GATES: tuple[tuple[str, tuple[str, ...]], ...] = (
 )
 
 
+def _print_declared_suite_failures() -> None:
+    if not V10_RESULT.is_file():
+        print("declared-suite receipt was not written", file=sys.stderr)
+        return
+    payload = json.loads(V10_RESULT.read_text(encoding="utf-8"))
+    for result in payload.get("results", []):
+        if result.get("pass"):
+            continue
+        print(
+            f"DECLARED SUITE FAILURE: {result.get('name')} "
+            f"return_code={result.get('return_code')}",
+            file=sys.stderr,
+        )
+        print(str(result.get("output", "")).rstrip(), file=sys.stderr)
+
+
 def run_gate(name: str, command: tuple[str, ...]) -> dict[str, object]:
     completed = subprocess.run(command, cwd=ROOT, check=False)
     if completed.returncode != 0:
+        if name == "declared_suites":
+            _print_declared_suite_failures()
         raise RuntimeError(f"TS-004 integration gate failed: {name}")
     return {"name": name, "pass": True}
 
