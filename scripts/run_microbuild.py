@@ -31,7 +31,7 @@ TEST_COMMANDS: dict[str, tuple[str, ...]] = {
     "microbuild_evidence": (sys.executable, "-m", "pytest", "-q", "tests/test_microbuild_evidence.py"),
     "advancement_preview": (sys.executable, "-m", "pytest", "-q", "tests/test_microbuild_advancement.py", "-k", "preview"),
     "advancement_refusal": (sys.executable, "-m", "pytest", "-q", "tests/test_microbuild_advancement.py", "-k", "refus"),
-    "ts004_integration": (sys.executable, "scripts/run_v10_validation.py"),
+    "ts004_integration": (sys.executable, "scripts/run_ts004_integration.py"),
     "ts004_programme_projection": (sys.executable, "-m", "pytest", "-q", "tests/test_programme_state.py"),
     "ts005_handoff": (sys.executable, "-m", "pytest", "-q", "tests/test_ts005_handoff.py"),
     "reference_block_command": (sys.executable, "-m", "pytest", "-q", "tests/test_reference_block_command.py", "-k", "reference_block"),
