@@ -5,8 +5,10 @@ import { dirname, resolve } from 'node:path';
 
 import {
   AUTHORITY_BUNDLE_URL,
+  authorityGeometry,
   authoritySummary,
-  renderAuthorityBundle
+  renderAuthorityBundle,
+  renderAuthorityGeometry
 } from '../authority/authority-view.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -35,6 +37,29 @@ function testModeSeparation() {
   assert.match(inlineScript, /selectMode/);
 }
 
+class FakeNode {
+  constructor(id = '') {
+    this.id = id;
+    this.textContent = '';
+    this.dataset = {};
+    this.attributes = new Map();
+    this.children = [];
+  }
+
+  setAttribute(name, value) {
+    this.attributes.set(name, String(value));
+  }
+
+  appendChild(child) {
+    this.children.push(child);
+    return child;
+  }
+
+  replaceChildren(...children) {
+    this.children = [...children];
+  }
+}
+
 function fakeDocument() {
   const ids = [
     'authority-view',
@@ -49,15 +74,25 @@ function fakeDocument() {
     'authority-dc-ac-ratio',
     'authority-evidence-state',
     'authority-missing-evidence',
+    'authority-rendered-modules',
+    'authority-rendered-routes',
     'authority-response-hash',
     'authority-block-hash',
-    'authority-build025-hash'
+    'authority-build025-hash',
+    'authority-geometry',
+    'authority-route-layer',
+    'authority-module-layer'
   ];
-  const elements = new Map(ids.map((id) => [id, { id, textContent: '', dataset: {} }]));
+  const elements = new Map(ids.map((id) => [id, new FakeNode(id)]));
   return {
     elements,
     getElementById(id) {
       return elements.get(id) ?? null;
+    },
+    createElementNS(_namespace, tagName) {
+      const node = new FakeNode();
+      node.tagName = tagName;
+      return node;
     }
   };
 }
@@ -95,9 +130,72 @@ function testBundleProjection() {
   assert.equal(documentRef.elements.get('authority-dc-ac-ratio').textContent, '1.35');
   assert.equal(documentRef.elements.get('authority-response-hash').textContent, bundle.response_hash);
 
-  assert.doesNotMatch(projectionSource, /Math\.|reduce\(|route\(|resistance|voltageDrop|powerLoss/i);
+  assert.doesNotMatch(projectionSource, /Math\.|reduce\(|resistance|voltageDrop|powerLoss/i);
   assert.match(projectionSource, /boundary\.module_rated_power_wp/);
   assert.match(projectionSource, /response\.response_hash/);
+}
+
+function expectedRouteCount() {
+  let count = 0;
+  for (const stringRoute of bundle.build025.routing.strings) {
+    count += 2;
+    count += stringRoute.interconnect_routes.length;
+  }
+  return count;
+}
+
+function testGeometryProjection() {
+  const projection = authorityGeometry(bundle);
+  const placements = bundle.build025.geometry.placements;
+  const strings = bundle.build025.routing.strings;
+
+  assert.equal(projection.modules.length, placements.length);
+  assert.equal(projection.modules.length, 720);
+  assert.equal(projection.routes.length, expectedRouteCount());
+  assert.equal(projection.routes.length, 744);
+  assert.deepEqual(projection.bounds_m, bundle.build025.geometry.bounds_m);
+  assert.deepEqual(projection.modules[0], {
+    moduleId: placements[0].module_id,
+    x_m: placements[0].centre_m[0],
+    y_m: placements[0].centre_m[1]
+  });
+  assert.deepEqual(projection.routes[0].vertices, strings[0].positive_route.vertices);
+  assert.deepEqual(projection.routes[1].vertices, strings[0].negative_route.vertices);
+  assert.deepEqual(
+    projection.routes[2].vertices,
+    strings[0].interconnect_routes[0].vertices
+  );
+
+  const documentRef = fakeDocument();
+  const rendered = renderAuthorityGeometry(documentRef, bundle);
+  const moduleNodes = documentRef.elements.get('authority-module-layer').children;
+  const routeNodes = documentRef.elements.get('authority-route-layer').children;
+
+  assert.equal(rendered, projection);
+  assert.equal(moduleNodes.length, placements.length);
+  assert.equal(routeNodes.length, expectedRouteCount());
+  assert.equal(moduleNodes[0].tagName, 'circle');
+  assert.equal(moduleNodes[0].attributes.get('cx'), String(placements[0].centre_m[0]));
+  assert.equal(moduleNodes[0].attributes.get('cy'), String(placements[0].centre_m[1]));
+  assert.equal(routeNodes[0].tagName, 'polyline');
+  assert.equal(
+    routeNodes[0].attributes.get('points'),
+    strings[0].positive_route.vertices
+      .map((point) => `${point.x_m},${point.y_m}`)
+      .join(' ')
+  );
+  assert.equal(documentRef.elements.get('authority-rendered-modules').textContent, '720');
+  assert.equal(documentRef.elements.get('authority-rendered-routes').textContent, '744');
+
+  assert.match(html, /id="authority-geometry"/);
+  assert.match(html, /id="authority-route-layer"/);
+  assert.match(html, /id="authority-module-layer"/);
+  assert.doesNotMatch(
+    projectionSource,
+    /Math\.|hypot|sqrt|geometric_length_m|route_length|cable_length|resistance|voltageDrop|powerLoss/i
+  );
+  assert.match(projectionSource, /placement\.centre_m/);
+  assert.match(projectionSource, /route\.vertices/);
 }
 
 switch (mode) {
@@ -106,6 +204,9 @@ switch (mode) {
     break;
   case 'bundle':
     testBundleProjection();
+    break;
+  case 'geometry':
+    testGeometryProjection();
     break;
   default:
     throw new Error(`unknown studio-authority test mode: ${mode}`);
