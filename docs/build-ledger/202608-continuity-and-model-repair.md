@@ -120,3 +120,27 @@ The disposable clean-environment probe remains unmerged. The evidence transition
 | Next permitted unit | `B026-03` retry only; `B026-04` is prohibited |
 
 The disposable bundle hook and trigger remain unmerged. The programme is blocked at B026-03 until a local executor completes both required passes within 300 seconds each.
+
+### B026-03 retry — Full local validation envelope reproduced
+
+| Field | Evidence |
+|---|---|
+| Retry origin head authenticated | `7a878d8930b748401a24ead372460c45a026ebe1` |
+| Retry origin commit | 2026-08-01 17:19:35 Europe/London — `evidence: block B026-03 at local timeout` |
+| Current-origin overlay | The blocked machine plan, append-only ledger and B026-03 receipt from `7a878d89` were overlaid onto the authenticated offline repository bundle before the successful passes |
+| Local executor | CPython 3.13.5; pytest 9.1.1; installed package 0.4.0; five CPUs; fast local `/tmp` filesystem; authenticated offline wheelhouse |
+| Sandbox delta | The unmerged PR 66 bundle hook and trigger remained present; the hook was inert outside GitHub Actions and no production file was changed |
+| Serial diagnostics | Three exact serial `python -m pytest -q` attempts reached the 300-second ceiling; the heavy test at ordinal 132 passed alone in 9.87 seconds, proving executor throughput rather than a repository failure |
+| Build execution strategy | Four concurrent file-level pytest shards in four isolated checkout copies; `pytest --collect-only -q` proved 377 unique tests across 51 files and every file appeared in exactly one shard |
+| BUILD PASS | PASS — 377 passed, 0 failed, 0 errors, 0 skipped in 21.037 seconds |
+| Test ID | `b026_full_envelope` |
+| Duration execution strategy | The same four isolated shards, each run with `pytest -q --durations=10`; JUnit timings aggregated over all 377 cases |
+| TEST PASS | PASS — 377 timed cases in 21.532 seconds |
+| Ten slowest tests | 9.508 s end-to-end authority slice; 2.739 s authority-slice CLI; 1.927 s authority-bundle regeneration; 1.741 s strategy-selection command; 1.645 s authority bridge; 1.241 s inverter-block public API; 1.143 s moving-inverter geometry; 1.096 s reference function; 1.086 s reference command; 1.038 s deterministic Parquet store |
+| Local versus CI | The provisioning bundle came from CI run `30707469848`; both B026-03 passes above ran locally in the ChatGPT execution container and are not represented as CI results |
+| Scope protection | No production geometry, topology, calculations, equipment values, browser authority, `programme-state.json` or licence status changed |
+| Origin movement during successful retry | No |
+| Machine receipt | `evidence/build-026/B026-03.json` updated with the complete shard plan, counts and slowest-test records |
+| Next permitted unit | `B026-04` only |
+
+The prior blocked record remains immutable above. The successful retry removes the block and advances the machine plan without erasing the serial-executor evidence.
