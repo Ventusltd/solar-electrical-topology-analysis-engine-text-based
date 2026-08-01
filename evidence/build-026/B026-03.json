@@ -1,0 +1,113 @@
+{
+  "schema_version": "globalgrid2050.solar-dc.build-026-receipt.v1",
+  "programme_id": "build-026-continuity-and-model-repair-20260801",
+  "unit_id": "B026-03",
+  "ordinal": 3,
+  "title": "Full local validation envelope reproduction",
+  "mode": "sandbox",
+  "plan": {
+    "path": "build-plans/build-026-continuity-and-model-repair.json",
+    "starting_blob_sha1": "e3bae9e92f96fd761f41ee2dca2d6451044f61bb"
+  },
+  "origin": {
+    "head_sha": "4ccbf301b73994a2c77ed792f666f90c25fedb4b",
+    "commit_date_utc": "2026-08-01T16:02:58Z",
+    "commit_date_europe_london": "2026-08-01T17:02:58+01:00",
+    "commit_message": "evidence: complete B026-02 clean environment"
+  },
+  "sandbox": {
+    "branch": "agent/b026-03-local-envelope",
+    "probe_commits": [
+      "c9ad6bd009f2a2e15d10f1826b431f2aa02914cb",
+      "a2e0249a9e702aca901b49537a78f95b50d2025a"
+    ],
+    "pull_request": 66,
+    "production_engineering_files_changed": [],
+    "sandbox_files_changed": [
+      "src/sitecustomize.py",
+      "tests/b026-03-local-bundle-trigger.txt"
+    ],
+    "merge_policy": "do not merge disposable bundle hook or trigger"
+  },
+  "provisioning": {
+    "status": "passed",
+    "workflow": "V10 Engine Validation",
+    "run_id": 30707469848,
+    "artifact_id": 8820792598,
+    "artifact_digest": "sha256:39893e1ab95134a4ea3f9d75ee078df962c845d1d4a0e743f4375efb79830d11",
+    "merge_test_sha": "7276be67c27a7e7241d5eacd61dfd0ca90280332",
+    "bundle_sha256": "sha256:99063524efd0d85351dce24fc2db7b865360dc341eb52ab3f39bb4a2896b7ea1",
+    "bundle_size_bytes": 41963304,
+    "bundle_generation_seconds": 4.156,
+    "python_target": "CPython 3.13 / manylinux_2_28_x86_64",
+    "ci_result": "passed",
+    "local_result": "not represented by this provisioning run"
+  },
+  "local_environment": {
+    "python": "3.13.5",
+    "pytest": "9.1.1",
+    "installed_distribution_version": "0.4.0",
+    "installed_module_path": "/tmp/b026-03-local/venv/lib/python3.13/site-packages/solar_topology/__init__.py",
+    "collected_tests": 377,
+    "dependency_source": "offline wheelhouse from the authenticated provisioning artifact"
+  },
+  "diagnostic_attempt": {
+    "status": "timed_out",
+    "elapsed_seconds": 300,
+    "observed_failures": [
+      {
+        "ordinal": 25,
+        "test": "tests/test_authority_bundle.py::test_authority_bundle_regeneration_candidate_matches_generator",
+        "cause": "The CI candidate-generation preparation step had not yet been reproduced locally."
+      },
+      {
+        "ordinal": 132,
+        "test": "tests/test_end_to_end_authority_slice.py::test_end_to_end_authority_slice",
+        "cause": "An isolated wheel subgate attempted to reach an unavailable package index."
+      }
+    ],
+    "corrections_applied_before_controlled_attempt": [
+      "Generated .microbuild/candidates/reference-inverter-block.json through scripts/build_authority_bundle.py.",
+      "Set PIP_NO_INDEX=1 and PIP_FIND_LINKS to the authenticated offline wheelhouse."
+    ]
+  },
+  "build_pass": {
+    "status": "blocked",
+    "elapsed_seconds": 300,
+    "command": "python -m pytest -q",
+    "environment": {
+      "PIP_NO_INDEX": "1",
+      "PIP_FIND_LINKS": "/tmp/b026-03-local/wheelhouse"
+    },
+    "collected_tests": 377,
+    "observed_passed_before_termination": 184,
+    "observed_failed_before_termination": 0,
+    "termination": "The local execution container stopped the command at the 300-second ceiling.",
+    "reason": "The complete suite did not finish within the unit compute limit."
+  },
+  "test_pass": {
+    "status": "blocked",
+    "test_id": "b026_full_envelope",
+    "elapsed_seconds": 0,
+    "command": "python -m pytest -q --durations=10",
+    "reason": "Not started because the preceding build pass timed out; advancing to a second pass would violate the unit law.",
+    "slowest_tests": []
+  },
+  "origin_moved_during_unit": false,
+  "defects_discovered": [
+    "A bare local pytest invocation does not reproduce the candidate-generation preparation used by the validation workflow.",
+    "Offline local execution requires isolated build subprocesses to inherit the authenticated wheelhouse.",
+    "The full suite exceeds 300 seconds on this CPython 3.13 container even after those environmental corrections."
+  ],
+  "prohibited_surfaces_untouched": [
+    "production geometry",
+    "topology",
+    "calculations",
+    "equipment values",
+    "browser authority",
+    "programme-state.json",
+    "licence status"
+  ],
+  "next_permitted_unit": "B026-03",
+  "retry_boundary": "Retry B026-03 only on a local executor capable of completing the full suite within 300 seconds; do not start B026-04."
+}

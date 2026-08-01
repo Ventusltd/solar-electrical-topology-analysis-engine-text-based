@@ -98,3 +98,25 @@ The validation marker remains unmerged. The evidence transition changes only the
 | Next permitted unit | `B026-03` only |
 
 The disposable clean-environment probe remains unmerged. The evidence transition changes only the machine plan, this ledger and the B026-02 receipt.
+
+### B026-03 — Full local validation envelope reproduction
+
+| Field | Evidence |
+|---|---|
+| Origin head authenticated | `4ccbf301b73994a2c77ed792f666f90c25fedb4b` |
+| Origin commit | 2026-08-01 17:02:58 Europe/London — `evidence: complete B026-02 clean environment` |
+| Sandbox | branch `agent/b026-03-local-envelope`; PR 66; probe commits `c9ad6bd0` and `a2e0249a` |
+| Disposable provisioning | GitHub Actions run `30707469848` generated an authenticated CPython 3.13 offline bundle; this CI run is not represented as the local result |
+| Provisioning artifact | artifact `8820792598`; artifact digest `sha256:39893e1ab95134a4ea3f9d75ee078df962c845d1d4a0e743f4375efb79830d11`; inner bundle digest `sha256:99063524efd0d85351dce24fc2db7b865360dc341eb52ab3f39bb4a2896b7ea1` |
+| Local environment | CPython 3.13.5; pytest 9.1.1; installed package 0.4.0; 377 tests collected |
+| Preparation reproduced | Generated `.microbuild/candidates/reference-inverter-block.json`; bound isolated pip subprocesses to the authenticated offline wheelhouse |
+| BUILD PASS | BLOCKED — `python -m pytest -q` reached the 300-second ceiling |
+| Boundary reached | 184 of 377 collected tests passed; zero failures observed in the corrected run before termination |
+| TEST PASS | BLOCKED — `python -m pytest -q --durations=10` was not started because the build pass had already timed out |
+| Initial diagnostic findings | A bare local run lacked the CI authority-bundle candidate and allowed an isolated wheel subgate to seek an unavailable network package index |
+| Scope protection | No production geometry, topology, calculations, equipment values, browser authority, programme state or licence status changed |
+| Origin movement during unit | No |
+| Machine receipt | `evidence/build-026/B026-03.json` |
+| Next permitted unit | `B026-03` retry only; `B026-04` is prohibited |
+
+The disposable bundle hook and trigger remain unmerged. The programme is blocked at B026-03 until a local executor completes both required passes within 300 seconds each.
