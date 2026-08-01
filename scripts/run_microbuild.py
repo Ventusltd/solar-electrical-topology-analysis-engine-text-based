@@ -41,7 +41,7 @@ TEST_COMMANDS: dict[str, tuple[str, ...]] = {
     "studio_mode_separation": ("node", "v10-development/tests/studio-authority.test.mjs", "mode"),
     "authority_bundle_render": ("node", "v10-development/tests/studio-authority.test.mjs", "bundle"),
     "authority_geometry_render": ("node", "v10-development/tests/studio-authority.test.mjs", "geometry"),
-    "authority_evidence_render": ("node", "v10-development/tests/studio-authority.test.mjs", "evidence"),
+    "authority_evidence_render": ("node", "v10-development/tests/studio-authority-evidence.test.mjs"),
     "local_authority_bridge": (sys.executable, "-m", "pytest", "-q", "tests/test_local_authority_bridge.py"),
     "end_to_end_authority_slice": (sys.executable, "-m", "pytest", "-q", "tests/test_end_to_end_authority_slice.py"),
 }
