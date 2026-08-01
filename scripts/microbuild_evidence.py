@@ -130,11 +130,19 @@ def evidence_from_active_plan(
     plan_path: Path = DEFAULT_PLAN_PATH,
 ) -> dict[str, object]:
     summary = validate_plan(load_plan(plan_path))
+    require(
+        summary["programme_status"] != "completed",
+        "completed programme has no active step",
+    )
+    step_id = summary["active_step"]
+    test_id = summary["active_test_id"]
+    require(isinstance(step_id, str), "active step identifier must be text")
+    require(isinstance(test_id, str), "active test identifier must be text")
     return microbuild_evidence_payload(
-        step_id=str(summary["active_step"]),
+        step_id=step_id,
         manifest_revision=int(summary["manifest_revision"]),
         tested_commit=tested_commit,
-        test_id=str(summary["active_test_id"]),
+        test_id=test_id,
         result=result,
         workflow_run_id=workflow_run_id,
         artifact_id=artifact_id,
