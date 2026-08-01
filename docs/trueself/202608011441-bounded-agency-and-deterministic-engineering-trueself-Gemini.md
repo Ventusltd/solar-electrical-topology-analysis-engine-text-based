@@ -6,13 +6,15 @@
 
 **Timestamp:** 2026-08-01 14:41 Europe/London
 
-**Version:** 1.0
+**Version:** 1.1
 
 **Status:** Gemini cross-domain continuity synthesis and research agenda; bounded witness only; not active machine programme control
 
+**Repair:** Source-body filename corrected after the 2026-08-01 rename; AGENTS.md references remain proposals, not repository dependencies.
+
 **Authority:** Explicit Product Owner instruction to preserve and mark the Gemini synthesis, bounded to the uploaded Gemini text committed at `1ca9094f60cf7110c4fede3fb26b0dded51aab11`; no independent verification of its mobile-tool, standards, safety, market or research claims is asserted by this wrapper
 
-**Source body:** [`202708011427-trueself-google-gemini-review.txt`](202708011427-trueself-google-gemini-review.txt)
+**Source body:** [`202608011427-trueself-google-gemini-review.txt`](202608011427-trueself-google-gemini-review.txt)
 
 **Supersedes:** None
 
@@ -89,7 +91,7 @@ ChatGPT currently carries the explicit continuity-defect repair control. Claude 
 
 The three lanes are complementary witnesses, not votes that override machine state. Where they disagree, the future builder must return to current repository evidence, exact public sources, deterministic tests and Product Owner authority.
 
-The correct eventual integration is likely layered: a concise `AGENTS.md` may carry ordinary coding-agent instructions; Trueself may carry the current responsible synthesis and bounded tranche; Quantum Spawn may carry enduring engineering law; programme manifests and execution artefacts may carry machine state and proof. That integration remains a proposal until explicitly authorised and implemented.
+The correct eventual integration is likely layered: a concise AGENTS.md may carry ordinary coding-agent instructions; Trueself may carry the current responsible synthesis and bounded tranche; Quantum Spawn may carry enduring engineering law; programme manifests and execution artefacts may carry machine state and proof. That integration remains a proposal until explicitly authorised and implemented.
 
 ## Enduring contribution
 
