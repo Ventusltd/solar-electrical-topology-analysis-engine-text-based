@@ -93,6 +93,9 @@ PUBLIC_API_CLASSIFICATION: dict[ApiStatus, tuple[str, ...]] = {
         "ResistanceSourceAssessment",
         "ResistanceSourceStatus",
         "assess_resistance_source",
+        "resistance_source_assessment_hash",
+        "resistance_source_assessment_json",
+        "resistance_source_assessment_payload",
     ),
     ApiStatus.COMPATIBILITY: (
         "EXTERNAL_STRING_6MM2",
