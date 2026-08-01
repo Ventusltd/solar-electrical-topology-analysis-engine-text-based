@@ -178,7 +178,7 @@ def test_hash_changes_when_a_bound_equipment_value_changes() -> None:
     changed_module = replace(contract.module, rated_power_wp=changed_power)
     changed = replace(contract, module=changed_module)
 
-    with pytest.raises(ValueError, match="475.2 kWp"):
+    with pytest.raises(ValueError, match="19.8 kWp"):
         validate_reference_equipment_contract(changed)
 
     changed_fixture = replace(
