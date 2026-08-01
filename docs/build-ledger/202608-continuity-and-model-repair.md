@@ -73,3 +73,28 @@ A failed or timed-out unit is recorded in the same format and blocks advancement
 | Next permitted unit | `B026-02` only |
 
 The validation marker remains unmerged. The evidence transition changes only the machine plan, this ledger and the B026-01 receipt.
+
+### B026-02 — Clean environment provisioning
+
+| Field | Evidence |
+|---|---|
+| Origin head authenticated | `8b94aea9ba254acc837ed64fca6fafdb7b5a2339` |
+| Origin commit | 2026-08-01 16:52:32 Europe/London — `evidence: complete B026-01 mirror integrity` |
+| Sandbox | branch `agent/b026-02-clean-environment`; PR 64; probe commit `4c71b0a0ffb71fb696968773687f526b5e259f26` |
+| Declared build scope | Create a fresh virtual environment outside the checkout and install the repository package through Python and pip |
+| Prohibited surfaces | Production geometry, topology, calculations, equipment values, browser authority, `programme-state.json` and licence status |
+| BUILD PASS | PASS — 99 seconds, measured from authenticated origin commit timestamp to disposable probe commit timestamp |
+| Installation commands | `python -m venv <temporary>/venv`; `<temporary>/venv/bin/python -m pip install --disable-pip-version-check <repository-root>` |
+| Sandbox files changed | `tests/test_b026_clean_environment.py` only; production engineering files changed: none |
+| Test ID | `b026_clean_environment` |
+| TEST PASS | PASS — 131 seconds, GitHub Actions validate-job wall clock rounded up |
+| Probe result | Fresh environment created; package installed; `solar_topology` imported outside the checkout; installed distribution version `0.4.0` matched `pyproject.toml` version `0.4.0` |
+| Hidden prerequisites | None discovered |
+| Wider envelope | 378 Python tests passed in 96.03 seconds; V8, V9, V10 JavaScript/Studio and clean installed-wheel gates passed |
+| Workflow evidence | run `30706950874`; artifact `8820641386`; merge-test SHA `5ec0f0275906a8a7a4fe2a3e27623c7de368d933`; artifact digest `sha256:2b0ce13f0cb830c68ef1a0fdf66bcf02a7221cf75cdc97ee2fe2495171efcad5` |
+| Local versus CI | No independent local result was available from the ChatGPT execution container. CI result: PASS. No CI result is described as local. |
+| Origin movement during unit | No |
+| Machine receipt | `evidence/build-026/B026-02.json` |
+| Next permitted unit | `B026-03` only |
+
+The disposable clean-environment probe remains unmerged. The evidence transition changes only the machine plan, this ledger and the B026-02 receipt.
