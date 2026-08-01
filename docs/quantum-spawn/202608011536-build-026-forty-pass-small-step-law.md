@@ -6,19 +6,21 @@
 
 **Timestamp:** 2026-08-01 15:36 Europe/London
 
-**Version:** 1.0
+**Version:** 1.1
 
 **Status:** Product Owner-authorised programme definition; not yet activated in `programme-state.json`
 
-**Authority:** Explicit Product Owner instruction: twenty builds, twenty tests, forty passes, the first five builds sandbox-only, the next fifteen production builds, and no build or test exceeding five minutes
+**Authority:** Explicit Product Owner instruction: twenty units, one build pass and one test pass per unit, forty passes, the first five units sandbox-only, the next fifteen repository builds, and no pass exceeding five minutes of compute
 
 **Prepared against head:** `eb1e2c7db5c85306e476b6fa912ccc31a0148602`
 
 **Last fully validated engineering commit:** `747381f6c3c3325a680a80a17e516268541c8548`
 
-**Machine plan:** [`../../build-plans/build-026-working-inverter-studio.json`](../../build-plans/build-026-working-inverter-studio.json)
+**Machine plan:** [`../../build-plans/build-026-continuity-and-model-repair.json`](../../build-plans/build-026-continuity-and-model-repair.json)
 
-**Does Not Supersede:** `programme-state.json`, the completed TS-005 `microbuild-plan.json`, receipts, tests, workflow artefacts, manufacturer evidence or standards
+**Execution ledger:** [`../build-ledger/202608-continuity-and-model-repair.md`](../build-ledger/202608-continuity-and-model-repair.md)
+
+**Does Not Supersede:** `programme-state.json`, the completed TS-005 `microbuild-plan.json`, deterministic receipts, code, tests, workflow artefacts, manufacturer evidence or standards
 
 **Confidentiality Boundary:** No confidential project identity, drawing, contract detail, private photograph or protected standards text may enter this programme. Public evidence requires exact provenance; private evidence may appear only through non-identifying handles and hashes.
 
@@ -28,147 +30,175 @@
 
 Large autonomous passes can exhaust context, combine unrelated work and leave a future worker unable to distinguish completion from unfinished reasoning.
 
-Build 026 therefore uses this unit:
+Build 026 therefore uses one indivisible operating unit:
 
-> one small change, one focused test, two receipts, one handoff.
-
-Every build must earn:
-
-- **BUILD PASS**
-- **TEST PASS**
+> one bounded build pass, one bounded test pass, two receipts, one handoff.
 
 Programme total:
 
-- 20 BUILD PASS receipts
-- 20 TEST PASS receipts
-- **40 passes**
+- 20 BUILD PASS receipts;
+- 20 TEST PASS receipts;
+- **40 passes**.
 
-Each build action stops at 300 seconds.
+The compute ceiling is 300 seconds for the build pass and separately 300 seconds for the test pass.
 
-Each test gate separately stops at 300 seconds.
+A worker approaching the limit stops and records the boundary reached. It may not push through, silently broaden scope or combine the remainder with another priority.
 
-Timeout, failure, inaccessible evidence or scope expansion blocks advancement. It does not authorise a longer run.
+No unit begins until both receipts for the immediately preceding unit are recorded. Timeout, unexplained red state, inaccessible evidence, a moving origin head or scope expansion blocks advancement.
 
-Only the immediately next ordinal may activate. No worker may skip, combine or continue automatically beyond the named build.
+## Mirror and rollback law
+
+Before every build pass, the worker authenticates its mirror against origin and records the exact head SHA.
+
+Work begins from a clean tree on a new branch or disposable sandbox. After the test pass, the worker compares the result against the recorded starting SHA and names every changed file.
+
+If origin moves during the unit, the result is abandoned and repeated from the new head. It is not merged blind.
+
+If a test fails and the cause is not understood inside the unit budget, the branch is abandoned and the failure is recorded as blocking. Speculative repair outside the declared unit is prohibited.
+
+The worker’s ability or inability to push must be stated in the handback. A patch is not a commit on origin, and a local pass is not a CI pass.
 
 ## Activation boundary
 
-This file defines the requested programme but does not pretend preparation is execution.
+This Quantum Spawn and its machine plan define Build 026 but do not pretend preparation is execution.
 
-At the preparation head, machine state remains TS-005 complete with the next goal to define the next programme. Activation must explicitly reconcile `programme-state.json`. Only `B026-01` may activate first.
+At the preparation boundary, machine state remains TS-005 complete and says the next controlled programme must be defined. `B026-01` is the only next permitted unit.
 
-The completed TS-005 `MB-01` to `MB-20` evidence remains immutable. Build 026 uses separate identifiers `B026-01` to `B026-20`.
+The completed TS-005 `MB-01` through `MB-20` evidence remains immutable. Build 026 uses separate identifiers `B026-01` through `B026-20`.
 
-## First five: sandbox before production
+`B026-06` may activate machine programme state only after the Product Owner designates the current Trueself. The bounded Claude and Gemini documents remain witnesses rather than votes. The Product Owner manual reload is constitutional continuity law, not itself a Trueself pointer.
 
-Builds `B026-01` to `B026-05` are sandbox-only.
+## First five units: prove the worker before changing production
 
-They may add disposable probes, fixtures and tests. They may not change production geometry, topology, calculations, receipts, equipment values, browser authority, programme state or licence status.
+`B026-01` through `B026-05` are sandbox passes. No production geometry, topology, calculations, receipts, equipment values, browser authority, programme state or licence status may change.
 
-They prove:
+Evidence-only ledger and receipt updates are permitted after each sandbox pair closes.
 
-1. hostile-amnesia reload;
-2. clean installed-wheel authority;
-3. command, bundle and bridge equivalence;
-4. quantity-kind and evidence rules;
-5. one deterministic editable round trip.
+The five tests prove:
 
-## Next fifteen: build one layer at a time
+1. mirror integrity and drift detection;
+2. clean environment provisioning;
+3. exact local validation-envelope reproduction;
+4. clean-wheel authority reproduction;
+5. change, test, patch and byte-identical revert discipline.
 
-The production order is deliberate:
+## Fifteen repository builds
 
-programme guard → repository hygiene → clean entry → evidence register → quantity typing → module binding → MPPT assignment → cold Voc → bifacial current → factory leads → slack geometry → project command → submission bridge → complete Studio hierarchy → one authoritative edit.
+The production order is deliberately narrow:
 
-Python remains the sole engineering authority. The browser collects intent and projects returned responses.
+programme-state reconciliation → root hygiene → clean entry → quantity meaning → comparison compatibility → evidence fixture → rear-gain screening → evidence monotonicity → cold Voc method → string-group profiles → per-pole leads → slack geometry → assumptions → contradiction detection → snapshot and verdict gates.
+
+No unit may borrow work from a later unit merely because the files are already open.
 
 ## Twenty priorities
 
-| Build | Phase | Priority | TEST PASS gate |
-|---|---|---|---|
-| B026-01 | sandbox | Hostile-amnesia reload sandbox | The probe emits one bounded wake-up receipt with exact commit identities and refuses to infer an active post-TS-005 programme. |
-| B026-02 | sandbox | Clean-wheel authority sandbox | The installed package returns 30 modules per string, 24 strings, 720 modules, 475.2 kWp and an incomplete-equipment-evidence state. |
-| B026-03 | sandbox | Authority transport sandbox | All three byte streams and response hashes match; the health route reports ready; the Studio remains projection-only. |
-| B026-04 | sandbox | Equipment quantity-kind sandbox | Compatible comparisons pass; unlike quantities are rejected; derived evidence cannot be stronger than its weakest input. |
-| B026-05 | sandbox | Editable round-trip sandbox | Identical inputs produce identical receipts; an invalid edit is blocked; the projection contains no engineering calculation. |
-| B026-06 | build | Forty-pass programme guard | Exactly 20 builds and 20 unique tests are present; advancement is impossible without both receipts; timeout, failure and scope-change states block the programme. |
-| B026-07 | build | Deliberate root gitignore | Known temporary files are ignored while committed receipts, schemas, fixtures and authority evidence remain trackable. |
-| B026-08 | build | Single clean entry contract | From a clean installation, the command starts, reports one URL, serves health=ready and loads the current Authority Studio. |
-| B026-09 | build | Reloadable evidence register | Every promoted equipment value resolves to a source entry; private evidence exposes only handles and hashes; missing sources remain unresolved. |
-| B026-10 | build | Quantity-kind typed equipment values | The kernel rejects incompatible comparisons and serialises quantity kind, unit, evidence class and source identity deterministically. |
-| B026-11 | build | Module profiles below project level | Mixed profile assignments are deterministic; all 24 strings resolve one profile; changing one group changes only the correct receipt branch. |
-| B026-12 | build | Project MPPT assignment separate from equipment truth | Twelve groups, 24 physical inputs and 24 strings validate; project assignment never changes internal-topology evidence state. |
-| B026-13 | build | Cold open-circuit-voltage cases | Known fixtures reproduce their arithmetic; warmer temperature never increases cold-corrected Voc; verdict words require a named method and evidenced limit. |
-| B026-14 | build | Bifacial current cases | Front, 5% and 10% fixtures keep operating and short-circuit comparison channels separate and cannot emit unsupported clipping or thermal conclusions. |
-| B026-15 | build | Per-pole factory-lead asymmetry | Asymmetric fixtures preserve both poles; total factory length and pole difference are correct; symmetric legacy fixtures remain stable. |
-| B026-16 | build | Declared installed slack geometry | Straight, looped and unresolved slack states serialise deterministically and alter geometry receipts only where declared. |
-| B026-17 | build | Validated inverter-project command | Valid input returns a deterministic authority response; missing evidence returns incomplete-evidence state; invalid topology is refused. |
-| B026-18 | build | Authoritative local submission bridge | Direct command and bridge submission are byte-equivalent for the same project; malformed or oversized input is rejected. |
-| B026-19 | build | Complete inverter hierarchy in Authority Studio | Counts and parent-child relationships match the response; selecting an MPPT, input or string highlights only its authoritative descendants and routes. |
-| B026-20 | build | One bounded authoritative edit | The edit changes the expected receipt branch, identical resubmission is deterministic, invalid edits remain blocked, and the full validation plus clean-wheel gates pass. |
+| Unit | Mode | Priority |
+|---|---|---|
+| B026-01 | sandbox | Mirror integrity and drift detection |
+| B026-02 | sandbox | Clean environment provisioning |
+| B026-03 | sandbox | Full local validation envelope reproduction |
+| B026-04 | sandbox | Clean-wheel authority reproduction |
+| B026-05 | sandbox | Change, test, patch and revert rehearsal |
+| B026-06 | build | Reconcile programme-state and current Trueself |
+| B026-07 | build | Deliberate root `.gitignore` |
+| B026-08 | build | One clean installation and one start command |
+| B026-09 | build | Quantity-kind typing |
+| B026-10 | build | Comparison compatibility guard |
+| B026-11 | build | Versioned datasheet evidence fixture |
+| B026-12 | build | Rear-gain current screening |
+| B026-13 | build | Evidence-class monotonicity |
+| B026-14 | build | Cold open-circuit voltage with explicit method |
+| B026-15 | build | String-group module-profile binding |
+| B026-16 | build | Per-pole factory-lead lengths |
+| B026-17 | build | Declared slack and coil geometry |
+| B026-18 | build | Named assumption register |
+| B026-19 | build | Governance contradiction gate |
+| B026-20 | build | Snapshot-expiry and verdict-vocabulary gates |
 
-## Evidence trail
+The exact build scope, test scope, acceptance condition and unique test identifier for each unit are authoritative in the machine plan.
 
-Quantum Spawn is the durable law and reload entry point. Execution logs remain compact machine receipts rather than becoming a long diary.
+## Evidence trail without capsule sprawl
 
-Each build writes:
+Quantum Spawn carries durable law. The append-only ledger carries human-readable execution history. Machine receipts carry structured proof. Git history and workflow artefacts carry provenance.
 
-`evidence/build-026/B026-XX.json`
+A routine implementation unit does not create its own Quantum Spawn.
 
-The generated index is:
-
-`evidence/build-026/index.json`
-
-Every receipt must record:
+Each unit appends one compact ledger record and one machine-readable receipt containing:
 
 - plan hash;
-- starting and resulting commits;
+- origin head authenticated before work;
+- branch or sandbox identity;
+- declared scope and prohibited surfaces;
 - exact files changed;
-- declared boundary and prohibited areas confirmed untouched;
-- build elapsed seconds and BUILD PASS;
+- build elapsed seconds and BUILD PASS or blocking state;
 - unique test identifier and repository-controlled command;
-- test elapsed seconds and TEST PASS;
-- workflow run, artifact and evidence hash where applicable;
-- unresolved findings;
-- next permitted build.
+- test elapsed seconds and TEST PASS or blocking state;
+- local and CI outcomes stated separately;
+- resulting commit, patch and evidence hashes where applicable;
+- defects discovered or deferred;
+- next permitted unit.
 
-A new worker loads the current head, `programme-state.json`, this Quantum Spawn, the machine plan and the latest passed receipt. After successful reload, the first handback line is:
+Two closing Quantum Spawns are permitted only after the relevant behaviour is implemented and proven:
+
+- quantity-kind and compatible-comparison law after `B026-10`;
+- evidence-class monotonicity law after `B026-13`.
+
+This preserves the Product Owner’s requested continuity without adding twenty implementation diaries to the constitutional corpus.
+
+## Hostile-amnesia reload
+
+A fresh worker loads, in order:
+
+1. current repository head;
+2. `programme-state.json`;
+3. this Quantum Spawn;
+4. the machine plan;
+5. the execution ledger;
+6. the latest completed unit receipt;
+7. only the files and test named by the next unit.
+
+After successful reload, the worker states:
 
 > trueself loaded.
 
-The worker then states the current ordinal, BUILD/TEST counts, exact next scope and stop conditions.
+It then reports the current ordinal, BUILD PASS count, TEST PASS count, exact next scope, mirror head and stop conditions.
 
 ## Engineering law retained
 
-Project arrangement remains separate from internal equipment truth.
+Project assignment remains separate from internal equipment truth.
 
 Twelve MPPT groups and two physical inputs per group do not prove hard paralleling, blocking, backfeed or shared internal-bus behaviour.
 
-Quantity kinds must match before comparison.
+Quantity kinds must be compatible before comparison.
 
-`Imp` belongs with operating-current limits when definitions and conditions align.
+`Imp` belongs with operating-current limits only when definitions and conditions align.
 
-`Isc` belongs with short-circuit limits when definitions and conditions align.
+`Isc` belongs with short-circuit limits only when definitions and conditions align.
 
-Derived evidence cannot be stronger than the weakest input.
+Derived evidence can never be stronger than its weakest input.
 
-Compliance words require a named source limit, compatible quantities and a declared method.
+Compliance vocabulary requires a named source limit, compatible quantities and a declared method.
 
-No build may select a licence, publish confidential evidence, reproduce protected standards text or invent an engineering verdict.
+No unit may select a licence, publish confidential evidence, reproduce protected standards text or invent an engineering verdict.
 
 ## Completion
 
-Build 026 closes only when the evidence index proves:
+Build 026 closes only when the ledger and machine receipts prove:
 
 - BUILD PASS = 20;
 - TEST PASS = 20;
 - total passes = 40;
 - no missing ordinal;
 - no duplicate test identifier;
-- no elapsed build or test above 300 seconds;
-- one complete inverter hierarchy is projected from Python;
-- one allowlisted edit returns a new deterministic receipt;
-- missing evidence remains visible;
-- the full declared validation and both clean-wheel gates pass;
-- no later programme is activated.
+- no build or test elapsed time above 300 seconds;
+- every origin movement or failed access was recorded;
+- quantity-kind incompatibility is structurally refused;
+- every promoted datasheet value is reloadable;
+- evidence monotonicity is enforced;
+- cold-voltage and rear-gain methods remain explicitly bounded;
+- per-pole leads, slack and assumptions remain visible;
+- governance contradictions, stale observations and unsupported verdict language are gated;
+- the full declared validation and both clean-wheel gates pass at closure;
+- no later programme is activated automatically.
 
-The next worker receives one exact build, one exact test, one compute limit, one evidence path and one stop boundary. That is how each build improves on the last without restarting from amnesia.
+The next worker receives one exact unit, one exact test, one compute limit, one evidence path and one stop boundary. That is how each unit improves on the last without restarting from amnesia.
