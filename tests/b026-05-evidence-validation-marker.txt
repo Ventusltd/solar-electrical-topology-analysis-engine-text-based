@@ -1,0 +1,8 @@
+Build 026 validation-only marker
+
+Unit: B026-05 — Change, test, patch and revert rehearsal
+Evidence head: 61868652405ca8a56a3000b4699436466b4ba599
+Origin head: 7ab62ad2fbe8915cbbe5a5bb3db6610afc1688a2
+Purpose: validate the three-file evidence transition after successful local edit-test-revert rehearsal.
+Merge policy: do not merge this marker.
+Production engineering changes: none.
