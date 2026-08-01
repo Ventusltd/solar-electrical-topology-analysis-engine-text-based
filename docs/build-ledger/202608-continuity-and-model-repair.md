@@ -46,4 +46,30 @@ A failed or timed-out unit is recorded in the same format and blocks advancement
 
 ## Unit records
 
-_No unit has executed. B026-01 is the only next permitted unit._
+### B026-01 — Mirror integrity and drift detection
+
+| Field | Evidence |
+|---|---|
+| Origin head authenticated before successful repeat | `e4d5cb4dd185a5e596b37493d8715595c00c0209` |
+| Origin commit | 2026-08-01 16:39:54 Europe/London — `test: restore TS-005 governance validation` |
+| Mirror inventory | 363 tracked files; 97 branches; repository size 1,624 KB |
+| Tracked-file method | 362 recorded at `37b00106`; `49ac61d7` added one file; later commits through the authenticated head renamed or modified files only |
+| Sandbox | branch `agent/b026-01-mirror-integrity`; PR 61; marker `ecf176abcc94c690580be065f57c0583b7b8447a` |
+| Declared build scope | Authenticate mirror identity and create one disposable non-merge validation marker |
+| Prohibited surfaces | Production geometry, topology, calculations, equipment values, browser authority, `programme-state.json` and licence status |
+| BUILD PASS | PASS — 35 seconds, conservatively measured from authenticated origin commit timestamp to marker commit timestamp |
+| Sandbox files changed | `tests/b026-01-validation-marker.txt` only; production engineering files changed: none |
+| Test ID | `b026_mirror_integrity` |
+| Repository-controlled commands | `python scripts/check_capsule_links.py --check`; `python scripts/sync_programme_state.py --check` |
+| TEST PASS | PASS — 123 seconds, GitHub Actions validate-job wall clock rounded up |
+| Required gate result | Capsule-link integrity passed for 55 Markdown capsules; programme state and generated public outputs were in sync |
+| Wider envelope | 377 Python tests passed; V8, V9, V10 JavaScript/Studio and clean installed-wheel gates passed |
+| Workflow evidence | run `30706456207`; artifact `8820491476`; merge-test SHA `eae46e950dc97a626ce35539031b940ca4b2b67f`; artifact digest `sha256:c820661c1c167566549a68f3a82c954407cad86e4aa6211a8baae288430f90c8` |
+| Local versus CI | No local result: the ChatGPT execution container could not resolve GitHub. CI result: PASS. No local result is represented as CI. |
+| Abandoned first attempt | Run `30706087559` from `70ec8057` exposed two governance defects. Repair PR 62 passed run `30706296694` and merged as `e4d5cb4`; the first attempt was abandoned because origin moved. |
+| Defects repaired | Stale terminal TS-005 assertions; missing validated receipt and MB-10 hand-off binding in the TS-005 closure |
+| Origin movement during successful repeat | No |
+| Machine receipt | `evidence/build-026/B026-01.json` |
+| Next permitted unit | `B026-02` only |
+
+The validation marker remains unmerged. The evidence transition changes only the machine plan, this ledger and the B026-01 receipt.

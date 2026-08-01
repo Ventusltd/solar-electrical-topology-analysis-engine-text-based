@@ -4,9 +4,9 @@
   "title": "Twenty-unit build plan — bounded passes, mirror comparison and evidence trail",
   "prepared_against_head": "eb1e2c7db5c85306e476b6fa912ccc31a0148602",
   "last_fully_validated_engineering_commit": "747381f6c3c3325a680a80a17e516268541c8548",
-  "programme_status": "defined_pending_activation",
+  "programme_status": "active",
   "active_unit": null,
-  "next_unit": "B026-01",
+  "next_unit": "B026-02",
   "quantum_spawn": "docs/quantum-spawn/202608011536-build-026-forty-pass-small-step-law.md",
   "ledger": "docs/build-ledger/202608-continuity-and-model-repair.md",
   "compute_limit_seconds_per_pass": 300,
@@ -44,8 +44,17 @@
       "build_scope": "Authenticate the working mirror against origin and record head SHA, commit date, message, tracked file count, branch count and repository size. No production file change.",
       "test_scope": "Run capsule-link and programme-state synchronisation checks and name any divergence from the previous ledger state.",
       "acceptance": "Mirror identity is explicit, capsule links pass, programme state is in sync, and drift is named rather than inherited.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_mirror_integrity", "evidence": null}
+      "build_pass": {
+        "status": "passed",
+        "max_compute_seconds": 300,
+        "evidence": "evidence/build-026/B026-01.json"
+      },
+      "test_pass": {
+        "status": "passed",
+        "max_compute_seconds": 300,
+        "test_id": "b026_mirror_integrity",
+        "evidence": "evidence/build-026/B026-01.json"
+      }
     },
     {
       "id": "B026-02",
@@ -55,8 +64,17 @@
       "build_scope": "Create a fresh virtual environment and install the package using only documented commands. No production file change.",
       "test_scope": "Import solar_topology from the installed package and verify its reported version against pyproject.toml.",
       "acceptance": "Installation succeeds without hidden prerequisites, or the exact hidden prerequisite is recorded as a blocking defect.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_clean_environment", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_clean_environment",
+        "evidence": null
+      }
     },
     {
       "id": "B026-03",
@@ -66,8 +84,17 @@
       "build_scope": "Run the complete local Python suite and capture exact counts. No production file change.",
       "test_scope": "Run pytest duration reporting and record the ten slowest tests.",
       "acceptance": "Local green or red state is stated exactly and is never misreported as CI state.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_full_envelope", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_full_envelope",
+        "evidence": null
+      }
     },
     {
       "id": "B026-04",
@@ -77,8 +104,17 @@
       "build_scope": "Build the wheel and install it into a second isolated environment. No production file change.",
       "test_scope": "Run both clean-wheel gates against the installed package rather than the checkout.",
       "acceptance": "Both clean-wheel boundaries reproduce their declared result and any working-tree dependency is recorded.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_clean_wheel", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_clean_wheel",
+        "evidence": null
+      }
     },
     {
       "id": "B026-05",
@@ -88,8 +124,17 @@
       "build_scope": "On a throwaway branch make one no-op edit, commit it and produce a patch.",
       "test_scope": "Run one focused test and the full local envelope, reset the tree and verify byte identity with the recorded head.",
       "acceptance": "The complete loop finishes inside budget and leaves no state behind except evidence.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_revert_rehearsal", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_revert_rehearsal",
+        "evidence": null
+      }
     },
     {
       "id": "B026-06",
@@ -99,8 +144,17 @@
       "build_scope": "Update only the current Trueself pointer, named Build 026 tranche and single next goal after Product Owner designation. Preserve all unrelated programme-state fields.",
       "test_scope": "Run TS-005 handoff tests and programme-state drift checks.",
       "acceptance": "Prose and machine authority agree, exactly one active tranche exists and no unrelated field changes.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_programme_state", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_programme_state",
+        "evidence": null
+      }
     },
     {
       "id": "B026-07",
@@ -110,8 +164,17 @@
       "build_scope": "Classify tracked and generated artefacts, then add a root .gitignore based on current Python and Node patterns plus local build candidates.",
       "test_scope": "Verify no tracked engineering artefact becomes ignored and a full test run leaves the working tree clean.",
       "acceptance": "No tracked file is removed; untracking proposals are deferred to a separate programme.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_gitignore", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_gitignore",
+        "evidence": null
+      }
     },
     {
       "id": "B026-08",
@@ -121,8 +184,17 @@
       "build_scope": "Document exactly one supported installation sequence and one command that starts the authority service and reports the Studio URL.",
       "test_scope": "Run a scripted clean-clone install and startup smoke check.",
       "acceptance": "A fresh clone reaches a ready health route and working Studio without remembered preparation.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_clean_entry", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_clean_entry",
+        "evidence": null
+      }
     },
     {
       "id": "B026-09",
@@ -132,8 +204,17 @@
       "build_scope": "Add explicit quantity kinds to qualified equipment values, including Isc, Imp, operating-current limit, short-circuit limit, Voc and Vmp. Add no comparison behaviour.",
       "test_scope": "Verify every relevant field carries a kind and all serialisation or hash changes are listed.",
       "acceptance": "No calculation result changes and quantity meaning is explicit.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_quantity_kind", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_quantity_kind",
+        "evidence": null
+      }
     },
     {
       "id": "B026-10",
@@ -143,8 +224,17 @@
       "build_scope": "Add a helper that rejects incompatible quantity kinds rather than returning a misleading comparison.",
       "test_scope": "Isc against an operating-current limit must reject; Imp against a compatible operating-current limit may compare when conditions align.",
       "acceptance": "The unlike-rating error identified in the continuity series is structurally impossible.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_comparison_guard", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_comparison_guard",
+        "evidence": null
+      }
     },
     {
       "id": "B026-11",
@@ -154,8 +244,17 @@
       "build_scope": "Create a machine-readable fixture for the exact public module and inverter datasheets with source identity, revision and hashes. Missing sources remain unresolved.",
       "test_scope": "Validate the fixture schema and prove every downstream promoted value resolves to one fixture source.",
       "acceptance": "No engineering arithmetic reads manufacturer values from prose.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_datasheet_fixture", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_datasheet_fixture",
+        "evidence": null
+      }
     },
     {
       "id": "B026-12",
@@ -165,8 +264,17 @@
       "build_scope": "Load front, 5 percent and 10 percent Imp and Isc values from the fixture and add separate compatible screening channels.",
       "test_scope": "Reproduce 34.70, 36.44 and 38.18 A for Imp and 36.90, 38.74 and 40.60 A for Isc without emitting unsupported compliance, clipping or thermal conclusions.",
       "acceptance": "Each result carries margin, quantity kind, evidence class and source identity rather than an invented verdict.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_rear_gain", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_rear_gain",
+        "evidence": null
+      }
     },
     {
       "id": "B026-13",
@@ -176,8 +284,17 @@
       "build_scope": "Make every derived value inherit the weakest evidence class among its inputs.",
       "test_scope": "Use property-based and targeted tests to prove no derivation becomes stronger than its weakest input, including assumed permittivity producing assumed capacitance.",
       "acceptance": "Any existing canonical result whose evidence state changes is explicitly listed.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_evidence_monotonicity", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_evidence_monotonicity",
+        "evidence": null
+      }
     },
     {
       "id": "B026-14",
@@ -187,8 +304,17 @@
       "build_scope": "Add cold Voc calculation with explicit minimum-temperature input and a separately named tolerance policy that is off by default.",
       "test_scope": "Reproduce 1377 V at STC and approximately 1497.5 V at minus 10 C; prove tolerance is absent unless selected.",
       "acceptance": "The method question remains explicit data and no automatic compliance verdict is issued.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_cold_voc", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_cold_voc",
+        "evidence": null
+      }
     },
     {
       "id": "B026-15",
@@ -198,8 +324,17 @@
       "build_scope": "Permit module profiles to bind at string-group level rather than only whole-project level.",
       "test_scope": "A two-group block with different bins aggregates correctly and records each bin; the legacy single-profile block remains byte-identical where the schema permits.",
       "acceptance": "A profile change affects only its own receipt branch.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_string_group_profile", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_string_group_profile",
+        "evidence": null
+      }
     },
     {
       "id": "B026-16",
@@ -209,8 +344,17 @@
       "build_scope": "Preserve positive and negative factory-lead lengths separately and let routing consume them.",
       "test_scope": "Verify 2.1 m asymmetry across one 30-module string and 50.4 m across 24 strings, with explicit receipt and hash consequences.",
       "acceptance": "The correction to prior installed-length reporting is stated and no other routing method changes.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_factory_leads", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_factory_leads",
+        "evidence": null
+      }
     },
     {
       "id": "B026-17",
@@ -220,8 +364,17 @@
       "build_scope": "Add declared installed slack and geometry state with explicit provenance, defaulting to unresolved rather than zero.",
       "test_scope": "Declared slack contributes to length and receipts; undeclared slack remains an unresolved evidence item.",
       "acceptance": "Field-created geometry becomes visible without inventing a coil where none is evidenced.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_slack_geometry", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_slack_geometry",
+        "evidence": null
+      }
     },
     {
       "id": "B026-18",
@@ -231,8 +384,17 @@
       "build_scope": "Create a register for standing assumptions such as relative permittivity, temperature cases and tolerance policy, each with owner and state.",
       "test_scope": "Validate the register and require every assumption-dependent derivation to cite its entry.",
       "acceptance": "No assumption is used anonymously.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_assumption_register", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_assumption_register",
+        "evidence": null
+      }
     },
     {
       "id": "B026-19",
@@ -242,8 +404,17 @@
       "build_scope": "Detect conflicting named quantities across governance documents unless explicit source-to-target supersession exists.",
       "test_scope": "A seeded contradiction fails and a properly superseded pair passes.",
       "acceptance": "Repeated model prose cannot promote conflicting values into apparent truth.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_contradiction_gate", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_contradiction_gate",
+        "evidence": null
+      }
     },
     {
       "id": "B026-20",
@@ -253,8 +424,17 @@
       "build_scope": "Add one bounded governance-validation unit covering commit-bounded observational claims and controlled use of violation, exceeds, complies and fails.",
       "test_scope": "Seeded stale or unbound claims fail; current commit-bounded and method-bound claims pass; both checks run inside the existing validation envelope.",
       "acceptance": "Observations cannot masquerade as live state and verdict language cannot outrun source, method or compatible quantities.",
-      "build_pass": {"status": "planned", "max_compute_seconds": 300, "evidence": null},
-      "test_pass": {"status": "planned", "max_compute_seconds": 300, "test_id": "b026_snapshot_and_verdict", "evidence": null}
+      "build_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "evidence": null
+      },
+      "test_pass": {
+        "status": "planned",
+        "max_compute_seconds": 300,
+        "test_id": "b026_snapshot_and_verdict",
+        "evidence": null
+      }
     }
   ]
 }
