@@ -232,6 +232,9 @@ from .resistance_qualification import (
     ResistanceSourceAssessment,
     ResistanceSourceStatus,
     assess_resistance_source,
+    resistance_source_assessment_hash,
+    resistance_source_assessment_json,
+    resistance_source_assessment_payload,
 )
 from .segments import (
     FeasibilityResult,
