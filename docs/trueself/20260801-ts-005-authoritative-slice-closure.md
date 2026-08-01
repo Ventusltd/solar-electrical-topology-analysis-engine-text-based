@@ -38,6 +38,13 @@ The command response, committed bundle and live bridge payload are byte-identica
 
 ## Final evidence
 
+The hostile-amnesia hand-off remains explicitly bound to the validated inverter-block authority:
+
+- `MB-10 — TS-005 hand-off proof`
+- `TS-005 — First authoritative Studio slice`
+- inverter-block receipt hash `sha256:79f3d02a878e4fe6bd700d194c2b29e2500cd9511e23d469c34f3d8472f8a1f8`
+- Forty-seven equipment evidence items remain unresolved or candidate; this closure does not promote them.
+
 MB-19 — Local authority bridge:
 
 - workflow run `30695546837`
