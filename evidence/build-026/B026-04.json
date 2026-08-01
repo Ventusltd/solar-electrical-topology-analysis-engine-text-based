@@ -1,0 +1,109 @@
+{
+  "schema_version": "globalgrid2050.solar-dc.build-026-receipt.v1",
+  "programme_id": "build-026-continuity-and-model-repair-20260801",
+  "unit_id": "B026-04",
+  "ordinal": 4,
+  "title": "Clean-wheel authority reproduction",
+  "mode": "sandbox",
+  "plan": {
+    "path": "build-plans/build-026-continuity-and-model-repair.json",
+    "starting_blob_sha1": "c941fb51d9942c355e0cf44ba2aac0639e27105a"
+  },
+  "origin": {
+    "head_sha": "fa0e3768f5c4a70d6ede95ebee696d3c4cb6e0f8",
+    "commit_date_utc": "2026-08-01T16:42:59Z",
+    "commit_date_europe_london": "2026-08-01T17:42:59+01:00",
+    "commit_message": "evidence: complete B026-03 local validation envelope"
+  },
+  "local_environment": {
+    "python": "3.13.5",
+    "pytest": "9.1.1",
+    "installed_distribution_version": "0.4.0",
+    "dependency_source": "authenticated offline wheelhouse from B026-03 provisioning artifact 8820792598",
+    "source_state": "current origin fa0e3768 with no sandbox production delta",
+    "working_filesystem": "/tmp"
+  },
+  "build_pass": {
+    "status": "passed",
+    "elapsed_seconds": 4.977,
+    "scope": "build wheel, create second isolated virtual environment, install wheel and probe outside checkout",
+    "wheel": {
+      "filename": "solar_electrical_topology_engine-0.4.0-py3-none-any.whl",
+      "size_bytes": 128239
+    },
+    "installed_version": "0.4.0",
+    "module_path_example": "/tmp/b026-04-build-*/venv/lib/python3.13/site-packages/solar_topology/__init__.py",
+    "workspace_outside_repository": true,
+    "commands": [
+      "python -m build --wheel --outdir <temporary>/dist",
+      "python -m venv <temporary>/venv",
+      "pip install --no-index --find-links <authenticated-wheelhouse> <built-wheel>",
+      "installed-package import and version probe"
+    ]
+  },
+  "test_pass": {
+    "status": "passed",
+    "test_id": "b026_clean_wheel",
+    "elapsed_seconds": 12.368,
+    "execution": "sequential; checkout build directory cleared before each independent gate",
+    "gates": [
+      {
+        "name": "clean-wheel",
+        "command": "python scripts/validate_clean_wheel.py",
+        "elapsed_seconds": 6.14,
+        "return_code": 0,
+        "status": "passed"
+      },
+      {
+        "name": "inverter-block-clean-wheel",
+        "command": "python scripts/validate_inverter_block_wheel.py",
+        "elapsed_seconds": 6.226,
+        "return_code": 0,
+        "status": "passed"
+      }
+    ]
+  },
+  "reproduced_authority": {
+    "distribution_version": "0.4.0",
+    "module_count": 720,
+    "string_count": 24,
+    "modules_per_string": 30,
+    "allocated_physical_input_count": 24,
+    "evidence_state": "incomplete_evidence",
+    "missing_evidence_count": 47,
+    "comparison_hash": "sha256:413aa93c98d1b9fd5f9ffee4f577cfe29a6e74f48bd927a3ebe7f541545d6366",
+    "equipment_contract_hash": "sha256:1482dfd06dda6b5a1765676bf1c98fe6eee78bc7858b378fe8b7acaa00ff32de",
+    "inverter_block_receipt_hash": "sha256:79f3d02a878e4fe6bd700d194c2b29e2500cd9511e23d469c34f3d8472f8a1f8",
+    "build025_receipt_hash": "sha256:d2f29cbe9fb9b5ce2e7bda95ce6828b7bd2b7ece69a5bb1e4f840d2810f9c219"
+  },
+  "diagnostics": [
+    {
+      "stage": "build harness",
+      "status": "failed_then_corrected",
+      "cause": "Path.resolve followed the venv Python symlink to system Python, which did not contain the build package.",
+      "correction": "Retain the virtual-environment interpreter path without resolving the symlink.",
+      "repository_defect": false
+    },
+    {
+      "stage": "test harness",
+      "status": "failed_then_corrected",
+      "cause": "Running both wheel builders concurrently in one checkout raced on the shared build directory and removed dist-info metadata.",
+      "correction": "Run the independent gates sequentially and clear the checkout build directory before each.",
+      "repository_defect": false
+    }
+  ],
+  "local_result": "passed",
+  "ci_result": "not yet run for this evidence transition",
+  "origin_moved_during_unit": false,
+  "production_engineering_files_changed": [],
+  "prohibited_surfaces_untouched": [
+    "production geometry",
+    "topology",
+    "calculations",
+    "equipment values",
+    "browser authority",
+    "programme-state.json",
+    "licence status"
+  ],
+  "next_permitted_unit": "B026-05"
+}
