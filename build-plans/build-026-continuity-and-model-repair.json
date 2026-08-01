@@ -6,7 +6,7 @@
   "last_fully_validated_engineering_commit": "747381f6c3c3325a680a80a17e516268541c8548",
   "programme_status": "active",
   "active_unit": null,
-  "next_unit": "B026-04",
+  "next_unit": "B026-05",
   "quantum_spawn": "docs/quantum-spawn/202608011536-build-026-forty-pass-small-step-law.md",
   "ledger": "docs/build-ledger/202608-continuity-and-model-repair.md",
   "compute_limit_seconds_per_pass": 300,
@@ -105,15 +105,15 @@
       "test_scope": "Run both clean-wheel gates against the installed package rather than the checkout.",
       "acceptance": "Both clean-wheel boundaries reproduce their declared result and any working-tree dependency is recorded.",
       "build_pass": {
-        "status": "planned",
+        "status": "passed",
         "max_compute_seconds": 300,
-        "evidence": null
+        "evidence": "evidence/build-026/B026-04.json"
       },
       "test_pass": {
-        "status": "planned",
+        "status": "passed",
         "max_compute_seconds": 300,
         "test_id": "b026_clean_wheel",
-        "evidence": null
+        "evidence": "evidence/build-026/B026-04.json"
       }
     },
     {
