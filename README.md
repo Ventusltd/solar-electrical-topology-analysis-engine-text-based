@@ -8,11 +8,11 @@ This block is generated from [`programme-state.json`](programme-state.json). CI 
 | Field | Current authority |
 |---|---|
 | Build | **Build 025.5D1** |
-| Stage | Trusted kernel and resistance-evidence authority |
+| Stage | Programme truth established; generic equipment contract active |
 | Package | `0.4.0` |
-| Last validated engineering commit | `a239aae2de32daf19bbb00c4bda7095ab7780623` |
-| Active gate | **TS-002 — Establish one programme truth manifest** |
-| Next single goal | **TS-003 — Freeze the generic reference equipment contract** |
+| Last validated engineering commit | `71b160dffda5a9596060b7597166ccb39c2919ba` |
+| Active gate | **TS-003 — Freeze the generic reference equipment contract** |
+| Next single goal | **TS-004 — Add the complete inverter-block aggregate and receipt** |
 
 ### First complete product boundary
 
@@ -28,7 +28,7 @@ DC/AC nameplate ratio = 1.35
 
 | Suite | Result | State |
 |---|---:|---|
-| Python | 275 / 275 | PASS |
+| Python | 282 / 282 | PASS |
 | V8 model | 13 / 13 | PASS |
 | V8 authority reconciliation | 6 / 6 | PASS |
 | V9 deterministic engine | 10 / 10 | PASS |
