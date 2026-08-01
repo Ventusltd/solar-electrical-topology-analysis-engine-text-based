@@ -1,21 +1,21 @@
 {
   "schema_version": "globalgrid2050.solar-dc.programme-state.v1",
   "current_build": "Build 025.5D1",
-  "programme_stage": "Trusted kernel and resistance-evidence authority",
-  "validated_commit": "a239aae2de32daf19bbb00c4bda7095ab7780623",
-  "validated_commit_scope": "Latest engineering-package implementation validated through TS-001. Later capsule and programme-control commits require their own CI evidence but do not change electrical calculation authority.",
+  "programme_stage": "Programme truth established; generic equipment contract active",
+  "validated_commit": "71b160dffda5a9596060b7597166ccb39c2919ba",
+  "validated_commit_scope": "Programme-state, capsule-link and engineering-package implementation through this commit was validated by pull-request merge testing. Later bounded-observation and checkpoint commits are continuity metadata and do not change electrical calculation authority.",
   "package_version": "0.4.0",
   "validation": {
     "workflow": "V10 Engine Validation",
-    "run_id": 30675585601,
-    "artifact_id": 8810319603,
-    "merge_test_sha": "58cc79934684dd7753371ea8cd247825ebd0914e",
+    "run_id": 30676441221,
+    "artifact_id": 8810623069,
+    "merge_test_sha": "f90c540b75c0c922020d189dc0483a3bbda7668c",
     "comparison_hash": "sha256:413aa93c98d1b9fd5f9ffee4f577cfe29a6e74f48bd927a3ebe7f541545d6366",
     "suites": [
       {
         "name": "Python",
-        "passed": 275,
-        "total": 275
+        "passed": 282,
+        "total": 282
       },
       {
         "name": "V8 model",
@@ -44,9 +44,9 @@
       }
     ]
   },
-  "restore_point": "restore/2026-08-01-0131-pre-ts-002-programme-truth",
-  "current_quantum_spawn": "docs/quantum-spawn/202608010120-amnesia-resilience-and-continuity-law.md",
-  "current_trueself": "docs/trueself/202608010129-ts-001-resistance-assessment-api-pass.md",
+  "restore_point": "restore/2026-08-01-0151-pre-bounded-observation-law",
+  "current_quantum_spawn": "docs/quantum-spawn/202608010151-bounded-observation-and-truncation-law.md",
+  "current_trueself": "docs/trueself/202608010154-ts-002-programme-truth-and-capsule-integrity.md",
   "reference_inverter_block": {
     "module_technology": "bifacial",
     "module_rated_power_wp": 660,
@@ -65,7 +65,8 @@
       "explicit sequential and leapfrog routing",
       "geometry, topology, assignment, routing and calculation receipts",
       "complete-circuit resistance, voltage drop, loss and uncertainty",
-      "installed solar_topology package and clean-wheel authority"
+      "installed solar_topology package and clean-wheel authority",
+      "machine-readable programme truth and capsule-link integrity gates"
     ],
     "provisional": [
       "resistance source qualification and assessment serialisation",
@@ -80,8 +81,8 @@
       "V10 browser development workbench"
     ]
   },
-  "active_gate": "TS-002 — Establish one programme truth manifest",
-  "next_single_goal": "TS-003 — Freeze the generic reference equipment contract",
+  "active_gate": "TS-003 — Freeze the generic reference equipment contract",
+  "next_single_goal": "TS-004 — Add the complete inverter-block aggregate and receipt",
   "known_limitations": [
     "The generic conductor resistance records remain candidates because exact source revisions are not encoded and verification is incomplete.",
     "The complete 352 kVA inverter-block aggregate and portable project contract are not yet first-class kernel objects.",
