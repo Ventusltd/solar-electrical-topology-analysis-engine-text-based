@@ -71,6 +71,7 @@ def main() -> int:
         probe.write_text(
             """from __future__ import annotations
 
+import hashlib
 import importlib.metadata
 import json
 import math
@@ -118,6 +119,9 @@ qualification_exports = (
     "ResistanceSourceAssessment",
     "ResistanceSourceStatus",
     "assess_resistance_source",
+    "resistance_source_assessment_hash",
+    "resistance_source_assessment_json",
+    "resistance_source_assessment_payload",
 )
 for name in qualification_exports:
     if name not in topology_api.__all__:
@@ -128,6 +132,21 @@ if topology_api.assess_resistance_source is not qualification.assess_resistance_
     raise AssertionError("top-level qualification function is not the module authority")
 if topology_api.ResistanceSourceStatus is not qualification.ResistanceSourceStatus:
     raise AssertionError("top-level qualification status is not the module authority")
+if (
+    topology_api.resistance_source_assessment_payload
+    is not qualification.resistance_source_assessment_payload
+):
+    raise AssertionError("top-level assessment payload is not the module authority")
+if (
+    topology_api.resistance_source_assessment_json
+    is not qualification.resistance_source_assessment_json
+):
+    raise AssertionError("top-level assessment JSON is not the module authority")
+if (
+    topology_api.resistance_source_assessment_hash
+    is not qualification.resistance_source_assessment_hash
+):
+    raise AssertionError("top-level assessment hash is not the module authority")
 
 qualification_results = {}
 for product in (
@@ -149,10 +168,61 @@ for product in (
             f"unexpected qualification reasons for {product.product_id}: "
             f"{assessment.reasons!r}"
         )
+
+    expected_payload = {
+        "schema_version": assessment.schema_version,
+        "record_hash": assessment.record_hash,
+        "status": str(assessment.status),
+        "reasons": list(assessment.reasons),
+    }
+    expected_json = json.dumps(
+        expected_payload,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    )
+    expected_hash = "sha256:" + hashlib.sha256(
+        expected_json.encode("utf-8")
+    ).hexdigest()
+
+    actual_payload = topology_api.resistance_source_assessment_payload(assessment)
+    actual_json = topology_api.resistance_source_assessment_json(assessment)
+    actual_hash = topology_api.resistance_source_assessment_hash(assessment)
+    if actual_payload != expected_payload:
+        raise AssertionError(
+            f"unexpected assessment payload for {product.product_id}: "
+            f"{actual_payload!r}"
+        )
+    if actual_json != expected_json:
+        raise AssertionError(
+            f"unexpected assessment JSON for {product.product_id}: "
+            f"{actual_json!r}"
+        )
+    if actual_hash != expected_hash:
+        raise AssertionError(
+            f"unexpected assessment hash for {product.product_id}: "
+            f"{actual_hash!r}"
+        )
+    if qualification.resistance_source_assessment_payload(
+        assessment
+    ) != expected_payload:
+        raise AssertionError("module and package assessment payloads differ")
+    if qualification.resistance_source_assessment_json(
+        assessment
+    ) != expected_json:
+        raise AssertionError("module and package assessment JSON differ")
+    if qualification.resistance_source_assessment_hash(
+        assessment
+    ) != expected_hash:
+        raise AssertionError("module and package assessment hashes differ")
+
     qualification_results[product.product_id] = {
         "status": str(assessment.status),
         "record_hash": assessment.record_hash,
         "reasons": list(assessment.reasons),
+        "assessment_payload": actual_payload,
+        "assessment_json": actual_json,
+        "assessment_hash": actual_hash,
     }
 
 first = array_api.compare_reference_24_by_30()
