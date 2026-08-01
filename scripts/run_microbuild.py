@@ -27,7 +27,7 @@ TEST_COMMANDS: dict[str, tuple[str, ...]] = {
     "manifest_contract": (sys.executable, "-m", "pytest", "-q", "tests/test_microbuild_plan.py"),
     "runner_contract": (sys.executable, "-m", "pytest", "-q", "tests/test_microbuild_runner.py"),
     "workflow_contract": (sys.executable, "-m", "pytest", "-q", "tests/test_microbuild_workflow.py"),
-    "clean_wheel_inverter_block": (sys.executable, "scripts/validate_clean_wheel.py"),
+    "clean_wheel_inverter_block": (sys.executable, "scripts/validate_inverter_block_wheel.py"),
     "microbuild_evidence": (sys.executable, "-m", "pytest", "-q", "tests/test_microbuild_evidence.py"),
     "advancement_preview": (sys.executable, "-m", "pytest", "-q", "tests/test_microbuild_advancement.py", "-k", "preview"),
     "advancement_refusal": (sys.executable, "-m", "pytest", "-q", "tests/test_microbuild_advancement.py", "-k", "refus"),
