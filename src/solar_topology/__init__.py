@@ -250,6 +250,18 @@ from .equipment_profiles import (
     reference_equipment_missing_evidence,
     validate_reference_equipment_contract,
 )
+from .inverter_block import (
+    INVERTER_BLOCK_SCHEMA_VERSION,
+    REFERENCE_INVERTER_BLOCK_ID,
+    InverterBlockEvidenceState,
+    InverterBlockReceipt,
+    build_inverter_block,
+    build_reference_inverter_block,
+    inverter_block_hash,
+    inverter_block_json,
+    inverter_block_payload,
+    validate_inverter_block_receipt,
+)
 from .resistance_qualification import (
     RESISTANCE_QUALIFICATION_SCHEMA_VERSION,
     ResistanceSourceAssessment,
