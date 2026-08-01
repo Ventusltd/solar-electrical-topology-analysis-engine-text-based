@@ -227,6 +227,29 @@ from .formulas import (
     two_wire_parameters,
 )
 from .products import ConductorSpec, EXTERNAL_STRING_6MM2, FACTORY_LEAD_4MM2
+from .equipment_profiles import (
+    EQUIPMENT_PROFILE_SCHEMA_VERSION,
+    GENERIC_REFERENCE_CONTRACT_REVISION,
+    GENERIC_REFERENCE_EQUIPMENT_CONTRACT,
+    ConnectorCompatibilityState,
+    ConnectorEquipmentProfile,
+    DcInputProfile,
+    FactoryLeadSetProfile,
+    FieldConductorProfile,
+    InternalDcTopology,
+    InverterEquipmentProfile,
+    ModuleEquipmentProfile,
+    ModuleTechnology,
+    QualifiedValue,
+    ReferenceEquipmentContract,
+    ReverseCurrentBlockingState,
+    build_generic_reference_equipment_contract,
+    reference_equipment_contract_hash,
+    reference_equipment_contract_json,
+    reference_equipment_contract_payload,
+    reference_equipment_missing_evidence,
+    validate_reference_equipment_contract,
+)
 from .resistance_qualification import (
     RESISTANCE_QUALIFICATION_SCHEMA_VERSION,
     ResistanceSourceAssessment,
