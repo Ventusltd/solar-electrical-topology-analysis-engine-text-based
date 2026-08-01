@@ -1,0 +1,51 @@
+name: Programme State Projection
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "programme-state.json"
+      - "scripts/sync_programme_state.py"
+      - ".github/workflows/programme-state-sync.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: programme-state-projection-main
+  cancel-in-progress: false
+
+jobs:
+  project:
+    if: github.actor != 'github-actions[bot]' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate public projections
+        run: python scripts/sync_programme_state.py --write
+
+      - name: Commit projection changes
+        run: |
+          if git diff --quiet -- README.md progress-dashboard.html; then
+            echo "Programme projections already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md progress-dashboard.html
+          git commit -m "docs: project programme state"
+          git push origin HEAD:main
