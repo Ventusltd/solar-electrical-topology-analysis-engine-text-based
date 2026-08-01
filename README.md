@@ -7,12 +7,12 @@ This block is generated from [`programme-state.json`](programme-state.json). CI 
 
 | Field | Current authority |
 |---|---|
-| Build | **Build 025.5D1** |
-| Stage | Complete inverter-block aggregate established; first authoritative Studio slice active |
+| Build | **Build 025.5D1 / TS-005** |
+| Stage | First end-to-end authoritative Studio slice completed |
 | Package | `0.4.0` |
-| Last validated engineering commit | `78fe6fd6add4e4558ac8475df230eb2cd1729cfb` |
-| Active gate | **TS-005 — First authoritative Studio slice** |
-| Next single goal | **MB-10 — TS-005 hand-off proof** |
+| Last validated engineering commit | `747381f6c3c3325a680a80a17e516268541c8548` |
+| Active gate | **TS-005 — Complete** |
+| Next single goal | **Define the next controlled programme** |
 
 ### First complete product boundary
 
@@ -28,17 +28,17 @@ DC/AC nameplate ratio = 1.35
 
 | Suite | Result | State |
 |---|---:|---|
-| Python | 334 / 334 | PASS |
+| Python | 377 / 377 | PASS |
 | V8 model | 13 / 13 | PASS |
 | V8 authority reconciliation | 6 / 6 | PASS |
 | V9 deterministic engine | 10 / 10 | PASS |
-| V10 JavaScript | 13 / 13 | PASS |
+| V10 JavaScript and Studio gates | 5 / 5 | PASS |
 | Clean installed wheel | 1 / 1 | PASS |
 | Inverter-block clean wheel | 1 / 1 | PASS |
 
 Comparison hash: `sha256:413aa93c98d1b9fd5f9ffee4f577cfe29a6e74f48bd927a3ebe7f541545d6366`
 
-**Progress policy:** No numerical programme-completion percentage is claimed until explicit stage weights and acceptance evidence are encoded in this manifest.
+**Progress policy:** No numerical programme-completion percentage is claimed. The TS-005 twenty-step programme is complete through twenty individually evidenced states; the broader engineering programme remains unweighted.
 <!-- PROGRAMME-STATE:END -->
 
 
