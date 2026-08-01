@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Solar DC Topology Studio</title>
+  <style>
+    :root{color-scheme:dark;--bg:#05090d;--panel:#0b151d;--line:#29485b;--text:#e9f4fa;--muted:#91a9b8;--cyan:#51d8ff;--amber:#ffb84d;--green:#55dda0}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,sans-serif}header{padding:18px 20px;border-bottom:1px solid var(--line)}h1{margin:.2em 0}.sub{color:var(--muted);max-width:980px}.modes{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.modes button{border:1px solid #3d6276;border-radius:7px;background:#0d1d27;color:var(--text);padding:9px 13px;font-weight:750;cursor:pointer}.modes button[aria-selected="true"]{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan) inset}.view{padding:12px}.banner{padding:12px 14px;border:1px solid var(--line);border-radius:9px;margin-bottom:12px;font:800 13px ui-monospace;letter-spacing:.08em}.playground .banner{border-color:var(--amber);color:var(--amber)}.authority .banner{border-color:var(--green);color:var(--green)}iframe{display:block;width:100%;height:calc(100vh - 220px);min-height:620px;border:1px solid var(--line);border-radius:10px;background:#02070a}.empty{min-height:420px;border:1px solid var(--line);border-radius:10px;background:var(--panel);display:grid;place-items:center;padding:30px;text-align:center}.empty strong{display:block;font-size:22px;margin-bottom:10px}.empty p{max-width:700px;color:var(--muted)}[hidden]{display:none!important}
+  </style>
+</head>
+<body>
+  <header>
+    <div>GLOBALGRID2050 · SOLAR DC TOPOLOGY STUDIO</div>
+    <h1>Play freely. Verify through one engineering authority.</h1>
+    <p class="sub">The Playground preserves the existing browser experiment. Authority mode is a separate projection lane and will display only Python-owned bundles, evidence states and receipt hashes.</p>
+    <div class="modes" role="tablist" aria-label="Studio mode">
+      <button id="playground-tab" type="button" role="tab" data-mode="playground" aria-controls="playground-view" aria-selected="true">Playground</button>
+      <button id="authority-tab" type="button" role="tab" data-mode="authority" aria-controls="authority-view" aria-selected="false">Authority</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="playground-view" class="view playground" role="tabpanel" data-authority-state="non-authoritative">
+      <div class="banner" role="status">INDICATIVE — NON-AUTHORITATIVE</div>
+      <iframe src="../topology-studio.html" title="Indicative topology playground" sandbox="allow-scripts allow-downloads"></iframe>
+    </section>
+
+    <section id="authority-view" class="view authority" role="tabpanel" data-authority-state="empty" hidden>
+      <div class="banner" role="status">PYTHON AUTHORITY — NO VERIFIED BUNDLE LOADED</div>
+      <div class="empty">
+        <div>
+          <strong>Authority mode is intentionally empty.</strong>
+          <p>This lane will render a validated response bundle without reproducing geometry, routing or electrical calculations in JavaScript. Until that bundle is connected, no authoritative result or receipt is displayed.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+      const tabs = [...document.querySelectorAll('[data-mode]')];
+      const views = {
+        playground: document.getElementById('playground-view'),
+        authority: document.getElementById('authority-view')
+      };
+      function selectMode(mode) {
+        for (const tab of tabs) tab.setAttribute('aria-selected', String(tab.dataset.mode === mode));
+        for (const [name, view] of Object.entries(views)) view.hidden = name !== mode;
+      }
+      for (const tab of tabs) tab.addEventListener('click', () => selectMode(tab.dataset.mode));
+    })();
+  </script>
+</body>
+</html>
