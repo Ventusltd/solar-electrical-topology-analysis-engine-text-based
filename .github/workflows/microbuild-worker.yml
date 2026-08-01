@@ -1,0 +1,126 @@
+name: Microbuild Worker
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".microbuild/**"
+      - "microbuild-plan.json"
+      - "scripts/check_microbuild_plan.py"
+      - "scripts/run_microbuild.py"
+      - "scripts/microbuild_*.py"
+      - "scripts/reference_block_command.py"
+      - "scripts/local_authority_bridge.py"
+      - "scripts/validate_clean_wheel.py"
+      - "tests/test_microbuild*.py"
+      - "tests/test_reference_block_command.py"
+      - "tests/test_authority_bundle.py"
+      - "tests/test_local_authority_bridge.py"
+      - "tests/test_end_to_end_authority_slice.py"
+      - "schemas/authority-response.schema.json"
+      - "authority-bundles/**"
+      - "src/solar_topology/**"
+      - "v10-development/topology-studio.html"
+      - "v10-development/authority/**"
+      - "v10-development/tests/studio-authority.test.mjs"
+      - ".github/workflows/microbuild-worker.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - ".microbuild/**"
+      - "microbuild-plan.json"
+      - "scripts/check_microbuild_plan.py"
+      - "scripts/run_microbuild.py"
+      - "scripts/microbuild_*.py"
+      - "scripts/reference_block_command.py"
+      - "scripts/local_authority_bridge.py"
+      - "scripts/validate_clean_wheel.py"
+      - "tests/test_microbuild*.py"
+      - "tests/test_reference_block_command.py"
+      - "tests/test_authority_bundle.py"
+      - "tests/test_local_authority_bridge.py"
+      - "tests/test_end_to_end_authority_slice.py"
+      - "schemas/authority-response.schema.json"
+      - "authority-bundles/**"
+      - "src/solar_topology/**"
+      - "v10-development/topology-studio.html"
+      - "v10-development/authority/**"
+      - "v10-development/tests/studio-authority.test.mjs"
+      - ".github/workflows/microbuild-worker.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: microbuild-worker-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  active-step:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out full repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install package and test tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[test]" "build>=1.2"
+
+      - name: Validate microbuild manifest
+        run: python scripts/check_microbuild_plan.py --check
+
+      - name: Run active allowlisted test
+        run: python scripts/run_microbuild.py --execute
+
+      - name: Write execution envelope
+        if: success()
+        run: |
+          mkdir -p .microbuild/evidence
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from scripts.check_microbuild_plan import load_plan, validate_plan
+
+          plan = load_plan()
+          summary = validate_plan(plan)
+          payload = {
+              "schema_version": "globalgrid2050.solar-dc.microbuild-execution.v1",
+              "step_id": summary["active_step"],
+              "manifest_revision": summary["manifest_revision"],
+              "test_id": summary["active_test_id"],
+              "tested_commit": os.environ["GITHUB_SHA"],
+              "result": "pass",
+          }
+          Path(".microbuild/evidence/latest.json").write_text(
+              json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n",
+              encoding="utf-8",
+          )
+          print(json.dumps(payload, sort_keys=True))
+          PY
+
+      - name: Upload microbuild evidence
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: microbuild-evidence-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 90
+          path: .microbuild/evidence/latest.json
