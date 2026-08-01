@@ -83,12 +83,14 @@ import array_engine
 import geometry_authority
 import solar_topology as topology_api
 import solar_topology.array as array_api
+import solar_topology.equipment_profiles as equipment
 import solar_topology.resistance_qualification as qualification
 
 source_root = Path(os.environ["SOURCE_ROOT"]).resolve()
 module_paths = {
     "solar_topology": Path(topology_api.__file__).resolve(),
     "solar_topology.array": Path(array_api.__file__).resolve(),
+    "solar_topology.equipment_profiles": Path(equipment.__file__).resolve(),
     "solar_topology.resistance_qualification": Path(
         qualification.__file__
     ).resolve(),
@@ -225,6 +227,114 @@ for product in (
         "assessment_hash": actual_hash,
     }
 
+equipment_exports = (
+    "EQUIPMENT_PROFILE_SCHEMA_VERSION",
+    "GENERIC_REFERENCE_CONTRACT_REVISION",
+    "GENERIC_REFERENCE_EQUIPMENT_CONTRACT",
+    "ReferenceEquipmentContract",
+    "build_generic_reference_equipment_contract",
+    "reference_equipment_contract_payload",
+    "reference_equipment_contract_json",
+    "reference_equipment_contract_hash",
+    "reference_equipment_missing_evidence",
+    "validate_reference_equipment_contract",
+)
+for name in equipment_exports:
+    if name not in topology_api.__all__:
+        raise AssertionError(f"equipment export missing from package API: {name}")
+    if topology_api.public_api_status(name) != topology_api.ApiStatus.PROVISIONAL:
+        raise AssertionError(f"equipment export is not explicitly provisional: {name}")
+if topology_api.ReferenceEquipmentContract is not equipment.ReferenceEquipmentContract:
+    raise AssertionError("top-level equipment contract type is not module authority")
+if topology_api.build_generic_reference_equipment_contract is not (
+    equipment.build_generic_reference_equipment_contract
+):
+    raise AssertionError("top-level equipment builder is not module authority")
+if topology_api.reference_equipment_contract_hash is not (
+    equipment.reference_equipment_contract_hash
+):
+    raise AssertionError("top-level equipment hash is not module authority")
+
+contract = topology_api.build_generic_reference_equipment_contract()
+second_contract = topology_api.build_generic_reference_equipment_contract()
+if contract != second_contract:
+    raise AssertionError("generic equipment contract is not deterministic")
+if contract.module_count != 720:
+    raise AssertionError("generic equipment contract does not contain 720 modules")
+if not math.isclose(contract.string_rated_power_kwp, 19.8, abs_tol=1e-12):
+    raise AssertionError("generic string is not 19.8 kWp")
+if not math.isclose(contract.dc_nameplate_power_kwp, 475.2, abs_tol=1e-12):
+    raise AssertionError("generic reference block is not 475.2 kWp")
+if contract.inverter.apparent_power_kva.value != 352.0:
+    raise AssertionError("generic inverter is not 352 kVA")
+if not math.isclose(contract.dc_ac_nameplate_ratio, 1.35, abs_tol=1e-12):
+    raise AssertionError("generic reference block does not have 1.35 DC/AC ratio")
+if len(contract.inverter.dc_inputs) != 24:
+    raise AssertionError("generic inverter does not expose 24 physical inputs")
+if len({item.input_id for item in contract.inverter.dc_inputs}) != 24:
+    raise AssertionError("generic physical input identifiers are not unique")
+if len(
+    {
+        terminal
+        for item in contract.inverter.dc_inputs
+        for terminal in (item.positive_terminal_id, item.negative_terminal_id)
+    }
+) != 48:
+    raise AssertionError("generic physical input terminal identifiers are not unique")
+if any(item.mppt_id.value is not None for item in contract.inverter.dc_inputs):
+    raise AssertionError("generic physical inputs silently invented MPPT assignments")
+if contract.inverter.internal_dc_topology.value != "unknown":
+    raise AssertionError("generic internal DC topology was silently resolved")
+if contract.inverter.reverse_current_blocking.value != "unknown":
+    raise AssertionError("generic reverse-current blocking was silently resolved")
+if contract.inverter.pce_backfeed_current_a.value is not None:
+    raise AssertionError("generic PCE backfeed was silently invented")
+
+contract_payload = topology_api.reference_equipment_contract_payload(contract)
+contract_json = topology_api.reference_equipment_contract_json(contract)
+contract_hash = topology_api.reference_equipment_contract_hash(contract)
+missing_evidence = topology_api.reference_equipment_missing_evidence(contract)
+if contract_payload != equipment.reference_equipment_contract_payload(contract):
+    raise AssertionError("module and package equipment payloads differ")
+if contract_json != equipment.reference_equipment_contract_json(contract):
+    raise AssertionError("module and package equipment JSON differ")
+if contract_hash != equipment.reference_equipment_contract_hash(contract):
+    raise AssertionError("module and package equipment hashes differ")
+if contract_hash != topology_api.reference_equipment_contract_hash(second_contract):
+    raise AssertionError("equipment contract hash is not deterministic")
+if json.loads(contract_json) != contract_payload:
+    raise AssertionError("equipment contract JSON does not reproduce payload")
+if "inverter.dc_inputs.dc_input_01.mppt_id" not in missing_evidence:
+    raise AssertionError("equipment contract does not expose missing MPPT mapping")
+if "inverter.dc_inputs.dc_input_24.mppt_id" not in missing_evidence:
+    raise AssertionError("equipment contract does not expose all input mappings")
+if "inverter.internal_dc_topology" not in missing_evidence:
+    raise AssertionError("equipment contract does not expose missing DC topology")
+if "inverter.reverse_current_blocking" not in missing_evidence:
+    raise AssertionError("equipment contract does not expose missing reverse blocking")
+if "factory_leads.conductor_resistance_source" not in missing_evidence:
+    raise AssertionError("factory-lead candidate resistance is not visible")
+if "field_conductor.conductor_resistance_source" not in missing_evidence:
+    raise AssertionError("field-conductor candidate resistance is not visible")
+for prohibited in ("manufacturer_name", "project_name", "client_name", "site_name"):
+    if prohibited in contract_json.lower():
+        raise AssertionError(f"generic equipment contract contains {prohibited}")
+
+equipment_result = {
+    "contract_id": contract.contract_id,
+    "revision": contract.revision,
+    "contract_hash": contract_hash,
+    "module_count": contract.module_count,
+    "string_count": contract.string_count,
+    "modules_per_string": contract.modules_per_string,
+    "dc_nameplate_power_kwp": contract.dc_nameplate_power_kwp,
+    "inverter_apparent_power_kva": contract.inverter.apparent_power_kva.value,
+    "physical_dc_input_count": len(contract.inverter.dc_inputs),
+    "internal_dc_topology": contract.inverter.internal_dc_topology.value,
+    "reverse_current_blocking": contract.inverter.reverse_current_blocking.value,
+    "missing_evidence_count": len(missing_evidence),
+}
+
 first = array_api.compare_reference_24_by_30()
 second = array_api.compare_reference_24_by_30()
 if first.comparison_hash != second.comparison_hash:
@@ -275,6 +385,7 @@ payload = {
     "comparison_hash": first.comparison_hash,
     "module_paths": {name: str(path) for name, path in module_paths.items()},
     "qualification": qualification_results,
+    "equipment_contract": equipment_result,
     "metrics": actual,
 }
 print(json.dumps(payload, sort_keys=True))
