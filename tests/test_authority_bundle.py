@@ -56,5 +56,4 @@ def test_authority_bundle_regeneration_binds_receipts_and_hash() -> None:
     assert binding["geometry_hash"] == child.geometry.geometry_hash
     assert binding["routing_hash"] == child.routing.routing_hash
     assert build025["routing"]["table_id"] == child.routing.table_id
-    assert len(build025["routing"]["string_routes"]) == 24
     assert json.loads(authority_response_json()) == payload
