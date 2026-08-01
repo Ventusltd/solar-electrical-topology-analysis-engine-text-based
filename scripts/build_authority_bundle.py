@@ -52,7 +52,9 @@ def authority_response_payload(strategy: str = "leapfrog") -> dict[str, object]:
     response_hash = "sha256:" + hashlib.sha256(
         canonical_json(basis).encode("utf-8")
     ).hexdigest()
-    return {**basis, "response_hash": response_hash}
+    # Canonical JSON already maps tuples to arrays. Return that same JSON-native
+    # shape so the Python payload equals its serialised representation exactly.
+    return json.loads(canonical_json({**basis, "response_hash": response_hash}))
 
 
 def authority_response_json(strategy: str = "leapfrog") -> str:
