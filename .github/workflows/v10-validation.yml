@@ -13,9 +13,14 @@ on:
       - "pyproject.toml"
       - "src/solar_topology/**"
       - "tests/**"
+      - "scripts/build_authority_bundle.py"
       - "scripts/check_capsule_links.py"
+      - "scripts/local_authority_bridge.py"
+      - "scripts/run_authority_slice.py"
       - "scripts/run_v10_validation.py"
+      - "scripts/validate_authority_bundle.py"
       - "scripts/validate_clean_wheel.py"
+      - "scripts/validate_inverter_block_wheel.py"
       - "scripts/sync_programme_state.py"
       - "v8-leapfrog/**"
       - "v9-sandbox/debug/**"
@@ -36,9 +41,14 @@ on:
       - "pyproject.toml"
       - "src/solar_topology/**"
       - "tests/**"
+      - "scripts/build_authority_bundle.py"
       - "scripts/check_capsule_links.py"
+      - "scripts/local_authority_bridge.py"
+      - "scripts/run_authority_slice.py"
       - "scripts/run_v10_validation.py"
+      - "scripts/validate_authority_bundle.py"
       - "scripts/validate_clean_wheel.py"
+      - "scripts/validate_inverter_block_wheel.py"
       - "scripts/sync_programme_state.py"
       - "v8-leapfrog/**"
       - "v9-sandbox/debug/**"
@@ -75,6 +85,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e ".[test]"
+
+      - name: Generate authority-bundle candidate
+        run: >-
+          python scripts/build_authority_bundle.py
+          --write
+          --output .microbuild/candidates/reference-inverter-block.json
 
       - name: Enforce capsule-link integrity
         run: python scripts/check_capsule_links.py --check

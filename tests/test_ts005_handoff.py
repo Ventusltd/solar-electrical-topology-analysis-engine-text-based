@@ -19,14 +19,23 @@ def test_hostile_amnesia_reload_recovers_ts005_handoff() -> None:
     )
     plan = load_plan()
     summary = validate_plan(plan)
+    handoff = plan["steps"][9]
+    reference_command = plan["steps"][10]
 
     assert programme["active_gate"] == "TS-005 — First authoritative Studio slice"
-    assert programme["next_single_goal"] == "MB-10 — TS-005 hand-off proof"
-    assert summary["active_step"] == "MB-10"
-    assert summary["active_test_id"] == "ts005_handoff"
-    assert summary["next_step"] == "MB-11"
-    assert plan["steps"][10]["title"] == "Reference-block command"
-    assert plan["steps"][10]["test_id"] == "reference_block_command"
+    assert plan["active_step"] == summary["active_step"]
+    assert plan["next_step"] == summary["next_step"]
+    assert int(str(summary["active_step"]).split("-")[1]) >= 10
+
+    assert handoff["id"] == "MB-10"
+    assert handoff["status"] == "passed"
+    assert handoff["test_id"] == "ts005_handoff"
+    assert handoff["evidence"]["result"] == "pass"
+    assert handoff["evidence"]["test_id"] == "ts005_handoff"
+
+    assert reference_command["title"] == "Reference-block command"
+    assert reference_command["test_id"] == "reference_block_command"
+    assert reference_command["status"] == "passed"
 
     block = programme["reference_inverter_block"]
     assert block["module_rated_power_wp"] == 660
@@ -65,16 +74,16 @@ def test_handoff_exposes_unresolved_authority_without_inference() -> None:
         "Internal DC topology",
         "reverse-current blocking",
         "PCE backfeed",
-        "authoritative Studio mode is not yet connected",
     ):
         assert unresolved in limitations
 
 
-def test_next_command_is_repository_allowlisted_but_not_executed_early() -> None:
-    assert active_test_id() == "ts005_handoff"
-    assert active_command()[-1] == "tests/test_ts005_handoff.py"
-
+def test_active_command_matches_current_manifest_pointer() -> None:
     plan = load_plan()
-    next_test_id = plan["steps"][10]["test_id"]
-    assert next_test_id == "reference_block_command"
-    assert plan["steps"][10]["status"] == "planned"
+    summary = validate_plan(plan)
+
+    assert active_test_id() == summary["active_test_id"]
+    assert active_command()
+    assert plan["active_step"] == summary["active_step"]
+    assert plan["steps"][9]["status"] == "passed"
+    assert plan["steps"][9]["evidence"]["test_id"] == "ts005_handoff"
