@@ -10,7 +10,7 @@ This block is generated from [`programme-state.json`](programme-state.json). CI 
 | Build | **Build 025.5D1** |
 | Stage | Programme truth established; generic equipment contract active |
 | Package | `0.4.0` |
-| Last validated engineering commit | `71b160dffda5a9596060b7597166ccb39c2919ba` |
+| Last validated engineering commit | `36f1ab756d7ae5e9f9dbeb2256bec2e65d1f4ee5` |
 | Active gate | **TS-003 — Freeze the generic reference equipment contract** |
 | Next single goal | **TS-004 — Add the complete inverter-block aggregate and receipt** |
 
