@@ -35,7 +35,12 @@ except ModuleNotFoundError:  # Direct execution from the scripts directory.
 
 ROOT = Path(__file__).resolve().parents[1]
 AUTHORITY_SLICE_VERSION = "globalgrid2050.solar-dc.authority-slice.v1"
-BROWSER_TEST = ROOT / "v10-development" / "tests" / "studio-authority.test.mjs"
+STUDIO_AUTHORITY_TEST = (
+    ROOT / "v10-development" / "tests" / "studio-authority.test.mjs"
+)
+STUDIO_EVIDENCE_TEST = (
+    ROOT / "v10-development" / "tests" / "studio-authority-evidence.test.mjs"
+)
 BROWSER_MODES = ("mode", "bundle", "geometry", "evidence")
 
 
@@ -92,11 +97,12 @@ def fetch_bytes(url: str) -> bytes:
 def run_browser_checks() -> tuple[str, ...]:
     completed_modes: list[str] = []
     for mode in BROWSER_MODES:
-        subprocess.run(
-            ["node", str(BROWSER_TEST), mode],
-            cwd=ROOT,
-            check=True,
+        command = (
+            ["node", str(STUDIO_EVIDENCE_TEST)]
+            if mode == "evidence"
+            else ["node", str(STUDIO_AUTHORITY_TEST), mode]
         )
+        subprocess.run(command, cwd=ROOT, check=True)
         completed_modes.append(mode)
     return tuple(completed_modes)
 
