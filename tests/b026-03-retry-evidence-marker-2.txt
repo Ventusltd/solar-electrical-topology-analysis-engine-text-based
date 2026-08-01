@@ -1,0 +1,1 @@
+Validation-only trigger for B026-03 retry evidence. Do not merge.
