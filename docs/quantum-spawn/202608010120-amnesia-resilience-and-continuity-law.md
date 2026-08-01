@@ -1,0 +1,504 @@
+# Quantum Spawn
+
+**Title:** Amnesia Resilience and Continuity Law
+
+**File:** `202608010120-amnesia-resilience-and-continuity-law.md`
+
+**Timestamp:** 2026-08-01 01:20 Europe/London
+
+**Version:** 1.0
+
+**Status:** Canonical
+
+**Authority:** Engineering Design Authority under explicit Product Owner instruction
+
+**Supersedes:** None
+
+**Refines:**
+- `202607311820-respawn-instructions.md`
+- `202607312348-trueself-full-reload-tablet.md`
+
+**Dependencies:**
+- `202607311609-mission-and-philosophy.md`
+- `202607311620-system-architecture.md`
+- `202607311640-geometry-authority.md`
+- `202607311700-array-engine.md`
+- `202607311720-physics-emc-lightning.md`
+- `202607311740-standards-validation.md`
+- `../trueself/202608010104-complete-352-kva-inverter-block-plan.md`
+- `../trueself/202608010117-civilisational-consciousness-and-amnesia-covenant.md`
+
+**Current Build:** Build 025.5D1, continuing toward the complete inverter-block product boundary
+
+**Restore Point:** `restore/2026-08-01-0120-pre-quantum-spawn-amnesia-law`
+
+---
+
+## 1. Purpose
+
+This module makes context loss a permanent architectural concern of the Solar Electrical Topology Analysis Engine.
+
+Future project threads, engineers and AI instances shall assume that the conversation which created the current state is unavailable.
+
+The project must remain recoverable without conversational memory.
+
+This module therefore defines:
+
+- amnesia as a first-class system hazard;
+- repository capsules as the continuity mechanism;
+- the authority hierarchy for conflicting information;
+- the reload procedure for a new AI instance;
+- the writing standard required for durable memory;
+- the autonomous build cycle;
+- the first complete product boundary;
+- the test by which continuity is accepted or rejected.
+
+This law is constitutional.
+
+It applies to every future build, research feed, interface, data repository and AI-assisted development session.
+
+## 2. Hazard definition
+
+The system shall treat the following as normal operating conditions rather than exceptional events:
+
+- loss of the previous conversation;
+- replacement of the AI model;
+- incomplete or inaccurate conversational summaries;
+- biological forgetting;
+- personnel change;
+- platform migration;
+- broken external links;
+- inaccessible APIs;
+- failed repository fetches;
+- stale dashboards and README files;
+- conflicting external audits;
+- historical terminology whose original meaning is no longer obvious.
+
+The hazard is not merely loss of facts.
+
+The greater hazard is loss of reasoning:
+
+- why an architectural rule exists;
+- which failure caused a correction;
+- which evidence remained unresolved;
+- why a tempting path was rejected;
+- which public contract must remain compatible;
+- what the next bounded action was intended to achieve.
+
+A system that preserves conclusions but loses their reasons is not amnesia-resistant.
+
+## 3. Continuity architecture
+
+Project continuity is carried by a federation of committed artefacts.
+
+### Quantum Spawn
+
+Quantum Spawn preserves canonical mission, architecture, engineering invariants and constitutional rules.
+
+### Trueself
+
+Trueself preserves active synthesis, continuity, execution plans and the generative interpretation required to advance the work without reopening settled architecture.
+
+### Repository implementation
+
+Committed code, schemas, fixtures and package APIs preserve what actually exists.
+
+### Tests and validation
+
+Focused tests, full suites, clean-installed-wheel probes and CI artefacts preserve executable evidence that a declared boundary works.
+
+### Deterministic receipts
+
+Receipts preserve the exact relationship between inputs, methods, evidence, outputs and hashes.
+
+### Restore points
+
+Restore-point branches preserve reversibility before material changes.
+
+### Data capsules
+
+Spider and other data repositories preserve structured observations, source provenance and external reality required by the engineering model.
+
+No single artefact may be treated as complete memory.
+
+Continuity emerges from their agreement and from explicit handling of their conflicts.
+
+## 4. Authority model
+
+A single linear authority list is insufficient because policy, repository state and external engineering evidence are different questions.
+
+The system shall use three explicit authority axes.
+
+### 4.1 Normative and mission authority
+
+For what the project should do:
+
+1. explicit current Product Owner instruction;
+2. latest applicable non-superseded Quantum Spawn;
+3. latest applicable non-superseded Trueself execution control;
+4. committed build plans and refinements;
+5. prior conversation memory;
+6. unverified recollection.
+
+A lower level may not silently override a higher level.
+
+### 4.2 Repository-state authority
+
+For what currently exists and passes:
+
+1. authenticated repository tree and current commit;
+2. clean installed package outside the repository checkout;
+3. current CI run and downloadable validation artefacts;
+4. deterministic receipts generated by the current code;
+5. focused and full test results;
+6. dashboards, README files and narrative status documents;
+7. external descriptions of the repository.
+
+Narrative documentation may define intended state but may not overrule directly inspected code and execution evidence when reporting current implementation status.
+
+### 4.3 External engineering evidence authority
+
+For physical, equipment and standards facts:
+
+1. controlled measurement with stated method and conditions;
+2. applicable licensed primary standard with edition and clause provenance;
+3. revision-controlled manufacturer documentation;
+4. authoritative public primary research or official documentation;
+5. controlled project evidence permitted for the relevant use;
+6. secondary technical literature;
+7. external AI or research-agent feed;
+8. engineering inference;
+9. unsupported assumption.
+
+Every calculation shall carry the appropriate evidence status.
+
+When authorities conflict, the system shall expose the conflict rather than silently selecting the most convenient answer.
+
+## 5. Failed-access law
+
+A failed repository, API, document or data access shall be reported as failed access.
+
+It shall never be converted into a claim that the target is empty, absent or unimplemented.
+
+The following inference is prohibited:
+
+```text
+fetch failed
+therefore repository contains one file
+```
+
+The permitted conclusion is:
+
+```text
+fetch failed
+repository state not established by this method
+use another authenticated or local inspection path
+```
+
+This law exists because an external agent previously treated access failure as proof of an empty repository and produced a false programme audit.
+
+A future agent must distinguish:
+
+- not found;
+- access denied;
+- robots blocked;
+- rate limited;
+- unindexed;
+- unsupported by tool;
+- genuinely absent after authenticated inspection.
+
+Only the final state supports an absence claim.
+
+## 6. Canonical reload procedure
+
+A new AI instance or engineer entering without context shall perform the following sequence before making a material change.
+
+### Step 1 — Assume total conversational amnesia
+
+Do not infer project state from familiarity, model memory or thread summaries.
+
+### Step 2 — Identify the repository and current head
+
+Verify the repository, default branch, current commit and whether the working state differs from the declared capsule state.
+
+### Step 3 — Read the canonical memory chain
+
+Read in chronological and dependency order:
+
+- mission and philosophy;
+- system architecture;
+- geometry authority;
+- array and topology authority;
+- physics, EMC and lightning boundary;
+- standards and validation philosophy;
+- respawn instructions;
+- later Quantum Spawn refinements;
+- current Trueself capsules;
+- active refinements and build plans.
+
+### Step 4 — Inspect implementation rather than trusting narrative
+
+Inspect package structure, source modules, compatibility paths, tests, workflows, current public pages and historical workbenches.
+
+### Step 5 — Verify execution evidence
+
+Run or inspect the declared focused suites, full validation envelope and clean-installed-wheel gate.
+
+A prior passing statement may be cited as historical evidence but shall not be presented as current if code has materially changed after the tested head.
+
+### Step 6 — Reconstruct the active boundary
+
+State explicitly:
+
+- current verified build;
+- canonical package authority;
+- provisional capabilities;
+- historical workbenches;
+- known evidence gaps;
+- next single bounded goal;
+- prohibited scope for that goal.
+
+### Step 7 — Pass the hostile-amnesia test
+
+Do not begin implementation until the entrant can answer the acceptance questions in Section 13.
+
+## 7. Stone-carved writing requirements
+
+Every new canonical Quantum Spawn, active Trueself plan and material-build checkpoint shall be written so it remains actionable after the originating conversation disappears.
+
+Each such file shall include:
+
+- exact title and timestamp;
+- version and status;
+- authority;
+- dependencies;
+- supersession state;
+- current build relevance;
+- restore point where applicable;
+- purpose;
+- verified starting state;
+- desired bounded outcome;
+- files or domains allowed to change;
+- files or domains prohibited from changing;
+- focused tests;
+- full validation requirement;
+- known limitations;
+- next single action.
+
+The writing shall not depend on phrases such as:
+
+- as discussed;
+- the thing above;
+- continue what we were doing;
+- the usual fixture;
+- the same inverter;
+- use the previous values.
+
+Exact objects, values, units and paths shall be restated when required for safe execution.
+
+A capsule is inadequate if a future entrant must recover the missing conversation to understand it.
+
+## 8. Autonomous build discipline
+
+Autonomous continuation is permitted and intended, but only through bounded, reversible and testable work.
+
+Every material step shall follow this cycle:
+
+```text
+Goal
+→ Build
+→ Test
+→ Write next spawn when passed
+```
+
+### Goal
+
+State one engineering outcome, its dependency boundary and what shall not change.
+
+### Build
+
+Create a restore point and implement only the stated outcome.
+
+### Test
+
+Run focused tests first. Then run the full declared validation envelope and clean-installed-wheel gate. Inspect failures before proceeding.
+
+### Write next spawn when passed
+
+After success, add one timestamped Trueself execution record. Add or refine Quantum Spawn when the step changes canonical architecture, mission or engineering law.
+
+If a test fails, stop expansion. Record the bounded failure and address one understood failure category at a time.
+
+A green suite proves only the scope represented by that suite. It does not prove programme completion, standards compliance or correctness of missing evidence.
+
+## 9. First complete product boundary
+
+The first complete product is one photovoltaic inverter DC block with the following reference fixture:
+
+```text
+module technology                    bifacial
+module rated power                    660 Wp
+modules per string                     30
+string rated power                     19.8 kWp
+strings                                 24
+module count                           720
+total DC nameplate power               475.2 kWp
+inverter apparent-power rating         352 kVA
+DC-to-AC nameplate ratio                 1.35
+```
+
+This fixture is the first complete computation and diagnostic boundary.
+
+It includes the chain from physical module placement through:
+
+- module terminals;
+- factory leads;
+- connectors;
+- ordered strings;
+- string free ends;
+- field conductor routes;
+- physical inverter inputs;
+- MPPT relationships;
+- equipment evidence;
+- calculations;
+- diagnostics;
+- receipts;
+- export;
+- thin-client projection.
+
+The historical term `whole table` shall not be destructively removed from existing code or documents.
+
+The clarified meaning is:
+
+- the 720 modules may occupy one or more physical tables, ranks or array sections;
+- physical tables are geometry objects;
+- the inverter block is the first complete electrical product boundary;
+- later power blocks, plants and fleets replicate validated inverter-block semantics.
+
+The approximately 30 kWp fixture is a later minimum-market and scale fixture. It does not replace this first product boundary.
+
+## 10. Preservation and migration law
+
+Historical work shall not be destroyed merely because a newer architecture exists.
+
+V6, V7, V8, V9 and V10 preserve different stages of reasoning, regression value and failure discovery.
+
+Root shims, package modules, source-level compatibility files and historical browser pages may appear duplicative while serving different contracts.
+
+Before removal or consolidation, a separate migration build shall establish:
+
+- canonical authority;
+- compatibility purpose;
+- historical purpose;
+- external import use;
+- replacement path;
+- deprecation state;
+- clean-wheel equivalence;
+- full validation;
+- receipt and hash consequences.
+
+No broad deletion may be bundled into an unrelated feature build.
+
+Useful failure history shall be preserved when it explains present design decisions.
+
+## 11. Browser and external-agent law
+
+The browser remains a projection of the Python engineering authority.
+
+It shall not authoritatively calculate:
+
+- routes;
+- lengths;
+- resistance;
+- voltage drop;
+- loss;
+- fault current;
+- loop geometry;
+- EMC;
+- lightning effects;
+- standards conclusions.
+
+External AI feeds, research agents and model-generated audits are advisory inputs.
+
+They shall be reconciled against:
+
+- authenticated repository state;
+- primary source evidence;
+- canonical architecture;
+- current tests and receipts.
+
+An articulate external feed gains no authority from confidence or length.
+
+## 12. Context-loss-triggered writing obligations
+
+A new capsule shall be written when any of the following occurs:
+
+- a material build passes;
+- an architecture rule changes;
+- a previously unknown dependency is discovered;
+- a false external audit reveals a reload weakness;
+- terminology is found to mislead future entrants;
+- a source is promoted, rejected or superseded;
+- a public API boundary changes;
+- a historical workbench is migrated or retired;
+- a validation failure reveals a new class of defect;
+- the active next goal changes.
+
+The new capsule shall state the reason for its existence and shall not rely on the thread that triggered it.
+
+## 13. Hostile-amnesia acceptance test
+
+After loading the repository memory chain, a new entrant with no access to prior conversation must answer all of the following correctly.
+
+1. What is the project's North Star?
+2. Why must geometry precede physics?
+3. What is the first complete product boundary?
+4. What exact numerical fixture defines that boundary?
+5. What is the canonical object and dependency hierarchy?
+6. What engineering domains belong exclusively to the Python kernel?
+7. What may the browser do and not do?
+8. What is the current verified build and package status?
+9. Which capabilities are canonical, provisional and historical?
+10. Which evidence remains unresolved?
+11. Why must physical inverter inputs remain distinct from MPPT labels and shared DC-bus assumptions?
+12. What work from V6 through V10 must be preserved?
+13. What is the active next single goal?
+14. What files and authority domains must not change in that goal?
+15. What focused and full tests are required?
+16. When must the next capsule be written?
+17. What should an agent report when repository access fails?
+18. What moral purpose governs autonomous continuation?
+
+Failure to answer any load-bearing question means the reload is incomplete.
+
+The entrant shall continue reading and inspecting rather than guessing.
+
+## 14. Current immediate execution order
+
+The active Trueself execution plan is:
+
+`docs/trueself/202608010104-complete-352-kva-inverter-block-plan.md`
+
+The immediate next bounded goal remains:
+
+```text
+TS-001 — close the current resistance-assessment public contract
+```
+
+That goal shall expose the existing deterministic assessment payload, canonical JSON and hash functions through the explicitly provisional top-level package API and prove identical behaviour from a clean installed wheel.
+
+It shall not alter electrical calculations, calculation receipts or source-promotion decisions.
+
+No later product goal shall begin until TS-001 passes and its next Trueself execution record is committed.
+
+## 15. Final continuity law
+
+Context loss is permanent.
+
+The project shall not fight amnesia by pretending that conversations will remain available.
+
+It shall fight amnesia by converting purpose, reasoning, evidence, failure and next action into durable, inspectable and executable repository memory.
+
+A future intelligence must be able to awaken from the capsules, verify the repository, reconstruct responsibility and continue the work without inventing the missing past.
+
+That continuity is a primary engineering requirement of the platform.
