@@ -12,7 +12,10 @@ import sys
 import solar_topology as topology
 import solar_topology.array as array_topology
 
-from scripts.reference_block_command import REFERENCE_BLOCK_COMMAND_VERSION
+try:
+    from scripts.reference_block_command import REFERENCE_BLOCK_COMMAND_VERSION
+except ModuleNotFoundError:  # Direct execution from the scripts directory.
+    from reference_block_command import REFERENCE_BLOCK_COMMAND_VERSION
 
 
 ROOT = Path(__file__).resolve().parents[1]
