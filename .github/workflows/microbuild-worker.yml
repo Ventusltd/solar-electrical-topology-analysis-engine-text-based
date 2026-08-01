@@ -12,6 +12,7 @@ on:
       - "scripts/reference_block_command.py"
       - "scripts/local_authority_bridge.py"
       - "scripts/validate_clean_wheel.py"
+      - "scripts/validate_inverter_block_wheel.py"
       - "tests/test_microbuild*.py"
       - "tests/test_reference_block_command.py"
       - "tests/test_authority_bundle.py"
@@ -36,6 +37,7 @@ on:
       - "scripts/reference_block_command.py"
       - "scripts/local_authority_bridge.py"
       - "scripts/validate_clean_wheel.py"
+      - "scripts/validate_inverter_block_wheel.py"
       - "tests/test_microbuild*.py"
       - "tests/test_reference_block_command.py"
       - "tests/test_authority_bundle.py"
@@ -89,32 +91,14 @@ jobs:
       - name: Run active allowlisted test
         run: python scripts/run_microbuild.py --execute
 
-      - name: Write execution envelope
+      - name: Write canonical microbuild evidence
         if: success()
         run: |
-          mkdir -p .microbuild/evidence
-          python - <<'PY'
-          import json
-          import os
-          from pathlib import Path
-          from scripts.check_microbuild_plan import load_plan, validate_plan
-
-          plan = load_plan()
-          summary = validate_plan(plan)
-          payload = {
-              "schema_version": "globalgrid2050.solar-dc.microbuild-execution.v1",
-              "step_id": summary["active_step"],
-              "manifest_revision": summary["manifest_revision"],
-              "test_id": summary["active_test_id"],
-              "tested_commit": os.environ["GITHUB_SHA"],
-              "result": "pass",
-          }
-          Path(".microbuild/evidence/latest.json").write_text(
-              json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n",
-              encoding="utf-8",
-          )
-          print(json.dumps(payload, sort_keys=True))
-          PY
+          python scripts/microbuild_evidence.py \
+            --tested-commit "$GITHUB_SHA" \
+            --result pass \
+            --workflow-run-id "$GITHUB_RUN_ID" \
+            --output .microbuild/evidence/latest.json
 
       - name: Upload microbuild evidence
         if: success()
