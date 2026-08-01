@@ -14,65 +14,79 @@ from scripts.check_microbuild_plan import (
 )
 
 
-def test_manifest_contract_has_twenty_ordered_steps_and_one_current_gate() -> None:
+def _active_before_final() -> dict[str, object]:
+    plan = deepcopy(load_plan())
+    final = plan["steps"][-1]
+    final["status"] = "active"
+    final["evidence"] = None
+    plan["manifest_revision"] = 20
+    plan["active_step"] = "MB-20"
+    plan["next_step"] = None
+    return plan
+
+
+def test_manifest_contract_has_twenty_ordered_completed_steps() -> None:
     plan = load_plan()
     summary = validate_plan(plan)
-    current = next(
-        item for item in plan["steps"] if item["status"] in {"active", "blocked"}
-    )
-    current_index = current["ordinal"] - 1
 
     assert summary["pass"] is True
+    assert summary["programme_status"] == "completed"
     assert summary["programme_id"] == "twenty-step-autopilot-20260801"
     assert summary["manifest_revision"] == plan["manifest_revision"]
-    assert summary["active_step"] == plan["active_step"] == current["id"]
-    assert summary["active_status"] == current["status"]
-    assert summary["active_test_id"] == current["test_id"]
-    assert summary["next_step"] == plan["next_step"]
-    assert summary["passed_steps"] == current_index
-    assert summary["planned_steps"] == 19 - current_index
+    assert summary["active_step"] is None
+    assert summary["active_status"] is None
+    assert summary["active_test_id"] is None
+    assert summary["next_step"] is None
+    assert summary["passed_steps"] == 20
+    assert summary["planned_steps"] == 0
     assert summary["total_steps"] == 20
+    assert plan["active_step"] is None
+    assert plan["next_step"] is None
     assert [item["id"] for item in plan["steps"]] == [
         f"MB-{ordinal:02d}" for ordinal in range(1, 21)
     ]
     assert [item["phase"] for item in plan["steps"][:10]] == ["A"] * 10
     assert [item["phase"] for item in plan["steps"][10:]] == ["B"] * 10
     assert len({item["test_id"] for item in plan["steps"]}) == 20
+    assert all(item["status"] == "passed" for item in plan["steps"])
+    assert all(item["evidence"]["result"] == "pass" for item in plan["steps"])
     assert all("command" not in item and "run" not in item for item in plan["steps"])
 
 
-def test_manifest_rejects_multiple_current_steps() -> None:
-    plan = deepcopy(load_plan())
-    current_index = next(
-        index
-        for index, item in enumerate(plan["steps"])
-        if item["status"] in {"active", "blocked"}
-    )
-    later_index = min(current_index + 1, 19)
-    if later_index == current_index:
-        later_index = current_index - 1
-    plan["steps"][later_index]["status"] = "active"
-    plan["steps"][later_index]["evidence"] = None
+def test_manifest_still_accepts_one_active_final_gate() -> None:
+    summary = validate_plan(_active_before_final())
 
-    with pytest.raises(PlanValidationError, match="exactly one active or blocked"):
+    assert summary["programme_status"] == "active"
+    assert summary["active_step"] == "MB-20"
+    assert summary["active_test_id"] == "end_to_end_authority_slice"
+    assert summary["next_step"] is None
+    assert summary["passed_steps"] == 19
+    assert summary["planned_steps"] == 0
+
+
+def test_manifest_rejects_multiple_current_steps() -> None:
+    plan = _active_before_final()
+    previous = plan["steps"][-2]
+    previous["status"] = "active"
+    previous["evidence"] = None
+
+    with pytest.raises(PlanValidationError, match="at most one active or blocked"):
+        validate_plan(plan)
+
+
+def test_manifest_rejects_incomplete_plan_without_current_step() -> None:
+    plan = deepcopy(load_plan())
+    plan["steps"][-1]["status"] = "planned"
+    plan["steps"][-1]["evidence"] = None
+
+    with pytest.raises(PlanValidationError, match="must be fully passed"):
         validate_plan(plan)
 
 
 def test_manifest_rejects_skipped_and_out_of_order_states() -> None:
-    plan = deepcopy(load_plan())
-    current_index = next(
-        index
-        for index, item in enumerate(plan["steps"])
-        if item["status"] in {"active", "blocked"}
-    )
-    assert current_index < 19
-    next_index = current_index + 1
-    plan["steps"][current_index]["status"] = "planned"
-    plan["steps"][next_index]["status"] = "active"
-    plan["active_step"] = plan["steps"][next_index]["id"]
-    plan["next_step"] = (
-        plan["steps"][next_index + 1]["id"] if next_index < 19 else None
-    )
+    plan = _active_before_final()
+    plan["steps"][-2]["status"] = "planned"
+    plan["steps"][-2]["evidence"] = None
 
     with pytest.raises(PlanValidationError, match="before current step must be passed"):
         validate_plan(plan)
