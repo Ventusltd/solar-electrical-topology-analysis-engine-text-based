@@ -1,0 +1,7 @@
+Build 026 validation-only marker
+
+Unit: B026-04 — Clean-wheel authority reproduction
+Base origin: fa0e3768f5c4a70d6ede95ebee696d3c4cb6e0f8
+Evidence head: d02380348bb9af30c2602ea63749dbb6a5fabc27
+Purpose: validate the three-file B026-04 evidence transition.
+Merge policy: do not merge this marker.
