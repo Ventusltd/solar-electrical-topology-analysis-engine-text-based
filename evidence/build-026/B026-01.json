@@ -1,0 +1,117 @@
+{
+  "schema_version": "globalgrid2050.solar-dc.build-026-receipt.v1",
+  "programme_id": "build-026-continuity-and-model-repair-20260801",
+  "unit_id": "B026-01",
+  "ordinal": 1,
+  "title": "Mirror integrity and drift detection",
+  "mode": "sandbox",
+  "plan": {
+    "path": "build-plans/build-026-continuity-and-model-repair.json",
+    "starting_blob_sha1": "0b99bc3ccc3c095625acd62c72e794053787f028"
+  },
+  "origin": {
+    "head_sha": "e4d5cb4dd185a5e596b37493d8715595c00c0209",
+    "commit_date_utc": "2026-08-01T15:39:54Z",
+    "commit_date_europe_london": "2026-08-01T16:39:54+01:00",
+    "commit_message": "test: restore TS-005 governance validation",
+    "tracked_file_count": 363,
+    "tracked_file_count_method": "362 tracked files were recorded at 37b00106; commit 49ac61d7 added one file, and subsequent commits through the authenticated origin head only renamed or modified files.",
+    "branch_count": 97,
+    "repository_size_kb": 1624
+  },
+  "sandbox": {
+    "branch": "agent/b026-01-mirror-integrity",
+    "marker_commit": "ecf176abcc94c690580be065f57c0583b7b8447a",
+    "pull_request": 61,
+    "merge_test_sha": "eae46e950dc97a626ce35539031b940ca4b2b67f",
+    "production_engineering_files_changed": [],
+    "sandbox_files_changed": [
+      "tests/b026-01-validation-marker.txt"
+    ],
+    "merge_policy": "do not merge validation marker"
+  },
+  "abandoned_attempt": {
+    "starting_origin_head": "70ec8057e733a0eaf5033171487b9ebafb82f250",
+    "marker_commit": "da643220859553bd829b7a846b48b91cf5ed87b4",
+    "workflow_run_id": 30706087559,
+    "result": "blocked",
+    "reason": "The wider envelope exposed two governance defects. Origin moved after the defects were repaired and validated, so the attempt was abandoned under the mirror law.",
+    "repair_pull_request": 62,
+    "repair_workflow_run_id": 30706296694,
+    "repair_origin_commit": "e4d5cb4dd185a5e596b37493d8715595c00c0209"
+  },
+  "build_pass": {
+    "status": "passed",
+    "elapsed_seconds": 35,
+    "elapsed_measurement": "Difference between authenticated origin commit timestamp and disposable marker commit timestamp; conservative wall-clock bound.",
+    "scope": "Authenticate mirror identity and create one non-merge validation marker.",
+    "prohibited_surfaces_untouched": [
+      "production geometry",
+      "topology",
+      "calculations",
+      "equipment values",
+      "browser authority",
+      "programme-state.json",
+      "licence status"
+    ]
+  },
+  "test_pass": {
+    "status": "passed",
+    "test_id": "b026_mirror_integrity",
+    "elapsed_seconds": 123,
+    "elapsed_measurement": "GitHub Actions validate job from runner start 2026-08-01T15:41:07.4579605Z to cleanup 2026-08-01T15:43:10.1212072Z, rounded up.",
+    "commands": [
+      "python scripts/check_capsule_links.py --check",
+      "python scripts/sync_programme_state.py --check"
+    ],
+    "required_gates": {
+      "capsule_link_integrity": {
+        "status": "passed",
+        "detail": "55 Markdown capsules"
+      },
+      "programme_state_and_public_page_drift": {
+        "status": "passed",
+        "detail": "programme state validated; generated outputs are in sync"
+      }
+    },
+    "github_actions": {
+      "workflow": "V10 Engine Validation",
+      "run_id": 30706456207,
+      "artifact_id": 8820491476,
+      "artifact_digest": "sha256:c820661c1c167566549a68f3a82c954407cad86e4aa6211a8baae288430f90c8",
+      "merge_test_sha": "eae46e950dc97a626ce35539031b940ca4b2b67f",
+      "conclusion": "success"
+    },
+    "full_envelope": {
+      "python": {
+        "passed": 377,
+        "failed": 0,
+        "duration_seconds": 88.53
+      },
+      "v8_model_and_authority": "passed",
+      "v9_deterministic_engine": "passed",
+      "v10_javascript_and_studio": "passed",
+      "clean_installed_wheel": "passed"
+    },
+    "local_result": "not run in the ChatGPT execution container because GitHub network resolution was unavailable; no local result is represented as CI.",
+    "ci_result": "passed"
+  },
+  "origin_moved_during_successful_repeat": false,
+  "defects_discovered": [
+    "The first attempt exposed stale programme-state assertions.",
+    "The TS-005 closure did not bind the validated inverter-block receipt and MB-10 hand-off phrases required by its hand-off test."
+  ],
+  "defects_repaired_before_repeat": [
+    "tests/test_programme_state.py aligned with terminal TS-005 machine state.",
+    "docs/trueself/20260801-ts-005-authoritative-slice-closure.md bound to the validated receipt and hand-off evidence."
+  ],
+  "unresolved_access_or_evidence": [
+    "No independent local clone result was available from the ChatGPT container."
+  ],
+  "evidence_only_files_to_commit": [
+    "build-plans/build-026-continuity-and-model-repair.json",
+    "docs/build-ledger/202608-continuity-and-model-repair.md",
+    "evidence/build-026/B026-01.json"
+  ],
+  "next_permitted_unit": "B026-02"
+}
