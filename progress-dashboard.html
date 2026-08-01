@@ -3,97 +3,78 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Live public engineering progress dashboard for the GlobalGrid2050 solar electrical topology analysis engine.">
-<title>Solar Topology Engine · Engineering Control Dashboard</title>
+<meta name="description" content="Generated engineering programme state for the Solar Electrical Topology Analysis Engine.">
+<title>Solar Topology Engine · Programme Truth</title>
 <style>
-:root{color-scheme:dark;--bg:#04080c;--panel:#0a141c;--panel2:#0d1b25;--line:#203544;--text:#eaf7fd;--muted:#91aaba;--good:#48e39b;--active:#42cfff;--future:#728592;--warn:#ffc857;--danger:#ff7185}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 15% 0,#123047 0,#071019 30%,var(--bg) 65%);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text)}
-header,main,footer{max-width:1240px;margin:auto;padding:24px}header{padding-top:38px}.kicker{letter-spacing:.17em;font-size:12px;color:var(--active);font-weight:850}h1{font-size:clamp(31px,6vw,66px);line-height:1.03;margin:.18em 0}.sub{color:var(--muted);max-width:850px;font-size:17px}.status,.actions,.legend{display:flex;gap:10px;flex-wrap:wrap}.status{margin:24px 0}.pill,.badge{border:1px solid var(--line);border-radius:999px;padding:7px 12px;background:#09131a;font-weight:750;font-size:12px}.green{color:var(--good);border-color:#246b4c}.blue{color:var(--active);border-color:#286a86}.amber{color:var(--warn);border-color:#745d22}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}.card,.panel{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:15px;box-shadow:0 18px 45px #0005}.card{padding:18px;min-height:128px}.card strong{font-size:30px;display:block}.card small,.muted{color:var(--muted)}.section-title{display:flex;justify-content:space-between;gap:18px;align-items:end;margin:34px 0 12px}.section-title h2{margin:0;font-size:23px}.section-title p{margin:0;color:var(--muted)}.progress-shell{height:15px;background:#101d25;border:1px solid var(--line);border-radius:20px;overflow:hidden}.progress-fill{height:100%;width:31.25%;background:linear-gradient(90deg,var(--good),var(--active))}.progress-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-top:8px}.builds{overflow:hidden;border:1px solid var(--line);border-radius:14px}.build{display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:center;padding:15px;background:#091219;border-bottom:1px solid var(--line)}.build:last-child{border-bottom:0}.num{font-size:21px;font-weight:900}.done .num{color:var(--good)}.active .num{color:var(--active)}.future{opacity:.68}.build strong{display:block}.build small{color:var(--muted)}.badge{padding:5px 9px}.architecture{display:grid;grid-template-columns:repeat(8,minmax(105px,1fr));gap:8px}.layer{padding:14px 10px;text-align:center;border:1px solid var(--line);border-radius:11px;background:#09131a}.layer.ready{border-color:#286a4f;color:var(--good)}.layer.active{border-color:#26718d;color:var(--active)}.timeline{padding:8px 18px}.event{display:grid;grid-template-columns:150px 1fr;gap:18px;padding:14px 0;border-bottom:1px solid var(--line)}.event:last-child{border-bottom:0}.event code{color:var(--active);font-size:12px;word-break:break-all}.event strong{display:block;margin-bottom:3px}.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.fact{padding:16px;border-left:3px solid var(--active);background:#08131b;border-radius:7px}.fact.good{border-color:var(--good)}.fact.warn{border-color:var(--warn)}a,button{color:var(--text);background:#0d1c26;border:1px solid #2e5165;border-radius:9px;padding:10px 13px;text-decoration:none;cursor:pointer;font:inherit}button:hover,a:hover{border-color:var(--active)}pre{white-space:pre-wrap;color:#bdd9e7;background:#04090d;border:1px solid var(--line);padding:16px;border-radius:11px}.hidden{display:none}footer{color:var(--muted);font-size:13px;padding-bottom:42px}@media(max-width:900px){.architecture{grid-template-columns:repeat(4,1fr)}}@media(max-width:620px){header,main,footer{padding:18px}.build{grid-template-columns:55px 1fr}.build .badge{grid-column:2;justify-self:start}.architecture{grid-template-columns:repeat(2,1fr)}.event{grid-template-columns:1fr}.section-title{display:block}.section-title p{margin-top:5px}}
+:root{color-scheme:dark;--bg:#05090d;--panel:#0b151d;--line:#254052;--text:#edf8fd;--muted:#91a9b8;--good:#55dfa0;--active:#43cfff;--warn:#ffc95e;--historic:#a9a1d6}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 12% 0,#14364d 0,var(--bg) 42%);color:var(--text);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}header,main,footer{max-width:1180px;margin:auto;padding:24px}header{padding-top:42px}h1{font-size:clamp(34px,7vw,68px);line-height:1;margin:.16em 0}h2{margin:32px 0 10px}.kicker{color:var(--active);font-weight:900;letter-spacing:.15em;font-size:12px}.muted,small{color:var(--muted)}.pills,.grid,.columns{display:grid;gap:12px}.pills{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin:22px 0}.pill,.card,.panel{border:1px solid var(--line);background:linear-gradient(180deg,#0e1d27,var(--panel));border-radius:14px}.pill{padding:12px 14px}.pill strong{display:block;color:var(--active)}.grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}.card{padding:17px}.card span,.card small{display:block}.card strong{display:block;font-size:27px;margin:4px 0;color:var(--good)}.panel{padding:20px}.boundary{font:700 16px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap}.columns{grid-template-columns:repeat(3,1fr)}ul{margin:8px 0;padding-left:22px}li{margin:7px 0}.canonical::marker{color:var(--good)}.provisional::marker,.limitation::marker{color:var(--warn)}.historical::marker{color:var(--historic)}code{color:#bdeeff;word-break:break-all}a{color:var(--active)}.policy{border-left:4px solid var(--warn)}@media(max-width:760px){.columns{grid-template-columns:1fr}header,main,footer{padding:18px}}
 </style>
 </head>
 <body>
 <header>
-<div class="kicker">GLOBALGRID2050 · ENGINEERING CONTROL ROOM</div>
+<div class="kicker">GLOBALGRID2050 · GENERATED PROGRAMME STATE</div>
 <h1>Solar Topology Engine</h1>
-<p class="sub">A public view of the backend recovery and rebuild: what is authoritative, what has passed validation, what is being built now, and how the browser remains downstream of the engineering kernel.</p>
-<div class="status"><span class="pill green">● VALIDATION GREEN</span><span class="pill blue">BUILD 024 ACTIVE</span><span class="pill">MAIN BRANCH</span><span class="pill amber">CANDIDATE ENGINEERING · NOT COMPLIANCE CERTIFICATION</span></div>
-<div class="actions"><a href="./index.html">Open interactive topology workbench</a><a href="#roadmap">View roadmap</a><a href="#history">See recent development</a><button id="toggle">Technical state</button></div>
+<p class="muted">This page is generated from <a href="./programme-state.json">programme-state.json</a>. It contains no manually maintained completion percentage.</p>
+<div class="pills">
+<div class="pill"><small>Current build</small><strong>Build 025.5D1</strong></div>
+<div class="pill"><small>Package</small><strong>0.4.0</strong></div>
+<div class="pill"><small>Active gate</small><strong>TS-002 — Establish one programme truth manifest</strong></div>
+<div class="pill"><small>Next single goal</small><strong>TS-003 — Freeze the generic reference equipment contract</strong></div>
+</div>
 </header>
 <main>
-<section class="grid" aria-label="Validation summary">
-<div class="card"><small>Total validated tests</small><strong>176</strong><small>across Python, V8, V9 and V10</small></div>
-<div class="card"><small>Python authority suite</small><strong>140</strong><small>tests passed</small></div>
-<div class="card"><small>Legacy continuity</small><strong>23 / 23</strong><small>V8 and V9 checks passed</small></div>
-<div class="card"><small>V10 JavaScript kernel</small><strong>13 / 13</strong><small>tests passed</small></div>
-<div class="card"><small>Latest validated source</small><strong style="font-size:18px">94020c1</strong><small>kernel authority gate tests</small></div>
-<div class="card"><small>Validation receipt</small><strong style="font-size:18px">c42f234</strong><small>green receipt on 31 July 2026</small></div>
+<h2>First complete product boundary</h2>
+<section class="panel boundary">660 Wp bifacial modules × 30 modules/string × 24 strings
+= 720 modules
+= 475.2 kWp DC
+= one 352 kVA inverter block
+DC/AC nameplate ratio = 1.35</section>
+
+<h2>Latest declared validation envelope</h2>
+<section class="grid"><article class="card"><span>Python</span><strong>275 / 275</strong><small>PASS</small></article>
+<article class="card"><span>V8 model</span><strong>13 / 13</strong><small>PASS</small></article>
+<article class="card"><span>V8 authority reconciliation</span><strong>6 / 6</strong><small>PASS</small></article>
+<article class="card"><span>V9 deterministic engine</span><strong>10 / 10</strong><small>PASS</small></article>
+<article class="card"><span>V10 JavaScript</span><strong>13 / 13</strong><small>PASS</small></article>
+<article class="card"><span>Clean installed wheel</span><strong>1 / 1</strong><small>PASS</small></article></section>
+<p class="muted">Workflow run <code>30675585601</code> · artefact <code>8810319603</code> · validated engineering commit <code>a239aae2de32daf19bbb00c4bda7095ab7780623</code></p>
+<p class="muted">Comparison hash <code>sha256:413aa93c98d1b9fd5f9ffee4f577cfe29a6e74f48bd927a3ebe7f541545d6366</code></p>
+
+<h2>Capability authority</h2>
+<section class="columns">
+<div class="panel"><h3>Canonical</h3><ul><li class="canonical">deterministic module placement for the 24 by 30 reference fixture</li>
+<li class="canonical">ordered string topology and physical input assignment</li>
+<li class="canonical">explicit sequential and leapfrog routing</li>
+<li class="canonical">geometry, topology, assignment, routing and calculation receipts</li>
+<li class="canonical">complete-circuit resistance, voltage drop, loss and uncertainty</li>
+<li class="canonical">installed solar_topology package and clean-wheel authority</li></ul></div>
+<div class="panel"><h3>Provisional</h3><ul><li class="provisional">resistance source qualification and assessment serialisation</li>
+<li class="provisional">generic 4 mm2 and 6 mm2 metal-coated class 5 resistance sources</li>
+<li class="provisional">browser workbenches as exploratory projections</li></ul></div>
+<div class="panel"><h3>Historical workbenches</h3><ul><li class="historical">V6 complete-circuit browser workbench</li>
+<li class="historical">V7 electromagnetic FEED workbench</li>
+<li class="historical">V8 leapfrog cable-schedule workbench</li>
+<li class="historical">V9 deterministic sandbox</li>
+<li class="historical">V10 browser development workbench</li></ul></div>
 </section>
 
-<div class="section-title"><div><h2>Recovery programme</h2><p>Five of sixteen defined engineering stages are complete or active.</p></div><strong>31.25%</strong></div>
-<div class="progress-shell" aria-label="Recovery programme progress"><div class="progress-fill"></div></div>
-<div class="progress-meta"><span>Build 020 · validation hardening</span><span>Build 035 · final thin client</span></div>
+<h2>Known limitations</h2>
+<section class="panel"><ul><li class="limitation">The generic conductor resistance records remain candidates because exact source revisions are not encoded and verification is incomplete.</li>
+<li class="limitation">The complete 352 kVA inverter-block aggregate and portable project contract are not yet first-class kernel objects.</li>
+<li class="limitation">Physical inverter inputs, MPPT control relationships and any shared DC-bus or reverse-current-blocking behaviour still require evidence-bound completion.</li>
+<li class="limitation">The production browser is not yet a calculation-free thin client.</li>
+<li class="limitation">Standards, EMC, lightning, environmental classes, plant ingestion and fleet intelligence remain later controlled builds.</li></ul></section>
 
-<div class="section-title"><div><h2>Authority stack</h2><p>The build order follows the physics rather than the browser.</p></div></div>
-<section class="architecture">
-<div class="layer ready">Physics</div><div class="layer ready">Geometry</div><div class="layer ready">Objects</div><div class="layer ready">Topology</div><div class="layer active">Computation</div><div class="layer">Evidence</div><div class="layer">Reporting</div><div class="layer">Visualisation</div>
+<h2>Progress policy</h2>
+<section class="panel policy">No numerical programme-completion percentage is claimed until explicit stage weights and acceptance evidence are encoded in this manifest.</section>
+
+<h2>Continuity</h2>
+<section class="panel">
+<p>Current Quantum Spawn: <code>docs/quantum-spawn/202608010120-amnesia-resilience-and-continuity-law.md</code></p>
+<p>Current Trueself checkpoint: <code>docs/trueself/202608010129-ts-001-resistance-assessment-api-pass.md</code></p>
+<p>Restore point: <code>restore/2026-08-01-0131-pre-ts-002-programme-truth</code></p>
 </section>
-
-<div class="section-title" id="roadmap"><div><h2>Build roadmap</h2><p>Click a stage to reveal its engineering purpose.</p></div></div>
-<section class="builds" id="builds"></section>
-
-<div class="section-title"><div><h2>What is now real</h2><p>Capabilities already present in the recovered main branch.</p></div></div>
-<section class="facts">
-<div class="fact good"><strong>Canonical circuit authority</strong><br><span class="muted">Immutable objects, terminals and connections with deterministic payloads and hashes.</span></div>
-<div class="fact good"><strong>Graph-derived electrical order</strong><br><span class="muted">Traversal does not trust browser order, tuple order or source segment indices.</span></div>
-<div class="fact good"><strong>Calculation receipt gate</strong><br><span class="muted">Resistance, voltage drop and loss are bound to validated topology and evidence.</span></div>
-<div class="fact good"><strong>Kernel authority protection</strong><br><span class="muted">Altered totals, formula drift, malformed hashes and segment-order mismatch are rejected.</span></div>
-<div class="fact"><strong>Geometry-derived quantities</strong><br><span class="muted">Route length, resistance, inductance, capacitance, energy and propagation calculations exist.</span></div>
-<div class="fact warn"><strong>Browser is a projection</strong><br><span class="muted">The public workbench remains useful for exploration but is not yet the final authoritative thin client.</span></div>
-</section>
-
-<div class="section-title" id="history"><div><h2>Recent development</h2><p>The latest visible milestones on main.</p></div></div>
-<section class="panel timeline">
-<div class="event"><code>19228b4</code><div><strong>Build 024 activated</strong><span class="muted">Kernel authority and method ownership recorded.</span></div></div>
-<div class="event"><code>c42f234</code><div><strong>Green validation receipt</strong><span class="muted">140 Python, 13 V8, 10 V9 and 13 V10 tests passed.</span></div></div>
-<div class="event"><code>94020c1</code><div><strong>Kernel authority regression tests</strong><span class="muted">Receipt tampering and calculation drift are explicitly blocked.</span></div></div>
-<div class="event"><code>ac83038</code><div><strong>Steady-state authority gate</strong><span class="muted">A single guarded route now decides whether calculation output is authoritative.</span></div></div>
-<div class="event"><code>398c14e</code><div><strong>Build 023 restore point</strong><span class="muted">Canonical topology authority recorded green.</span></div></div>
-<div class="event"><code>a2cc595</code><div><strong>First public build dashboard</strong><span class="muted">Backend progress became externally visible.</span></div></div>
-</section>
-
-<pre id="technical" class="hidden">Current programme: Build 024 — Kernel authority
-Latest validated source commit: 94020c1dd2aa0a09c1f39c9587a5e64c810c222b
-Validation receipt commit: c42f234d97c070e78fa88712648cfb27c9a5c3a2
-Build 023 restore point: 398c14ea13317170757adb8f5ccd5258f93f4dfe
-Build 024 authority record: 19228b423f9adeff179af9ea16f30be8bd4d8985
-Validated test count: Python 140 · V8 13 · V9 10 · V10 JS 13
-Next engineering increments: public authority API export, end-to-end cartridge-to-receipt fixture, restore point, then Build 025 route and installation physics.</pre>
 </main>
-<footer>Dashboard snapshot generated from authenticated repository state. Engineering outputs remain evidence-bearing candidate results until applicable project evidence, standards and competent-person review are complete.</footer>
-<script>
-const builds=[
-{n:20,t:'Validation hardening',s:'complete',d:'Import gates, deterministic diagnostics and recovery checks.'},
-{n:21,t:'Public API contract',s:'complete',d:'Explicit canonical, provisional and compatibility classifications.'},
-{n:22,t:'Independent capability audit',s:'complete',d:'Adopt, adapt and repair decisions across recovered modules.'},
-{n:23,t:'Canonical object and topology closure',s:'complete',d:'Circuit model, validation, traversal, hash and topology authority receipt.'},
-{n:24,t:'Kernel authority',s:'active',d:'Single authoritative steady-state entry point, method ownership and anti-drift gates.'},
-{n:25,t:'Route and installation physics',s:'future',d:'Installation-aware geometry and route conditions.'},
-{n:26,t:'Distributed and transient boundary',s:'future',d:'Define where lumped models stop and distributed physics begins.'},
-{n:27,t:'Reporting and browser projection',s:'future',d:'Bind public visualisation to signed kernel outputs.'},
-{n:28,t:'Standards cartridge registry',s:'future',d:'Versioned engineering study methods and applicability.'},
-{n:29,t:'Fleet aggregation and data laws',s:'future',d:'Scale validated string results across inverter and fleet levels.'},
-{n:30,t:'Electrical acceptance studies',s:'future',d:'Voltage, loss, thermal and acceptance criteria.'},
-{n:31,t:'EMC, lightning and SPD studies',s:'future',d:'Field geometry, surge boundaries and protection evidence.'},
-{n:32,t:'Arc fault and rapid shutdown',s:'future',d:'Safety-study objects, states and limitations.'},
-{n:33,t:'Uncertainty and Monte Carlo',s:'future',d:'Propagate evidence ranges rather than hiding assumptions.'},
-{n:34,t:'Investor-grade report DNA',s:'future',d:'Traceable outputs suitable for technical due diligence.'},
-{n:35,t:'Final thin client',s:'future',d:'Browser becomes a transparent projection of the authoritative kernel.'}
-];
-const label={complete:'COMPLETE',active:'ACTIVE',future:'QUEUED'};
-const root=document.querySelector('#builds');
-root.innerHTML=builds.map(b=>`<div class="build ${b.s==='complete'?'done':b.s}" tabindex="0" role="button" aria-expanded="false"><div class="num">${String(b.n).padStart(3,'0')}</div><div><strong>${b.t}</strong><small class="summary">${b.s==='active'?'Current engineering build':b.s==='complete'?'Validated programme stage':'Queued after authority dependencies'}</small><small class="detail hidden">${b.d}</small></div><span class="badge">${label[b.s]}</span></div>`).join('');
-root.querySelectorAll('.build').forEach(row=>{const toggle=()=>{row.querySelector('.summary').classList.toggle('hidden');row.querySelector('.detail').classList.toggle('hidden');row.setAttribute('aria-expanded',row.getAttribute('aria-expanded')!=='true')};row.addEventListener('click',toggle);row.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}})});
-document.querySelector('#toggle').onclick=()=>document.querySelector('#technical').classList.toggle('hidden');
-</script>
+<footer>Generated deterministically by <code>scripts/sync_programme_state.py</code>. Engineering outputs remain evidence-qualified and are not a project-specific approval or compliance certificate.</footer>
 </body>
 </html>
