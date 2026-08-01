@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://globalgrid2050.com/schemas/solar-dc/programme-state-v1.json",
+  "title": "Solar DC Programme State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "current_build",
+    "programme_stage",
+    "validated_commit",
+    "validated_commit_scope",
+    "package_version",
+    "validation",
+    "restore_point",
+    "current_quantum_spawn",
+    "current_trueself",
+    "reference_inverter_block",
+    "capabilities",
+    "active_gate",
+    "next_single_goal",
+    "known_limitations",
+    "progress_policy",
+    "generated_outputs"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "globalgrid2050.solar-dc.programme-state.v1"
+    },
+    "current_build": {
+      "type": "string",
+      "minLength": 1
+    },
+    "programme_stage": {
+      "type": "string",
+      "minLength": 1
+    },
+    "validated_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "validated_commit_scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "package_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workflow",
+        "run_id",
+        "artifact_id",
+        "merge_test_sha",
+        "comparison_hash",
+        "suites"
+      ],
+      "properties": {
+        "workflow": {
+          "type": "string",
+          "minLength": 1
+        },
+        "run_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "artifact_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "merge_test_sha": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "comparison_hash": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "suites": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "passed", "total"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "passed": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "restore_point": {
+      "type": "string",
+      "pattern": "^restore/"
+    },
+    "current_quantum_spawn": {
+      "type": "string",
+      "pattern": "^docs/quantum-spawn/"
+    },
+    "current_trueself": {
+      "type": "string",
+      "pattern": "^docs/trueself/"
+    },
+    "reference_inverter_block": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "module_technology",
+        "module_rated_power_wp",
+        "modules_per_string",
+        "string_rated_power_kwp",
+        "strings",
+        "module_count",
+        "dc_nameplate_power_kwp",
+        "inverter_apparent_power_kva",
+        "dc_ac_nameplate_ratio"
+      ],
+      "properties": {
+        "module_technology": {
+          "type": "string",
+          "minLength": 1
+        },
+        "module_rated_power_wp": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "modules_per_string": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "string_rated_power_kwp": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "strings": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "module_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "dc_nameplate_power_kwp": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "inverter_apparent_power_kva": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "dc_ac_nameplate_ratio": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonical", "provisional", "historical"],
+      "properties": {
+        "canonical": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "provisional": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "historical": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        }
+      }
+    },
+    "active_gate": {
+      "type": "string",
+      "minLength": 1
+    },
+    "next_single_goal": {
+      "type": "string",
+      "minLength": 1
+    },
+    "known_limitations": {
+      "$ref": "#/$defs/nonEmptyStringArray"
+    },
+    "progress_policy": {
+      "type": "string",
+      "minLength": 1
+    },
+    "generated_outputs": {
+      "$ref": "#/$defs/nonEmptyStringArray"
+    }
+  },
+  "$defs": {
+    "nonEmptyStringArray": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}
