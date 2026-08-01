@@ -161,8 +161,16 @@ TS-005 — First authoritative Studio slice
 
 Its first microbuild will be one local command returning the existing reference inverter-block JSON.
 
+## Microbuild ledger
+
+```text
+TS-004.1  PASS
+commits     b9bf3ed, 3ffb3a6
+validation  run 30678641421 · Python 306/306 · clean wheel PASS
+```
+
 ## Current pointer
 
 ```text
-ACTIVE: TS-004.1 — explicit provisional public-API classification
+ACTIVE: TS-004.2 — clean-wheel inverter-block contract
 ```
