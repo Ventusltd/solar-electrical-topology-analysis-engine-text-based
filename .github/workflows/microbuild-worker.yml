@@ -9,6 +9,7 @@ on:
       - "scripts/check_microbuild_plan.py"
       - "scripts/run_microbuild.py"
       - "scripts/microbuild_*.py"
+      - "scripts/build_authority_bundle.py"
       - "scripts/reference_block_command.py"
       - "scripts/local_authority_bridge.py"
       - "scripts/validate_clean_wheel.py"
@@ -34,6 +35,7 @@ on:
       - "scripts/check_microbuild_plan.py"
       - "scripts/run_microbuild.py"
       - "scripts/microbuild_*.py"
+      - "scripts/build_authority_bundle.py"
       - "scripts/reference_block_command.py"
       - "scripts/local_authority_bridge.py"
       - "scripts/validate_clean_wheel.py"
@@ -88,8 +90,23 @@ jobs:
       - name: Validate microbuild manifest
         run: python scripts/check_microbuild_plan.py --check
 
+      - name: Generate authority-bundle candidate
+        run: |
+          python scripts/build_authority_bundle.py \
+            --write \
+            --output .microbuild/candidates/reference-inverter-block.json
+
       - name: Run active allowlisted test
         run: python scripts/run_microbuild.py --execute
+
+      - name: Upload authority-bundle candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: authority-bundle-candidate-${{ github.sha }}
+          if-no-files-found: ignore
+          retention-days: 90
+          path: .microbuild/candidates/reference-inverter-block.json
 
       - name: Write canonical microbuild evidence
         if: success()
