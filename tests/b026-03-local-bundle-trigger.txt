@@ -1,0 +1,4 @@
+B026-03 disposable workflow trigger.
+
+This file is not a test and must not be merged.
+It exists only so the pull-request path filter executes the local-bundle provisioning probe.
