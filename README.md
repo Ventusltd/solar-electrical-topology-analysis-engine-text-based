@@ -8,11 +8,11 @@ This block is generated from [`programme-state.json`](programme-state.json). CI 
 | Field | Current authority |
 |---|---|
 | Build | **Build 025.5D1** |
-| Stage | Generic equipment contract established; inverter-block aggregate active |
+| Stage | Complete inverter-block aggregate established; first authoritative Studio slice active |
 | Package | `0.4.0` |
-| Last validated engineering commit | `d0c377b53e5d60b8c716c97c112c7996ba102f8f` |
-| Active gate | **TS-004 — Add the complete inverter-block aggregate and receipt** |
-| Next single goal | **TS-005 — Complete physical input and MPPT authority** |
+| Last validated engineering commit | `78fe6fd6add4e4558ac8475df230eb2cd1729cfb` |
+| Active gate | **TS-005 — First authoritative Studio slice** |
+| Next single goal | **MB-10 — TS-005 hand-off proof** |
 
 ### First complete product boundary
 
@@ -28,12 +28,13 @@ DC/AC nameplate ratio = 1.35
 
 | Suite | Result | State |
 |---|---:|---|
-| Python | 296 / 296 | PASS |
+| Python | 334 / 334 | PASS |
 | V8 model | 13 / 13 | PASS |
 | V8 authority reconciliation | 6 / 6 | PASS |
 | V9 deterministic engine | 10 / 10 | PASS |
 | V10 JavaScript | 13 / 13 | PASS |
 | Clean installed wheel | 1 / 1 | PASS |
+| Inverter-block clean wheel | 1 / 1 | PASS |
 
 Comparison hash: `sha256:413aa93c98d1b9fd5f9ffee4f577cfe29a6e74f48bd927a3ebe7f541545d6366`
 
