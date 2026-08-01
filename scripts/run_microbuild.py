@@ -10,7 +10,14 @@ import subprocess
 import sys
 from typing import Sequence
 
-from check_microbuild_plan import DEFAULT_PLAN_PATH, load_plan, validate_plan
+try:
+    from scripts.check_microbuild_plan import (
+        DEFAULT_PLAN_PATH,
+        load_plan,
+        validate_plan,
+    )
+except ModuleNotFoundError:  # Direct execution from the scripts directory.
+    from check_microbuild_plan import DEFAULT_PLAN_PATH, load_plan, validate_plan
 
 
 ROOT = Path(__file__).resolve().parents[1]
