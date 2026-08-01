@@ -4,7 +4,7 @@
   "title": "Twenty-unit build plan — bounded passes, mirror comparison and evidence trail",
   "prepared_against_head": "eb1e2c7db5c85306e476b6fa912ccc31a0148602",
   "last_fully_validated_engineering_commit": "747381f6c3c3325a680a80a17e516268541c8548",
-  "programme_status": "active",
+  "programme_status": "blocked",
   "active_unit": null,
   "next_unit": "B026-03",
   "quantum_spawn": "docs/quantum-spawn/202608011536-build-026-forty-pass-small-step-law.md",
@@ -85,15 +85,17 @@
       "test_scope": "Run pytest duration reporting and record the ten slowest tests.",
       "acceptance": "Local green or red state is stated exactly and is never misreported as CI state.",
       "build_pass": {
-        "status": "planned",
+        "status": "blocked",
         "max_compute_seconds": 300,
-        "evidence": null
+        "evidence": "evidence/build-026/B026-03.json",
+        "reason": "The corrected full local Python suite reached the 300-second ceiling after 184 of 377 collected tests had passed."
       },
       "test_pass": {
-        "status": "planned",
+        "status": "blocked",
         "max_compute_seconds": 300,
         "test_id": "b026_full_envelope",
-        "evidence": null
+        "evidence": "evidence/build-026/B026-03.json",
+        "reason": "The duration-reporting pass was not started because the preceding build pass timed out."
       }
     },
     {
