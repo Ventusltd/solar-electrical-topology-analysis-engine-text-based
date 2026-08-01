@@ -168,3 +168,25 @@ The prior blocked record remains immutable above. The successful retry removes t
 | Next permitted unit | `B026-05` only |
 
 The isolated wheel environments were temporary and removed after execution. The evidence transition changes only the machine plan, this ledger and the B026-04 receipt.
+
+### B026-05 — Change, test, patch and revert rehearsal
+
+| Field | Evidence |
+|---|---|
+| Origin head authenticated | `7ab62ad2fbe8915cbbe5a5bb3db6610afc1688a2` |
+| Origin commit | 2026-08-01 17:53:33 Europe/London — `evidence: complete B026-04 clean-wheel authority` |
+| Disposable provisioning | PR 72; run `30718327218`; artifact `8824059444`; artifact digest `sha256:395365ea19216011a98151117dea9b4502d999c14844a56de48ad8e7046fd62f`; current-head bundle digest `sha256:62e2c1eb16386d0c7a369a219157c05a097adf3b9862537993b068956ce56a28` |
+| Authenticated local boundary | 367 files; manifest `sha256:04c9057701029f387a19ae2d1aa8bbbd742d61ddf083d041986789e7f9a5f613`; synthetic baseline tree `35c8b5504cf6526cd844c18d2e2d9ce4e279fc70` |
+| BUILD PASS | PASS — created `build/05-revert-rehearsal`, added only `tests/b026-05-rehearsal-noop.txt`, committed it and generated a 736-byte patch in 0.011 seconds |
+| Patch identity | `sha256:675c9b7908f088d3063825d5b724855c46f4bbc63f664d73a57ab819c4168ada` |
+| Focused test | `python -m pytest -q tests/test_microbuild_plan.py`: 7 passed in 0.02 seconds; measured command time 0.142 seconds |
+| Full local envelope | 377/377 passed across 51 files in four isolated file-level shards; summed shard compute 47.476 seconds; slowest shard 31.462 seconds |
+| TEST PASS | PASS — focused control plus complete local envelope in 47.618 seconds |
+| Revert proof | `git reset --hard` plus `git clean -fdx`; 367 files before and after; manifest remained `sha256:04c9057701029f387a19ae2d1aa8bbbd742d61ddf083d041986789e7f9a5f613`; Git status empty |
+| Harness corrections | Removed leaked `PYTHONPATH` after one isolated-wheel probe failure; rebuilt the synthetic baseline after generated egg-info was detected. Both were local harness defects, not repository defects, and the entire loop was repeated successfully. |
+| Scope protection | No production geometry, topology, calculations, equipment values, browser authority, `programme-state.json` or licence status changed |
+| Origin movement during successful unit | No |
+| Machine receipt | `evidence/build-026/B026-05.json` |
+| Next permitted unit | `B026-06` only, subject to Product Owner designation of the current Trueself |
+
+The throwaway edit, branch and patch were not published to production. Only the machine plan, this append-only ledger and the B026-05 receipt may enter `main`.
