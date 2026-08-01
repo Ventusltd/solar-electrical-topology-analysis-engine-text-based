@@ -38,8 +38,18 @@ def test_programme_state_schema_arithmetic_and_capability_boundaries() -> None:
         "dc_ac_nameplate_ratio": 1.35,
     }
     assert state["current_build"] == "Build 025.5D1"
-    assert state["active_gate"].startswith("TS-004")
-    assert state["next_single_goal"].startswith("TS-005")
+    assert state["active_gate"].startswith("TS-005")
+    assert state["next_single_goal"].startswith("MB-10")
+    assert state["validation"]["suites"][0] == {
+        "name": "Python",
+        "passed": 334,
+        "total": 334,
+    }
+    assert any(
+        item["name"] == "Inverter-block clean wheel"
+        and item["passed"] == item["total"] == 1
+        for item in state["validation"]["suites"]
+    )
     assert "weighted_programme_progress" not in state
     assert "progress_percent" not in state
 
