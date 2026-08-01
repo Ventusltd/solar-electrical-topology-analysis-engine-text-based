@@ -2,14 +2,14 @@
   "schema_version": "globalgrid2050.solar-dc.programme-state.v1",
   "current_build": "Build 025.5D1",
   "programme_stage": "Programme truth established; generic equipment contract active",
-  "validated_commit": "71b160dffda5a9596060b7597166ccb39c2919ba",
-  "validated_commit_scope": "Programme-state, capsule-link and engineering-package implementation through this commit was validated by pull-request merge testing. Later bounded-observation and checkpoint commits are continuity metadata and do not change electrical calculation authority.",
+  "validated_commit": "36f1ab756d7ae5e9f9dbeb2256bec2e65d1f4ee5",
+  "validated_commit_scope": "Programme-state, capsule-link, bounded-observation and engineering-package implementation through this commit was validated by pull-request merge testing. The subsequent checkpoint commit records that evidence and does not change electrical calculation authority.",
   "package_version": "0.4.0",
   "validation": {
     "workflow": "V10 Engine Validation",
-    "run_id": 30676441221,
-    "artifact_id": 8810623069,
-    "merge_test_sha": "f90c540b75c0c922020d189dc0483a3bbda7668c",
+    "run_id": 30676961307,
+    "artifact_id": 8810817726,
+    "merge_test_sha": "acb1d65583dbca1e57737d7701a30f8b0b276669",
     "comparison_hash": "sha256:413aa93c98d1b9fd5f9ffee4f577cfe29a6e74f48bd927a3ebe7f541545d6366",
     "suites": [
       {
