@@ -1,21 +1,21 @@
 {
   "schema_version": "globalgrid2050.solar-dc.programme-state.v1",
   "current_build": "Build 025.5D1",
-  "programme_stage": "Generic equipment contract established; inverter-block aggregate active",
-  "validated_commit": "d0c377b53e5d60b8c716c97c112c7996ba102f8f",
-  "validated_commit_scope": "Generic equipment profiles, exact reference-fixture arithmetic, package API, clean-wheel contract and all earlier engineering authority through this commit were validated by pull-request merge testing. The successor Trueself checkpoint records final evidence and does not alter calculations.",
+  "programme_stage": "Complete inverter-block aggregate established; first authoritative Studio slice active",
+  "validated_commit": "78fe6fd6add4e4558ac8475df230eb2cd1729cfb",
+  "validated_commit_scope": "The complete inverter-block aggregate, provisional public API, both clean-wheel contracts and all earlier geometry, topology, routing and calculation authority were validated together by the TS-004 integration worker. The compact Trueself checkpoint and generated public projections do not alter engineering calculations.",
   "package_version": "0.4.0",
   "validation": {
-    "workflow": "V10 Engine Validation",
-    "run_id": 30677811304,
-    "artifact_id": 8811110022,
-    "merge_test_sha": "1ec15a12be9ca06c7419bc084457964e753fe0bf",
+    "workflow": "Microbuild Worker — TS-004 Integration",
+    "run_id": 30680420035,
+    "artifact_id": 8812013685,
+    "merge_test_sha": "78fe6fd6add4e4558ac8475df230eb2cd1729cfb",
     "comparison_hash": "sha256:413aa93c98d1b9fd5f9ffee4f577cfe29a6e74f48bd927a3ebe7f541545d6366",
     "suites": [
       {
         "name": "Python",
-        "passed": 296,
-        "total": 296
+        "passed": 334,
+        "total": 334
       },
       {
         "name": "V8 model",
@@ -41,12 +41,17 @@
         "name": "Clean installed wheel",
         "passed": 1,
         "total": 1
+      },
+      {
+        "name": "Inverter-block clean wheel",
+        "passed": 1,
+        "total": 1
       }
     ]
   },
-  "restore_point": "restore/2026-08-01-0210-pre-ts-003-equipment-contract",
-  "current_quantum_spawn": "docs/quantum-spawn/202608010151-bounded-observation-and-truncation-law.md",
-  "current_trueself": "docs/trueself/202608010226-ts-003-exact-equipment-contract-authority.md",
+  "restore_point": "restore/2026-08-01-0303-pre-twenty-step-autopilot",
+  "current_quantum_spawn": "docs/quantum-spawn/202608010303-twenty-step-github-actions-autopilot.md",
+  "current_trueself": "docs/trueself/202608010343-ts-004-inverter-block-aggregate-pass.md",
   "reference_inverter_block": {
     "module_technology": "bifacial",
     "module_rated_power_wp": 660,
@@ -69,6 +74,7 @@
       "machine-readable programme truth and capsule-link integrity gates"
     ],
     "provisional": [
+      "complete deterministic 352 kVA inverter-block aggregate and receipt",
       "generic evidence-qualified 660 Wp bifacial module and 352 kVA inverter equipment contract",
       "resistance source qualification and assessment serialisation",
       "generic 4 mm2 and 6 mm2 metal-coated class 5 resistance sources",
@@ -82,14 +88,14 @@
       "V10 browser development workbench"
     ]
   },
-  "active_gate": "TS-004 — Add the complete inverter-block aggregate and receipt",
-  "next_single_goal": "TS-005 — Complete physical input and MPPT authority",
+  "active_gate": "TS-005 — First authoritative Studio slice",
+  "next_single_goal": "MB-10 — TS-005 hand-off proof",
   "known_limitations": [
     "The generic equipment contract contains 47 unresolved or candidate evidence items, including module electrical values, dimensions, connector data, lead lengths, installation class and every input-to-MPPT relationship.",
     "The generic conductor resistance records remain candidates because exact source revisions are not encoded and verification is incomplete.",
-    "The complete 352 kVA inverter-block aggregate and portable project contract are not yet first-class kernel objects.",
     "Internal DC topology, shared-bus behaviour, reverse-current blocking and PCE backfeed remain unresolved.",
-    "The production browser is not yet a calculation-free thin client.",
+    "The authoritative Studio mode is not yet connected to the Python inverter-block receipt.",
+    "The existing browser calculations remain exploratory and must be visibly separated from Authority mode.",
     "Standards, EMC, lightning, environmental classes, plant ingestion and fleet intelligence remain later controlled builds."
   ],
   "progress_policy": "No numerical programme-completion percentage is claimed until explicit stage weights and acceptance evidence are encoded in this manifest.",
