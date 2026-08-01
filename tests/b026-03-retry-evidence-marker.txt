@@ -1,0 +1,8 @@
+Build 026 validation-only marker
+
+Unit: B026-03 retry — Full local validation envelope reproduction
+Base origin head: 7a878d8930b748401a24ead372460c45a026ebe1
+Evidence head: 81859e2d3ecdbdeae017f8213d7d940b3337627f
+Purpose: trigger repository-controlled validation of the evidence transition after both local passes completed.
+Merge policy: do not merge this marker.
+Production engineering changes: none.
