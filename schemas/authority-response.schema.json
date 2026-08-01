@@ -1,0 +1,410 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://globalgrid2050.com/schemas/solar-dc/authority-response.v1.json",
+  "title": "Solar DC Reference Inverter-Block Authority Response",
+  "description": "Machine-readable contract for the deterministic Python-owned reference inverter-block response. Hash semantics and cross-receipt identity are additionally enforced by scripts/validate_authority_bundle.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "command_version",
+    "strategy",
+    "inverter_block",
+    "build025",
+    "response_hash"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "globalgrid2050.solar-dc.authority-response.v1"
+    },
+    "command_version": {
+      "const": "globalgrid2050.solar-dc.reference-block-command.v1"
+    },
+    "strategy": {
+      "enum": ["leapfrog", "sequential"]
+    },
+    "inverter_block": {
+      "$ref": "#/$defs/inverter_block"
+    },
+    "build025": {
+      "$ref": "#/$defs/build025"
+    },
+    "response_hash": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "product_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "module_profile_id",
+        "inverter_profile_id",
+        "module_technology",
+        "module_rated_power_wp",
+        "modules_per_string",
+        "string_count",
+        "module_count",
+        "string_rated_power_kwp",
+        "dc_nameplate_power_kwp",
+        "inverter_apparent_power_kva",
+        "dc_ac_nameplate_ratio"
+      ],
+      "properties": {
+        "module_profile_id": {
+          "const": "generic_bifacial_module_660wp"
+        },
+        "inverter_profile_id": {
+          "const": "generic_string_inverter_352kva_24_input"
+        },
+        "module_technology": {
+          "const": "bifacial"
+        },
+        "module_rated_power_wp": {
+          "const": 660.0
+        },
+        "modules_per_string": {
+          "const": 30
+        },
+        "string_count": {
+          "const": 24
+        },
+        "module_count": {
+          "const": 720
+        },
+        "string_rated_power_kwp": {
+          "const": 19.8
+        },
+        "dc_nameplate_power_kwp": {
+          "const": 475.2
+        },
+        "inverter_apparent_power_kva": {
+          "const": 352.0
+        },
+        "dc_ac_nameplate_ratio": {
+          "const": 1.35
+        }
+      }
+    },
+    "input_authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "physical_dc_input_count",
+        "allocated_physical_input_count",
+        "mppt_count",
+        "mppt_count_verification_state",
+        "mppt_mapping_verification_states",
+        "internal_dc_topology",
+        "internal_dc_topology_verification_state",
+        "reverse_current_blocking",
+        "reverse_current_blocking_verification_state",
+        "pce_backfeed_current_a",
+        "pce_backfeed_verification_state",
+        "routing_fixture_mppt_labels_are_equipment_evidence"
+      ],
+      "properties": {
+        "physical_dc_input_count": {
+          "const": 24
+        },
+        "allocated_physical_input_count": {
+          "const": 24
+        },
+        "mppt_count": {
+          "type": "null"
+        },
+        "mppt_count_verification_state": {
+          "const": "unknown"
+        },
+        "mppt_mapping_verification_states": {
+          "const": ["unknown"]
+        },
+        "internal_dc_topology": {
+          "const": "unknown"
+        },
+        "internal_dc_topology_verification_state": {
+          "const": "unknown"
+        },
+        "reverse_current_blocking": {
+          "const": "unknown"
+        },
+        "reverse_current_blocking_verification_state": {
+          "const": "unknown"
+        },
+        "pce_backfeed_current_a": {
+          "type": "null"
+        },
+        "pce_backfeed_verification_state": {
+          "const": "unknown"
+        },
+        "routing_fixture_mppt_labels_are_equipment_evidence": {
+          "const": false
+        }
+      }
+    },
+    "equipment_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "missing_evidence_count",
+        "missing_evidence"
+      ],
+      "properties": {
+        "state": {
+          "const": "incomplete_evidence"
+        },
+        "missing_evidence_count": {
+          "const": 47
+        },
+        "missing_evidence": {
+          "type": "array",
+          "minItems": 47,
+          "maxItems": 47,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "equipment_contract_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_id", "revision", "contract_hash"],
+      "properties": {
+        "contract_id": {
+          "const": "generic_352kva_475_2kwp_reference_equipment"
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_hash": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "table_receipt_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "table_id",
+        "strategy",
+        "module_count",
+        "string_count",
+        "geometry_hash",
+        "assignment_hash",
+        "topology_hash",
+        "input_allocation_hash",
+        "routing_hash",
+        "installed_length_hash",
+        "build025_receipt_hash",
+        "routing_fixture_equipment_profile_id",
+        "routing_fixture_inverter_id"
+      ],
+      "properties": {
+        "table_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "strategy": {
+          "enum": ["leapfrog", "sequential"]
+        },
+        "module_count": {
+          "const": 720
+        },
+        "string_count": {
+          "const": 24
+        },
+        "geometry_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "assignment_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "topology_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "input_allocation_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "routing_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "installed_length_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "build025_receipt_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "routing_fixture_equipment_profile_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "routing_fixture_inverter_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "inverter_block": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "block_id",
+        "receipt_hash",
+        "equipment_contract",
+        "product_boundary",
+        "table_count",
+        "table_receipts",
+        "input_authority",
+        "equipment_evidence"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "globalgrid2050.solar-dc.inverter-block.v1"
+        },
+        "block_id": {
+          "const": "inverter_block_352kva_475_2kwp_001"
+        },
+        "receipt_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "equipment_contract": {
+          "$ref": "#/$defs/equipment_contract_binding"
+        },
+        "product_boundary": {
+          "$ref": "#/$defs/product_boundary"
+        },
+        "table_count": {
+          "const": 1
+        },
+        "table_receipts": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "$ref": "#/$defs/table_receipt_binding"
+          }
+        },
+        "input_authority": {
+          "$ref": "#/$defs/input_authority"
+        },
+        "equipment_evidence": {
+          "$ref": "#/$defs/equipment_evidence"
+        }
+      }
+    },
+    "build025": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "receipt_hash",
+        "geometry",
+        "string_allocation",
+        "topology",
+        "input_allocation",
+        "routing",
+        "installed_length",
+        "equipment_profile"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "globalgrid2050.solar-dc.build-025.v1"
+        },
+        "receipt_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "geometry": {
+          "type": "object",
+          "required": ["table_id", "module_count", "geometry_hash", "placements"],
+          "properties": {
+            "table_id": {"type": "string", "minLength": 1},
+            "module_count": {"const": 720},
+            "geometry_hash": {"$ref": "#/$defs/sha256"},
+            "placements": {"type": "array", "minItems": 720, "maxItems": 720}
+          }
+        },
+        "string_allocation": {
+          "type": "object",
+          "required": ["table_id", "string_count", "modules_per_string", "assignment_hash", "geometry_hash"],
+          "properties": {
+            "table_id": {"type": "string", "minLength": 1},
+            "string_count": {"const": 24},
+            "modules_per_string": {"const": 30},
+            "assignment_hash": {"$ref": "#/$defs/sha256"},
+            "geometry_hash": {"$ref": "#/$defs/sha256"}
+          }
+        },
+        "topology": {
+          "type": "object",
+          "required": ["table_id", "strategy", "assignment_hash", "topology_hash"],
+          "properties": {
+            "table_id": {"type": "string", "minLength": 1},
+            "strategy": {"enum": ["leapfrog", "sequential"]},
+            "assignment_hash": {"$ref": "#/$defs/sha256"},
+            "topology_hash": {"$ref": "#/$defs/sha256"}
+          }
+        },
+        "input_allocation": {
+          "type": "object",
+          "required": ["table_id", "assignment_hash", "allocation_hash"],
+          "properties": {
+            "table_id": {"type": "string", "minLength": 1},
+            "assignment_hash": {"$ref": "#/$defs/sha256"},
+            "allocation_hash": {"$ref": "#/$defs/sha256"}
+          }
+        },
+        "routing": {
+          "type": "object",
+          "required": [
+            "table_id",
+            "strategy",
+            "geometry_hash",
+            "assignment_hash",
+            "topology_hash",
+            "input_allocation_hash",
+            "routing_hash",
+            "strings"
+          ],
+          "properties": {
+            "table_id": {"type": "string", "minLength": 1},
+            "strategy": {"enum": ["leapfrog", "sequential"]},
+            "geometry_hash": {"$ref": "#/$defs/sha256"},
+            "assignment_hash": {"$ref": "#/$defs/sha256"},
+            "topology_hash": {"$ref": "#/$defs/sha256"},
+            "input_allocation_hash": {"$ref": "#/$defs/sha256"},
+            "routing_hash": {"$ref": "#/$defs/sha256"},
+            "strings": {"type": "array", "minItems": 24, "maxItems": 24}
+          }
+        },
+        "installed_length": {
+          "type": "object",
+          "required": ["table_id", "routing_hash", "receipt_hash"],
+          "properties": {
+            "table_id": {"type": "string", "minLength": 1},
+            "routing_hash": {"$ref": "#/$defs/sha256"},
+            "receipt_hash": {"$ref": "#/$defs/sha256"}
+          }
+        },
+        "equipment_profile": {
+          "type": "object",
+          "required": ["profile_id", "inverter_id", "physical_inputs"],
+          "properties": {
+            "profile_id": {"type": "string", "minLength": 1},
+            "inverter_id": {"type": "string", "minLength": 1},
+            "physical_inputs": {"type": "array", "minItems": 24, "maxItems": 24}
+          }
+        }
+      }
+    }
+  }
+}
