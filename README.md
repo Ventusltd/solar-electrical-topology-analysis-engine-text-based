@@ -1,5 +1,46 @@
 # Solar Electrical Topology Analysis Engine
 
+<!-- PROGRAMME-STATE:START -->
+## Current programme state
+
+This block is generated from [`programme-state.json`](programme-state.json). CI fails if the manifest, this status block or [`progress-dashboard.html`](progress-dashboard.html) drift apart.
+
+| Field | Current authority |
+|---|---|
+| Build | **Build 025.5D1** |
+| Stage | Trusted kernel and resistance-evidence authority |
+| Package | `0.4.0` |
+| Last validated engineering commit | `a239aae2de32daf19bbb00c4bda7095ab7780623` |
+| Active gate | **TS-002 — Establish one programme truth manifest** |
+| Next single goal | **TS-003 — Freeze the generic reference equipment contract** |
+
+### First complete product boundary
+
+```text
+660 Wp bifacial modules × 30 modules/string × 24 strings
+= 720 modules
+= 475.2 kWp DC
+= one 352 kVA inverter block
+DC/AC nameplate ratio = 1.35
+```
+
+### Latest declared validation envelope
+
+| Suite | Result | State |
+|---|---:|---|
+| Python | 275 / 275 | PASS |
+| V8 model | 13 / 13 | PASS |
+| V8 authority reconciliation | 6 / 6 | PASS |
+| V9 deterministic engine | 10 / 10 | PASS |
+| V10 JavaScript | 13 / 13 | PASS |
+| Clean installed wheel | 1 / 1 | PASS |
+
+Comparison hash: `sha256:413aa93c98d1b9fd5f9ffee4f577cfe29a6e74f48bd927a3ebe7f541545d6366`
+
+**Progress policy:** No numerical programme-completion percentage is claimed until explicit stage weights and acceptance evidence are encoded in this manifest.
+<!-- PROGRAMME-STATE:END -->
+
+
 An open-source, text-based engineering engine for modelling solar PV electrical topology from physical geometry and electrical parameters.
 
 The purpose of this repository is to test whether conventional solar DC string design methods based mainly on conductor resistance, voltage drop and current carrying capacity omit electrical behaviour that becomes important in large systems.
@@ -135,7 +176,7 @@ V8 adds:
 - diagram showing why the free positive and negative terminals are no longer one row span apart;
 - JSON export.
 
-Default manufacturer inputs are treated as editable hypotheses. The Trina module geometry, factory cable data, SG350HX input configuration, Studer cable resistance and Stäubli connector data are useful starting points, but final values require measured lead lengths, actual connector family, actual route, as-built string sequence and competent-person review.
+Default manufacturer inputs are treated as editable hypotheses. The module geometry, factory cable data, inverter input configuration, cable resistance and connector data are useful starting points, but final values require measured lead lengths, actual connector family, actual route, as-built string sequence and competent-person review.
 
 A restore point was created before this build at [`restore_points/2026-07-27-v8-leapfrog/`](restore_points/2026-07-27-v8-leapfrog/).
 
