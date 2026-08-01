@@ -79,6 +79,7 @@ def test_end_to_end_harness_uses_existing_authority_paths() -> None:
     assert "validate_authority_bundle_payload" in source
     assert "validate_inverter_block_wheel.py" in source
     assert "studio-authority.test.mjs" in source
+    assert "studio-authority-evidence.test.mjs" in source
     assert "authority_response_json" in bridge_source
     assert "AUTHORITY_BUNDLE_PATH.read_bytes()" not in bridge_source
     assert "eval(" not in source
