@@ -1,0 +1,98 @@
+TS-005 AUTHORITATIVE STUDIO SLICE — FINAL HANDOVER
+Date: 1 August 2026
+Repository: Ventusltd/solar-electrical-topology-analysis-engine-text-based
+
+PURPOSE
+
+This handover records the exact state after completion of the twenty-step GitHub Actions autopilot programme. It is written for a future human or AI worker arriving with no reliable conversational memory. The repository, tests, manifests, receipts and evidence artefacts are the authority. This text is a navigation aid, not a substitute for them.
+
+PRODUCT BOUNDARY
+
+The first complete engineering product boundary is one generic solar inverter block:
+
+660 Wp bifacial modules
+30 modules per string
+24 strings
+720 modules
+475.2 kWp DC
+352 kVA inverter
+1.35 DC/AC nameplate ratio
+
+This is not a claim that all equipment data have been verified. It is an exact deterministic reference boundary over which geometry, string assignment, topology, routing, installed length, resistance, voltage drop, loss, uncertainty and evidence receipts can be exercised together.
+
+WHAT IS NOW COMPLETE
+
+The programme identified as twenty-step-autopilot-20260801 is complete. MB-01 through MB-20 have passed. Each step in microbuild-plan.json contains the step identifier, manifest revision, tested commit, test identifier, passing result, workflow run, evidence artefact and deterministic evidence hash. The manifest has no active or next step because no unfinished step remains.
+
+Phase A established the machine-controlled development system: a twenty-step manifest, validation rules, an allowlisted test runner, GitHub Actions execution, installed-wheel inverter-block checks, deterministic evidence, safe advancement previews, refusal of stale or mismatched evidence, full TS-004 integration and hostile-amnesia handoff proof.
+
+Phase B established the first Python-kernel-to-screen authority path: a versioned reference-block command, deterministic command contract, committed authority response bundle, JSON Schema and semantic validation, visibly separated Playground and Authority modes, direct projection of product scalars and hashes, direct projection of 720 module centres and 744 conductor polylines, explicit presentation of 24 physical input assignments and unresolved evidence, a live local authority bridge, and the final end-to-end authority slice.
+
+MERGED IMPLEMENTATION
+
+Pull request 56 merged the local authority bridge, the end-to-end authority harness, their tests and repairs to the full validation envelope. The merge commit is d533dc34ba365156cb2fb321c7e1d360c9008791.
+
+The local bridge is implemented in scripts/local_authority_bridge.py. It uses Python’s standard library HTTP server and dynamically obtains the authority response from the Python command path. It does not treat the committed JSON file as its live calculation authority. It serves both the response and the existing Studio assets through controlled routes.
+
+The end-to-end harness is implemented in scripts/run_authority_slice.py. It runs the reference command, compares its bytes with the committed bundle, starts the local bridge, fetches the bridge response, proves that the Studio’s relative bundle path resolves to that bridge route, validates the response schema and semantics, runs the browser projection gates and runs the clean installed inverter-block wheel check.
+
+A stale MB-20 harness reference was corrected: evidence projection is now tested through v10-development/tests/studio-authority-evidence.test.mjs rather than through an obsolete mode argument to studio-authority.test.mjs.
+
+The same work exposed and repaired three pre-existing validation weaknesses. The full workflow now generates the authority-bundle candidate before pytest. TS-005 handoff assertions no longer freeze the active pointer at MB-10 after later steps have passed. The V10 npm test command explicitly invokes the mode-driven Studio gates rather than asking Node’s generic test discovery to execute a script without its required mode.
+
+VALIDATION
+
+The repaired full V10 validation envelope passed on pull request 56. The merge-test SHA was 4816f365fa90239647a3bb2dd6d621c11c5a6658. The validation artefact was 8817086181. Results included 371 passing Python tests, V8 regression tests with authority reconciliation, ten passing V9 deterministic tests, all declared V10 JavaScript and Studio gates, and the clean installed-wheel authority probe.
+
+MB-19 then passed its own focused Microbuild Worker run:
+
+workflow run 30695546837
+evidence artefact 8817123798
+tested merge SHA d012c6944fb0f181c6bcdbcbcbead177ae96696b
+evidence hash sha256:86afd976854a70262f6924837b03114a439045e7e57fba618bc6931d47f49123
+
+MB-20 passed its own focused Microbuild Worker run:
+
+workflow run 30695639823
+evidence artefact 8817152776
+tested merge SHA 96300f507ea7ef6ab5baff748afdbcfc3619213b
+evidence hash sha256:d5739468dd47ef9b9ffa2e9a7bbcc025279a3ba7de898fdccfb2c30b5bf3f529
+
+AUTHORITY BOUNDARY
+
+The Python package owns the engineering authority. The browser is an editor and projection surface. Authority mode may display supplied values, coordinates, routes, evidence states and receipt hashes. It must not independently recompute authoritative route lengths, resistance, voltage drop, loss or equipment conclusions.
+
+The command response, committed response bundle and local bridge response are required to be byte-identical for the reference case. Any divergence is a failing authority condition, not a harmless presentation difference.
+
+The existing Playground calculations remain useful exploratory work, but they are visibly non-authoritative. Historical V6 to V10 workbenches remain reproducible references and are not silently promoted merely because their tests pass.
+
+UNRESOLVED EVIDENCE
+
+Completion of the slice does not mean completion of the engineering programme as a whole. Forty-seven equipment evidence items remain unresolved or candidate. In particular, input identifiers that resemble MPPT labels are routing fixture labels, not proof of actual equipment MPPT mapping. Internal inverter DC topology, shared-bus behaviour, reverse-current blocking and PCE backfeed current remain unknown.
+
+The generic 4 mm² and 6 mm² metal-coated Class 5 conductor resistance records remain candidates because exact source revisions and independent verification are not yet encoded. Legacy ideal-bulk resistance calculations remain historical, lower-bound or assumed outputs rather than finished-conductor authority.
+
+No universal loop-area compliance threshold, universal bifacial multiplier, universal string-cable current rule or unevidenced protection trigger may be introduced. Standards, EMC, lightning, wet/dry environmental networks, plant ingestion and fleet intelligence require separate controlled builds.
+
+RELOAD ORDER
+
+A future worker should read, in order:
+
+1. programme-state.json for the public programme truth;
+2. microbuild-plan.json for all twenty step-evidence records;
+3. docs/trueself/20260801-ts-005-authoritative-slice-closure.md;
+4. docs/quantum-spawn/202608010303-twenty-step-github-actions-autopilot.md for the original programme law;
+5. scripts/build_authority_bundle.py and scripts/reference_block_command.py;
+6. scripts/local_authority_bridge.py and scripts/run_authority_slice.py;
+7. tests/test_local_authority_bridge.py and tests/test_end_to_end_authority_slice.py;
+8. authority-bundles/reference-inverter-block.json;
+9. the installed package authority under src/solar_topology;
+10. the cited GitHub Actions runs and artefacts when execution evidence is required.
+
+RESTORE AND NEXT WORK
+
+The pre-MB-19/MB-20 restore point is restore/2026-08-01-1048-pre-mb19-mb20. The earlier isolated implementation branch may remain for history, but main contains the validated implementation.
+
+No following twenty-step programme is defined in this handover. That omission is deliberate. The next engineering objective must be selected by the Product Owner rather than inferred from momentum. The completed manifest is a terminal state, not permission for an autonomous worker to invent a new scope.
+
+The next worker’s first duty is therefore to verify the repository state, not to begin coding. If a new programme is authorised, create a new Quantum Spawn, new restore point and new machine-readable manifest. Preserve the completed twenty-step programme as immutable evidence of the first end-to-end authoritative Studio slice.
