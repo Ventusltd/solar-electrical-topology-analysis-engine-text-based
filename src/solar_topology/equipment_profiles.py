@@ -9,6 +9,7 @@ geometry, topology, routing, electrical calculations or existing receipt hashes.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from decimal import Decimal
 from enum import StrEnum
 import hashlib
 import json
@@ -178,18 +179,27 @@ class ReferenceEquipmentContract:
         value = self.module.rated_power_wp.value
         if not isinstance(value, (int, float)):
             raise ValueError("module rated power is unresolved")
-        return float(value) * self.modules_per_string / 1000.0
+        result = (
+            Decimal(str(value))
+            * Decimal(self.modules_per_string)
+            / Decimal(1000)
+        )
+        return float(result)
 
     @property
     def dc_nameplate_power_kwp(self) -> float:
-        return self.string_rated_power_kwp * self.string_count
+        result = Decimal(str(self.string_rated_power_kwp)) * Decimal(
+            self.string_count
+        )
+        return float(result)
 
     @property
     def dc_ac_nameplate_ratio(self) -> float:
         value = self.inverter.apparent_power_kva.value
         if not isinstance(value, (int, float)):
             raise ValueError("inverter apparent power is unresolved")
-        return self.dc_nameplate_power_kwp / float(value)
+        result = Decimal(str(self.dc_nameplate_power_kwp)) / Decimal(str(value))
+        return float(result)
 
 
 def _known(value: ScalarValue, unit: str | None) -> QualifiedValue:
