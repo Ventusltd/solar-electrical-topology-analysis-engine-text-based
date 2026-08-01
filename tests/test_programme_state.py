@@ -37,13 +37,16 @@ def test_programme_state_schema_arithmetic_and_capability_boundaries() -> None:
         "inverter_apparent_power_kva": 352,
         "dc_ac_nameplate_ratio": 1.35,
     }
-    assert state["current_build"] == "Build 025.5D1"
-    assert state["active_gate"].startswith("TS-005")
-    assert state["next_single_goal"].startswith("MB-10")
+    assert state["current_build"] == "Build 025.5D1 / TS-005"
+    assert state["active_gate"] == "TS-005 — Complete"
+    assert state["next_single_goal"] == "Define the next controlled programme"
+    assert state["current_trueself"] == (
+        "docs/trueself/20260801-ts-005-authoritative-slice-closure.md"
+    )
     assert state["validation"]["suites"][0] == {
         "name": "Python",
-        "passed": 334,
-        "total": 334,
+        "passed": 377,
+        "total": 377,
     }
     assert any(
         item["name"] == "Inverter-block clean wheel"
