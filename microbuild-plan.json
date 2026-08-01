@@ -1,0 +1,191 @@
+{
+  "schema_version": "globalgrid2050.solar-dc.microbuild-plan.v1",
+  "programme_id": "twenty-step-autopilot-20260801",
+  "manifest_revision": 1,
+  "quantum_spawn": "docs/quantum-spawn/202608010303-twenty-step-github-actions-autopilot.md",
+  "restore_point": "restore/2026-08-01-0303-pre-twenty-step-autopilot",
+  "active_step": "MB-01",
+  "next_step": "MB-02",
+  "steps": [
+    {
+      "id": "MB-01",
+      "ordinal": 1,
+      "phase": "A",
+      "title": "Microbuild manifest authority",
+      "status": "active",
+      "test_id": "manifest_contract",
+      "evidence": null
+    },
+    {
+      "id": "MB-02",
+      "ordinal": 2,
+      "phase": "A",
+      "title": "Allowlisted step runner",
+      "status": "planned",
+      "test_id": "runner_contract",
+      "evidence": null
+    },
+    {
+      "id": "MB-03",
+      "ordinal": 3,
+      "phase": "A",
+      "title": "GitHub Actions microbuild worker",
+      "status": "planned",
+      "test_id": "workflow_contract",
+      "evidence": null
+    },
+    {
+      "id": "MB-04",
+      "ordinal": 4,
+      "phase": "A",
+      "title": "Installed inverter-block contract",
+      "status": "planned",
+      "test_id": "clean_wheel_inverter_block",
+      "evidence": null
+    },
+    {
+      "id": "MB-05",
+      "ordinal": 5,
+      "phase": "A",
+      "title": "Canonical microbuild evidence",
+      "status": "planned",
+      "test_id": "microbuild_evidence",
+      "evidence": null
+    },
+    {
+      "id": "MB-06",
+      "ordinal": 6,
+      "phase": "A",
+      "title": "Safe advancement preview",
+      "status": "planned",
+      "test_id": "advancement_preview",
+      "evidence": null
+    },
+    {
+      "id": "MB-07",
+      "ordinal": 7,
+      "phase": "A",
+      "title": "Advancement refusal rules",
+      "status": "planned",
+      "test_id": "advancement_refusal",
+      "evidence": null
+    },
+    {
+      "id": "MB-08",
+      "ordinal": 8,
+      "phase": "A",
+      "title": "TS-004 integration gate",
+      "status": "planned",
+      "test_id": "ts004_integration",
+      "evidence": null
+    },
+    {
+      "id": "MB-09",
+      "ordinal": 9,
+      "phase": "A",
+      "title": "TS-004 compact closure",
+      "status": "planned",
+      "test_id": "ts004_programme_projection",
+      "evidence": null
+    },
+    {
+      "id": "MB-10",
+      "ordinal": 10,
+      "phase": "A",
+      "title": "TS-005 hand-off proof",
+      "status": "planned",
+      "test_id": "ts005_handoff",
+      "evidence": null
+    },
+    {
+      "id": "MB-11",
+      "ordinal": 11,
+      "phase": "B",
+      "title": "Reference-block command",
+      "status": "planned",
+      "test_id": "reference_block_command",
+      "evidence": null
+    },
+    {
+      "id": "MB-12",
+      "ordinal": 12,
+      "phase": "B",
+      "title": "Command contract",
+      "status": "planned",
+      "test_id": "command_contract",
+      "evidence": null
+    },
+    {
+      "id": "MB-13",
+      "ordinal": 13,
+      "phase": "B",
+      "title": "Committed authority bundle",
+      "status": "planned",
+      "test_id": "authority_bundle",
+      "evidence": null
+    },
+    {
+      "id": "MB-14",
+      "ordinal": 14,
+      "phase": "B",
+      "title": "Bundle schema gate",
+      "status": "planned",
+      "test_id": "bundle_schema",
+      "evidence": null
+    },
+    {
+      "id": "MB-15",
+      "ordinal": 15,
+      "phase": "B",
+      "title": "Studio mode separation",
+      "status": "planned",
+      "test_id": "studio_mode_separation",
+      "evidence": null
+    },
+    {
+      "id": "MB-16",
+      "ordinal": 16,
+      "phase": "B",
+      "title": "Authority mode loads bundle",
+      "status": "planned",
+      "test_id": "authority_bundle_render",
+      "evidence": null
+    },
+    {
+      "id": "MB-17",
+      "ordinal": 17,
+      "phase": "B",
+      "title": "Kernel geometry and routes",
+      "status": "planned",
+      "test_id": "authority_geometry_render",
+      "evidence": null
+    },
+    {
+      "id": "MB-18",
+      "ordinal": 18,
+      "phase": "B",
+      "title": "Inputs and evidence gaps",
+      "status": "planned",
+      "test_id": "authority_evidence_render",
+      "evidence": null
+    },
+    {
+      "id": "MB-19",
+      "ordinal": 19,
+      "phase": "B",
+      "title": "Local authority bridge",
+      "status": "planned",
+      "test_id": "local_authority_bridge",
+      "evidence": null
+    },
+    {
+      "id": "MB-20",
+      "ordinal": 20,
+      "phase": "B",
+      "title": "End-to-end authoritative slice",
+      "status": "planned",
+      "test_id": "end_to_end_authority_slice",
+      "evidence": null
+    }
+  ]
+}
