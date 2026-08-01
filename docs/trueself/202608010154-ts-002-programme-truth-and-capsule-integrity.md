@@ -6,13 +6,13 @@
 
 **Timestamp:** 2026-08-01 01:54 Europe/London
 
-**Version:** 1.0
+**Version:** 1.1
 
-**Status:** Implemented; closure validation pending
+**Status:** Verified execution checkpoint
 
-**Authority:** Repository implementation and verified intermediate GitHub Actions evidence
+**Authority:** Repository implementation, GitHub Actions run `30676961307` and validation artefact `8810817726`
 
-**Supersedes:** None
+**Supersedes:** Version 1.0 of this file, which recorded closure validation as pending
 
 **Dependencies:**
 - `202608010104-complete-352-kva-inverter-block-plan.md`
@@ -23,7 +23,7 @@
 
 **Current Build:** Build 025.5D1
 
-**Goal:** TS-002 — Establish one programme truth manifest
+**Completed Goal:** TS-002 — Establish one programme truth manifest
 
 **Restore Points:**
 - `restore/2026-08-01-0131-pre-ts-002-programme-truth`
@@ -32,15 +32,15 @@
 
 ---
 
-## 1. Goal
+## 1. Goal completed
 
-Create one machine-readable programme-state authority and prevent public status, capsule paths and future AI reload instructions from drifting away from repository reality.
+The repository now has one machine-readable programme-state authority and executable controls preventing public status and capsule dependencies from drifting away from repository reality.
 
-No engineering calculation, equipment value, source-promotion decision or deterministic electrical receipt may change in this goal.
+No electrical calculation, equipment value, source-promotion decision or deterministic engineering receipt changed in this goal.
 
-## 2. Programme truth implementation
+## 2. Programme truth authority
 
-The new authority files are:
+The controlling files are:
 
 ```text
 programme-state.json
@@ -49,16 +49,44 @@ scripts/sync_programme_state.py
 tests/test_programme_state.py
 ```
 
-Generated or checked projections are:
+The generated or checked projections are:
 
 ```text
 README.md programme-state block
 progress-dashboard.html
 ```
 
-CI now fails when the manifest and public projections differ.
+The validation workflow executes:
 
-The stale manually maintained claims removed from public state include:
+```text
+python scripts/sync_programme_state.py --check
+```
+
+before the engineering suites.
+
+A manually edited README or dashboard that disagrees with the manifest now fails validation.
+
+## 3. First complete product boundary
+
+Programme truth fixes the first product boundary as:
+
+```text
+module technology                    bifacial
+module rated power                    660 Wp
+modules per string                     30
+string rated power                     19.8 kWp
+strings                                 24
+module count                           720
+total DC nameplate power               475.2 kWp
+inverter apparent-power rating         352 kVA
+DC-to-AC nameplate ratio                 1.35
+```
+
+The synchroniser verifies the arithmetic using decimal values.
+
+## 4. Public-state correction
+
+The previous dashboard manually repeated obsolete claims including:
 
 ```text
 Build 024 active
@@ -67,36 +95,37 @@ Build 024 active
 31.25 percent completion
 ```
 
-No replacement completion percentage is invented. The manifest states that no numerical programme percentage is claimed until explicit weights and acceptance evidence exist.
+Those claims are removed.
 
-## 3. First product boundary fixed in programme truth
+No replacement completion percentage is invented. The manifest states:
 
 ```text
-660 Wp bifacial modules
-30 modules per string
-24 strings
-720 modules
-475.2 kWp DC
-352 kVA inverter apparent-power rating
-1.35 DC/AC nameplate ratio
+No numerical programme-completion percentage is claimed until explicit stage weights and acceptance evidence are encoded.
 ```
 
-The synchroniser checks this arithmetic using decimal values and rejects a contradictory manifest.
-
-## 4. Confirmed capsule-link defect
-
-An external audit correctly identified that three newly written capsules cited six plausible but non-existent paths.
-
-The title-verified canonical mapping is:
+Capabilities are now separated into:
 
 ```text
-reconstructed path                              canonical title-verified path
-202607311620-system-architecture.md          -> 202607311615-system-architecture.md
-202607311640-geometry-authority.md            -> 202607311619-geometry-authority.md
-202607311700-array-engine.md                  -> 202607311624-array-engine.md
-202607311720-physics-emc-lightning.md         -> 202607311627-physics-emc-lightning.md
-202607311740-standards-validation.md          -> 202607311628-standards-validation.md
-202607311820-respawn-instructions.md          -> 202607311652-respawn-instructions.md
+canonical
+provisional
+historical
+```
+
+Known limitations remain visible.
+
+## 5. Confirmed capsule-path defect
+
+An external audit correctly identified six plausible but non-existent references introduced during an amnesia reconstruction.
+
+The title-verified mapping is:
+
+```text
+202607311620-system-architecture.md      -> 202607311615-system-architecture.md
+202607311640-geometry-authority.md        -> 202607311619-geometry-authority.md
+202607311700-array-engine.md              -> 202607311624-array-engine.md
+202607311720-physics-emc-lightning.md     -> 202607311627-physics-emc-lightning.md
+202607311740-standards-validation.md      -> 202607311628-standards-validation.md
+202607311820-respawn-instructions.md      -> 202607311652-respawn-instructions.md
 ```
 
 The genuine file:
@@ -105,83 +134,112 @@ The genuine file:
 202607311640-commercial-strategy.md
 ```
 
-is explicitly prevented from satisfying the Geometry Authority mapping.
+is a different subject and cannot satisfy the Geometry Authority dependency.
 
-## 5. Non-destructive repair
+## 6. Non-destructive repair
 
-Because the incorrect references were already committed into append-only memory capsules, the repair preserves history through six compatibility pointers.
+Because the incorrect references were already part of append-only memory capsules, six compatibility pointers were added rather than deleting history.
 
 Each pointer:
 
-- declares that it is not an independent authority;
-- names one title-verified canonical target;
+- declares that it is compatibility-only;
+- identifies one canonical target by title;
 - explains the reconstructed-timestamp error;
-- preserves old links without silently rewriting history.
+- preserves old references while directing reloads to the real file.
 
-The executable prevention is:
+Executable prevention is now provided by:
 
 ```text
 scripts/check_capsule_links.py
 tests/test_capsule_links.py
 ```
 
-The gate runs before programme-state drift and engineering validation.
+The workflow runs the capsule-link gate before programme-state drift and the engineering suites.
 
-## 6. Bounded-observation correction
+## 7. Bounded-observation law
 
-The same external audit reported that an earlier repository count was derived from a shallow clone and therefore measured the clone depth rather than full history.
+The external audit also disclosed that an earlier repository count came from a shallow clone and therefore measured the clone depth rather than complete history.
 
-This hazard is now canonical in:
+The general hazard is now canonical in:
 
 ```text
 docs/quantum-spawn/202608010151-bounded-observation-and-truncation-law.md
 ```
 
-The external audit also supplied a replacement exact commit count. The current connected interface does not expose an independently verified uncapped total enumeration, so that number is not promoted into programme truth.
+The connected interface used for this build did not expose an independently verified uncapped full-history count. Therefore the replacement numerical count supplied by the external feed was not promoted into programme truth.
 
-The general rule is verified and retained:
+The retained law is:
 
 ```text
 a bounded successful result is not proof of completeness
 ```
 
-## 7. Intermediate validation evidence
+## 8. Validation history
 
-### TS-002 manifest validation
+### Initial manifest validation
 
 ```text
 run id: 30676078814
 artefact id: 8810491418
-result: PASS
-Python: 279/279
 programme-state drift gate: PASS
+Python: 279/279
 clean installed wheel: PASS
 ```
 
-### TS-002a capsule-link validation
+### Capsule-link repair validation
 
 ```text
 run id: 30676441221
 artefact id: 8810623069
-merge-test SHA: f90c540b75c0c922020d189dc0483a3bbda7668c
-result: PASS
 capsule-link gate: PASS
 programme-state drift gate: PASS
 Python: 282/282
-V8 model: 13/13
-V8 authority reconciliation: 6/6
-V9 deterministic engine: 10/10
-V10 JavaScript: 13/13
+all remaining suites: PASS
 clean installed wheel: PASS
 ```
 
-Artefact digest:
+### First closure attempt — useful bounded failure
 
 ```text
-sha256:8c5d29171e913cc649c0e578191babae71f8201e23d8cdbe192e606cb9915562
+run id: 30676822492
+artefact id: 8810766509
+capsule-link gate: PASS
+programme-state drift gate: PASS
+clean installed wheel: PASS
+Python: 281 passed / 1 failed
 ```
 
-## 8. Engineering authority unchanged
+The only failure was an obsolete test assertion that still expected TS-003 in `next_single_goal` after TS-003 had correctly become `active_gate` and TS-004 had become the next goal.
+
+No production code or engineering result failed.
+
+The test contract alone was corrected.
+
+### Final closure validation
+
+```text
+run id: 30676961307
+artefact id: 8810817726
+merge-test SHA: acb1d65583dbca1e57737d7701a30f8b0b276669
+artefact digest: sha256:d3e884f1142e49d8aad22d3defa12ca60ed79663c37a2d6affb8784b65daa79b
+```
+
+Final result:
+
+```text
+capsule-link integrity                PASS
+programme-state drift                 PASS
+Python                                282 / 282
+V8 model                               13 / 13
+V8 authority reconciliation             6 / 6
+V9 deterministic engine                10 / 10
+V10 JavaScript                         13 / 13
+Clean installed wheel                 PASS
+```
+
+Both workflow jobs passed.
+
+## 9. Engineering authority unchanged
 
 The clean installed wheel continues to report:
 
@@ -192,18 +250,48 @@ migration stage          build-025.5-package-authority
 comparison hash          sha256:413aa93c98d1b9fd5f9ffee4f577cfe29a6e74f48bd927a3ebe7f541545d6366
 ```
 
-The generic 4 mm2 and 6 mm2 metal-coated Class 5 resistance sources remain candidates. No standards edition conflict is silently resolved and no source is promoted.
+The established conductor comparison remains:
 
-## 9. Closure condition
+```text
+sequential total conductor     2513.328 m
+leapfrog total conductor       2560.128 m
+field-installed reduction       798.288 m
+factory-fitted increase          845.088 m
+total conductor change           +46.800 m
+```
 
-This file remains `closure validation pending` until programme-state is advanced to TS-003, both generated public projections are regenerated and one final validation run passes against that exact state.
+The generic 4 mm2 and 6 mm2 metal-coated Class 5 resistance sources remain candidates. No standards edition conflict was silently resolved and no source was promoted.
 
-After that run, this checkpoint shall be updated to `Verified execution checkpoint` with the final run and artefact identifiers.
+## 10. Goal status
 
-## 10. Intended next goal
+```text
+TS-001  COMPLETE
+TS-002  COMPLETE
+```
+
+The programme manifest, README and dashboard now identify the active gate as:
 
 ```text
 TS-003 — Freeze the generic reference equipment contract
 ```
 
-TS-003 must remain generic, evidence-bound and free of confidential project or manufacturer names. Missing physical-input, MPPT, shared-bus and reverse-current-blocking evidence remains visibly unresolved.
+The next single goal after TS-003 is:
+
+```text
+TS-004 — Add the complete inverter-block aggregate and receipt
+```
+
+## 11. TS-003 boundary
+
+TS-003 shall create or refine generic, versioned and evidence-qualified profiles for:
+
+- a 660 Wp bifacial module;
+- a 352 kVA inverter;
+- 24 physical DC string inputs;
+- the evidenced or unresolved MPPT/input relationship;
+- the evidenced or unresolved shared DC-bus and reverse-current-blocking behaviour;
+- factory leads, connectors and field conductors.
+
+It shall not publish confidential project details, manufacturer names, licensed standards text, the private 16 MWp report or unsupported equipment facts.
+
+Missing evidence remains visibly missing.
