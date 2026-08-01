@@ -8,9 +8,12 @@ on:
       - "schemas/programme-state.schema.json"
       - "README.md"
       - "progress-dashboard.html"
+      - "docs/quantum-spawn/**"
+      - "docs/trueself/**"
       - "pyproject.toml"
       - "src/solar_topology/**"
       - "tests/**"
+      - "scripts/check_capsule_links.py"
       - "scripts/run_v10_validation.py"
       - "scripts/validate_clean_wheel.py"
       - "scripts/sync_programme_state.py"
@@ -28,9 +31,12 @@ on:
       - "schemas/programme-state.schema.json"
       - "README.md"
       - "progress-dashboard.html"
+      - "docs/quantum-spawn/**"
+      - "docs/trueself/**"
       - "pyproject.toml"
       - "src/solar_topology/**"
       - "tests/**"
+      - "scripts/check_capsule_links.py"
       - "scripts/run_v10_validation.py"
       - "scripts/validate_clean_wheel.py"
       - "scripts/sync_programme_state.py"
@@ -69,6 +75,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e ".[test]"
+
+      - name: Enforce capsule-link integrity
+        run: python scripts/check_capsule_links.py --check
 
       - name: Enforce programme-state manifest and public-page drift gate
         run: python scripts/sync_programme_state.py --check
