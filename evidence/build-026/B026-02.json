@@ -1,0 +1,99 @@
+{
+  "schema_version": "globalgrid2050.solar-dc.build-026-receipt.v1",
+  "programme_id": "build-026-continuity-and-model-repair-20260801",
+  "unit_id": "B026-02",
+  "ordinal": 2,
+  "title": "Clean environment provisioning",
+  "mode": "sandbox",
+  "plan": {
+    "path": "build-plans/build-026-continuity-and-model-repair.json",
+    "starting_blob_sha1": "edd4dd6b3ec12f8b69ffb100402b6abfeade30e6"
+  },
+  "origin": {
+    "head_sha": "8b94aea9ba254acc837ed64fca6fafdb7b5a2339",
+    "commit_date_utc": "2026-08-01T15:52:32Z",
+    "commit_date_europe_london": "2026-08-01T16:52:32+01:00",
+    "commit_message": "evidence: complete B026-01 mirror integrity"
+  },
+  "sandbox": {
+    "branch": "agent/b026-02-clean-environment",
+    "probe_commit": "4c71b0a0ffb71fb696968773687f526b5e259f26",
+    "pull_request": 64,
+    "merge_test_sha": "5ec0f0275906a8a7a4fe2a3e27623c7de368d933",
+    "production_engineering_files_changed": [],
+    "sandbox_files_changed": [
+      "tests/test_b026_clean_environment.py"
+    ],
+    "merge_policy": "do not merge disposable probe"
+  },
+  "build_pass": {
+    "status": "passed",
+    "elapsed_seconds": 99,
+    "elapsed_measurement": "Difference between authenticated origin commit timestamp and disposable probe commit timestamp.",
+    "scope": "Create one disposable test that provisions a fresh virtual environment outside the checkout and installs the repository package.",
+    "commands": [
+      "python -m venv <temporary>/venv",
+      "<temporary>/venv/bin/python -m pip install --disable-pip-version-check <repository-root>"
+    ],
+    "hidden_prerequisites": [],
+    "prohibited_surfaces_untouched": [
+      "production geometry",
+      "topology",
+      "calculations",
+      "equipment values",
+      "browser authority",
+      "programme-state.json",
+      "licence status"
+    ]
+  },
+  "test_pass": {
+    "status": "passed",
+    "test_id": "b026_clean_environment",
+    "elapsed_seconds": 131,
+    "elapsed_measurement": "GitHub Actions validate job from runner start 2026-08-01T15:54:29.5944259Z to cleanup 2026-08-01T15:56:39.8151893Z, rounded up.",
+    "probe_assertions": {
+      "fresh_virtual_environment_created": true,
+      "package_install_succeeded": true,
+      "solar_topology_import_succeeded": true,
+      "installed_distribution_version": "0.4.0",
+      "pyproject_version": "0.4.0",
+      "versions_match": true,
+      "module_resolved_outside_checkout": true
+    },
+    "github_actions": {
+      "workflow": "V10 Engine Validation",
+      "run_id": 30706950874,
+      "artifact_id": 8820641386,
+      "artifact_digest": "sha256:2b0ce13f0cb830c68ef1a0fdf66bcf02a7221cf75cdc97ee2fe2495171efcad5",
+      "merge_test_sha": "5ec0f0275906a8a7a4fe2a3e27623c7de368d933",
+      "conclusion": "success"
+    },
+    "full_envelope": {
+      "python": {
+        "passed": 378,
+        "failed": 0,
+        "duration_seconds": 96.03
+      },
+      "v8_model_and_authority": "passed",
+      "v9_deterministic_engine": "passed",
+      "v10_javascript_and_studio": "passed",
+      "clean_installed_wheel": {
+        "status": "passed",
+        "duration_seconds": 11.644
+      }
+    },
+    "local_result": "not run in the ChatGPT execution container because GitHub network resolution was unavailable; no local result is represented as CI.",
+    "ci_result": "passed"
+  },
+  "origin_moved_during_unit": false,
+  "defects_discovered": [],
+  "unresolved_access_or_evidence": [
+    "No independent local clone result was available from the ChatGPT container."
+  ],
+  "evidence_only_files_to_commit": [
+    "build-plans/build-026-continuity-and-model-repair.json",
+    "docs/build-ledger/202608-continuity-and-model-repair.md",
+    "evidence/build-026/B026-02.json"
+  ],
+  "next_permitted_unit": "B026-03"
+}
