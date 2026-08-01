@@ -4,6 +4,8 @@ import hashlib
 import json
 from pathlib import Path
 
+import solar_topology as topology
+
 from scripts.build_authority_bundle import (
     AUTHORITY_BUNDLE_PATH,
     authority_response_json,
@@ -34,6 +36,7 @@ def test_authority_bundle_regeneration_candidate_matches_generator() -> None:
 
 def test_authority_bundle_regeneration_binds_receipts_and_hash() -> None:
     payload = authority_response_payload()
+    authority = topology.build_reference_inverter_block()
     basis = dict(payload)
     response_hash = basis.pop("response_hash")
     recomputed = "sha256:" + hashlib.sha256(
@@ -44,14 +47,14 @@ def test_authority_bundle_regeneration_binds_receipts_and_hash() -> None:
     assert payload["strategy"] == "leapfrog"
     block = payload["inverter_block"]
     build025 = payload["build025"]
-    assert block["receipt_hash"] == build025["receipt_hash"] or (
-        block["table_receipts"][0]["build025_receipt_hash"]
-        == build025["receipt_hash"]
-    )
-    assert block["table_receipts"][0]["geometry_hash"] == (
-        build025["geometry"]["geometry_hash"]
-    )
-    assert block["table_receipts"][0]["routing_hash"] == (
-        build025["routing"]["routing_hash"]
-    )
+    binding = block["table_receipts"][0]
+    child = authority.table_receipts[0]
+
+    assert binding["build025_receipt_hash"] == build025["receipt_hash"]
+    assert binding["build025_receipt_hash"] == child.receipt_hash
+    assert binding["geometry_hash"] == build025["geometry"]["geometry_hash"]
+    assert binding["geometry_hash"] == child.geometry.geometry_hash
+    assert binding["routing_hash"] == child.routing.routing_hash
+    assert build025["routing"]["table_id"] == child.routing.table_id
+    assert len(build025["routing"]["string_routes"]) == 24
     assert json.loads(authority_response_json()) == payload
