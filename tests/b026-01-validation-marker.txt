@@ -1,0 +1,8 @@
+Build 026 validation-only marker
+
+Unit: B026-01 — Mirror integrity and drift detection
+Base origin head: e4d5cb4dd185a5e596b37493d8715595c00c0209
+Purpose: trigger the repository-controlled pull-request validation envelope after the governance repair.
+Merge policy: do not merge this marker.
+Production engineering changes: none.
+Previous attempt: abandoned because origin moved after validation exposed and repaired two governance-test defects.
