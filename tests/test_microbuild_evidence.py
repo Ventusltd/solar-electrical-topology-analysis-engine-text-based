@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+from scripts.check_microbuild_plan import load_plan, validate_plan
 from scripts.microbuild_evidence import (
     EvidenceValidationError,
     canonical_json,
@@ -54,15 +55,16 @@ def test_engineering_core_changes_evidence_hash() -> None:
 
 
 def test_active_plan_evidence_uses_current_step_and_test() -> None:
+    summary = validate_plan(load_plan())
     payload = evidence_from_active_plan(
         tested_commit="c" * 40,
         result="pass",
         workflow_run_id=12,
     )
 
-    assert payload["core"]["step_id"] == "MB-05"
-    assert payload["core"]["manifest_revision"] == 5
-    assert payload["core"]["test_id"] == "microbuild_evidence"
+    assert payload["core"]["step_id"] == summary["active_step"]
+    assert payload["core"]["manifest_revision"] == summary["manifest_revision"]
+    assert payload["core"]["test_id"] == summary["active_test_id"]
     assert payload["runtime"]["workflow_run_id"] == 12
     assert payload["runtime"]["artifact_id"] is None
 
