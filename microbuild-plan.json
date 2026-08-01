@@ -1,27 +1,36 @@
 {
   "schema_version": "globalgrid2050.solar-dc.microbuild-plan.v1",
   "programme_id": "twenty-step-autopilot-20260801",
-  "manifest_revision": 1,
+  "manifest_revision": 2,
   "quantum_spawn": "docs/quantum-spawn/202608010303-twenty-step-github-actions-autopilot.md",
   "restore_point": "restore/2026-08-01-0303-pre-twenty-step-autopilot",
-  "active_step": "MB-01",
-  "next_step": "MB-02",
+  "active_step": "MB-02",
+  "next_step": "MB-03",
   "steps": [
     {
       "id": "MB-01",
       "ordinal": 1,
       "phase": "A",
       "title": "Microbuild manifest authority",
-      "status": "active",
+      "status": "passed",
       "test_id": "manifest_contract",
-      "evidence": null
+      "evidence": {
+        "step_id": "MB-01",
+        "manifest_revision": 1,
+        "tested_commit": "658da7ff050ba204f30ac263b8f04627f28fe4c6",
+        "test_id": "manifest_contract",
+        "result": "pass",
+        "workflow_run_id": 30679366618,
+        "artifact_id": 8811663697,
+        "evidence_hash": "sha256:6600a3e2573cb72313489e71f3d7f4139040621cb7b2046d86fbafa0ea58ff0b"
+      }
     },
     {
       "id": "MB-02",
       "ordinal": 2,
       "phase": "A",
       "title": "Allowlisted step runner",
-      "status": "planned",
+      "status": "active",
       "test_id": "runner_contract",
       "evidence": null
     },
