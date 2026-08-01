@@ -171,7 +171,7 @@ function testGeometryProjection() {
   const moduleNodes = documentRef.elements.get('authority-module-layer').children;
   const routeNodes = documentRef.elements.get('authority-route-layer').children;
 
-  assert.equal(rendered, projection);
+  assert.deepEqual(rendered, projection);
   assert.equal(moduleNodes.length, placements.length);
   assert.equal(routeNodes.length, expectedRouteCount());
   assert.equal(moduleNodes[0].tagName, 'circle');
