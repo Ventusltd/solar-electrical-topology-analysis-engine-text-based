@@ -1,0 +1,7 @@
+Build 026 validation-only bundle trigger
+
+Unit: B026-05 — Change, test, patch and revert rehearsal
+Base origin head: 7ab62ad2fbe8915cbbe5a5bb3db6610afc1688a2
+Purpose: export an authenticated current-head repository snapshot and offline wheelhouse for the local reversible-work rehearsal.
+Merge policy: do not merge.
+Production engineering changes: none.
