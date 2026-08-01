@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Solar DC Topology Studio</title>
   <style>
-    :root{color-scheme:dark;--bg:#05090d;--panel:#0b151d;--line:#29485b;--text:#e9f4fa;--muted:#91a9b8;--cyan:#51d8ff;--amber:#ffb84d;--green:#55dda0}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,sans-serif}header{padding:18px 20px;border-bottom:1px solid var(--line)}h1{margin:.2em 0}.sub{color:var(--muted);max-width:980px}.modes{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.modes button{border:1px solid #3d6276;border-radius:7px;background:#0d1d27;color:var(--text);padding:9px 13px;font-weight:750;cursor:pointer}.modes button[aria-selected="true"]{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan) inset}.view{padding:12px}.banner{padding:12px 14px;border:1px solid var(--line);border-radius:9px;margin-bottom:12px;font:800 13px ui-monospace;letter-spacing:.08em}.playground .banner{border-color:var(--amber);color:var(--amber)}.authority .banner{border-color:var(--green);color:var(--green)}iframe{display:block;width:100%;height:calc(100vh - 220px);min-height:620px;border:1px solid var(--line);border-radius:10px;background:#02070a}.authority-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.authority-card{min-height:92px;border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:13px}.authority-card span{display:block;color:var(--muted);font-size:12px}.authority-card strong{display:block;margin-top:7px;font:750 18px ui-monospace;overflow-wrap:anywhere}.authority-card.hash{grid-column:1/-1}.authority-card.hash strong{font-size:12px}.authority-note{grid-column:1/-1;border-left:4px solid var(--green);background:var(--panel);padding:13px;color:var(--muted)}[hidden]{display:none!important}
+    :root{color-scheme:dark;--bg:#05090d;--panel:#0b151d;--line:#29485b;--text:#e9f4fa;--muted:#91a9b8;--cyan:#51d8ff;--amber:#ffb84d;--green:#55dda0;--red:#ff8068;--blue:#6bc3ff}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,sans-serif}header{padding:18px 20px;border-bottom:1px solid var(--line)}h1{margin:.2em 0}.sub{color:var(--muted);max-width:980px}.modes{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.modes button{border:1px solid #3d6276;border-radius:7px;background:#0d1d27;color:var(--text);padding:9px 13px;font-weight:750;cursor:pointer}.modes button[aria-selected="true"]{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan) inset}.view{padding:12px}.banner{padding:12px 14px;border:1px solid var(--line);border-radius:9px;margin-bottom:12px;font:800 13px ui-monospace;letter-spacing:.08em}.playground .banner{border-color:var(--amber);color:var(--amber)}.authority .banner{border-color:var(--green);color:var(--green)}iframe{display:block;width:100%;height:calc(100vh - 220px);min-height:620px;border:1px solid var(--line);border-radius:10px;background:#02070a}.authority-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.authority-card{min-height:92px;border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:13px}.authority-card span{display:block;color:var(--muted);font-size:12px}.authority-card strong{display:block;margin-top:7px;font:750 18px ui-monospace;overflow-wrap:anywhere}.authority-card.hash{grid-column:1/-1}.authority-card.hash strong{font-size:12px}.authority-note{grid-column:1/-1;border-left:4px solid var(--green);background:var(--panel);padding:13px;color:var(--muted)}.authority-geometry{grid-column:1/-1;border:1px solid var(--line);border-radius:10px;background:#02070a;overflow:auto;padding:10px}.authority-geometry svg{display:block;width:100%;min-width:760px;height:620px}.authority-module-point{fill:var(--green)}.authority-route{fill:none;stroke-width:.025;vector-effect:non-scaling-stroke}.authority-route.positive-home-run{stroke:var(--red)}.authority-route.negative-home-run{stroke:var(--blue)}.authority-route.series-interconnect{stroke:#7893a4;opacity:.72}[hidden]{display:none!important}
   </style>
 </head>
 <body>
   <header>
     <div>GLOBALGRID2050 · SOLAR DC TOPOLOGY STUDIO</div>
     <h1>Play freely. Verify through one engineering authority.</h1>
-    <p class="sub">The Playground preserves the existing browser experiment. Authority mode is a separate projection lane and displays only values, evidence states and hashes already contained in a Python-owned response bundle.</p>
+    <p class="sub">The Playground preserves the existing browser experiment. Authority mode is a separate projection lane and displays only values, evidence states, coordinates, conductor vertices and hashes already contained in a Python-owned response bundle.</p>
     <div class="modes" role="tablist" aria-label="Studio mode">
       <button id="playground-tab" type="button" role="tab" data-mode="playground" aria-controls="playground-view" aria-selected="true">Playground</button>
       <button id="authority-tab" type="button" role="tab" data-mode="authority" aria-controls="authority-view" aria-selected="false">Authority</button>
@@ -39,10 +39,18 @@
         <div class="authority-card"><span>DC / AC nameplate ratio</span><strong id="authority-dc-ac-ratio">—</strong></div>
         <div class="authority-card"><span>Equipment evidence state</span><strong id="authority-evidence-state">—</strong></div>
         <div class="authority-card"><span>Unresolved evidence fields</span><strong id="authority-missing-evidence">—</strong></div>
+        <div class="authority-card"><span>Rendered module centres</span><strong id="authority-rendered-modules">—</strong></div>
+        <div class="authority-card"><span>Rendered conductor polylines</span><strong id="authority-rendered-routes">—</strong></div>
         <div class="authority-card hash"><span>Authority response hash</span><strong id="authority-response-hash">—</strong></div>
         <div class="authority-card hash"><span>Inverter-block receipt hash</span><strong id="authority-block-hash">—</strong></div>
         <div class="authority-card hash"><span>Build 025 child receipt hash</span><strong id="authority-build025-hash">—</strong></div>
-        <div class="authority-note">Every displayed scalar is copied from the committed response bundle. This page does not derive cable routes, lengths, resistance, voltage drop, loss or evidence conclusions.</div>
+        <div class="authority-note">Every displayed scalar, module centre and conductor vertex is copied from the committed response bundle. This page does not derive route lengths, resistance, voltage drop, loss or evidence conclusions.</div>
+        <div class="authority-geometry">
+          <svg id="authority-geometry" viewBox="-6 0 42 56" role="img" aria-label="Python-owned module centres and conductor routes">
+            <g id="authority-route-layer"></g>
+            <g id="authority-module-layer"></g>
+          </svg>
+        </div>
       </div>
     </section>
   </main>
