@@ -1,21 +1,21 @@
 {
   "schema_version": "globalgrid2050.solar-dc.programme-state.v1",
-  "current_build": "Build 025.5D1",
-  "programme_stage": "Complete inverter-block aggregate established; first authoritative Studio slice active",
-  "validated_commit": "78fe6fd6add4e4558ac8475df230eb2cd1729cfb",
-  "validated_commit_scope": "The complete inverter-block aggregate, provisional public API, both clean-wheel contracts and all earlier geometry, topology, routing and calculation authority were validated together by the TS-004 integration worker. The compact Trueself checkpoint and generated public projections do not alter engineering calculations.",
+  "current_build": "Build 025.5D1 / TS-005",
+  "programme_stage": "First end-to-end authoritative Studio slice completed",
+  "validated_commit": "747381f6c3c3325a680a80a17e516268541c8548",
+  "validated_commit_scope": "The terminal twenty-step manifest, completion-aware worker controls, deterministic reference command, committed authority bundle, live local bridge, Authority Studio projections, end-to-end reference slice, full declared Python/V8/V9/V10 envelope and clean installed wheel were validated together. This closure changes programme control and projection authority without promoting unresolved equipment evidence.",
   "package_version": "0.4.0",
   "validation": {
-    "workflow": "Microbuild Worker — TS-004 Integration",
-    "run_id": 30680420035,
-    "artifact_id": 8812013685,
-    "merge_test_sha": "78fe6fd6add4e4558ac8475df230eb2cd1729cfb",
+    "workflow": "V10 Engine Validation — TS-005 Terminal Closure",
+    "run_id": 30696063294,
+    "artifact_id": 8817320885,
+    "merge_test_sha": "747381f6c3c3325a680a80a17e516268541c8548",
     "comparison_hash": "sha256:413aa93c98d1b9fd5f9ffee4f577cfe29a6e74f48bd927a3ebe7f541545d6366",
     "suites": [
       {
         "name": "Python",
-        "passed": 334,
-        "total": 334
+        "passed": 377,
+        "total": 377
       },
       {
         "name": "V8 model",
@@ -33,9 +33,9 @@
         "total": 10
       },
       {
-        "name": "V10 JavaScript",
-        "passed": 13,
-        "total": 13
+        "name": "V10 JavaScript and Studio gates",
+        "passed": 5,
+        "total": 5
       },
       {
         "name": "Clean installed wheel",
@@ -49,9 +49,9 @@
       }
     ]
   },
-  "restore_point": "restore/2026-08-01-0303-pre-twenty-step-autopilot",
+  "restore_point": "restore/2026-08-01-1048-pre-mb19-mb20",
   "current_quantum_spawn": "docs/quantum-spawn/202608010303-twenty-step-github-actions-autopilot.md",
-  "current_trueself": "docs/trueself/202608010343-ts-004-inverter-block-aggregate-pass.md",
+  "current_trueself": "docs/trueself/20260801-ts-005-authoritative-slice-closure.md",
   "reference_inverter_block": {
     "module_technology": "bifacial",
     "module_rated_power_wp": 660,
@@ -71,13 +71,16 @@
       "geometry, topology, assignment, routing and calculation receipts",
       "complete-circuit resistance, voltage drop, loss and uncertainty",
       "installed solar_topology package and clean-wheel authority",
-      "machine-readable programme truth and capsule-link integrity gates"
+      "machine-readable completed microbuild programme with twenty evidence records",
+      "byte-identical command, committed-bundle and live-bridge response contract",
+      "Authority Studio projection of Python-owned scalars, hashes, geometry, routes, inputs and evidence gaps"
     ],
     "provisional": [
       "complete deterministic 352 kVA inverter-block aggregate and receipt",
       "generic evidence-qualified 660 Wp bifacial module and 352 kVA inverter equipment contract",
       "resistance source qualification and assessment serialisation",
       "generic 4 mm2 and 6 mm2 metal-coated class 5 resistance sources",
+      "local authority bridge for the single reference block rather than project ingestion",
       "browser workbenches as exploratory projections"
     ],
     "historical": [
@@ -88,17 +91,18 @@
       "V10 browser development workbench"
     ]
   },
-  "active_gate": "TS-005 — First authoritative Studio slice",
-  "next_single_goal": "MB-10 — TS-005 hand-off proof",
+  "active_gate": "TS-005 — Complete",
+  "next_single_goal": "Define the next controlled programme",
   "known_limitations": [
     "The generic equipment contract contains 47 unresolved or candidate evidence items, including module electrical values, dimensions, connector data, lead lengths, installation class and every input-to-MPPT relationship.",
     "The generic conductor resistance records remain candidates because exact source revisions are not encoded and verification is incomplete.",
     "Internal DC topology, shared-bus behaviour, reverse-current blocking and PCE backfeed remain unresolved.",
-    "The authoritative Studio mode is not yet connected to the Python inverter-block receipt.",
-    "The existing browser calculations remain exploratory and must be visibly separated from Authority mode.",
-    "Standards, EMC, lightning, environmental classes, plant ingestion and fleet intelligence remain later controlled builds."
+    "Authority Studio is connected end to end for one generic reference inverter block; it is not yet a project ingestion, editing or approval workflow.",
+    "The live authority bridge is local and offline; no remote service, authentication or multi-user deployment is claimed.",
+    "The existing browser calculations remain exploratory and visibly separate from Authority mode.",
+    "Standards, EMC, lightning, environmental classes, plant ingestion and fleet intelligence remain later controlled programmes."
   ],
-  "progress_policy": "No numerical programme-completion percentage is claimed until explicit stage weights and acceptance evidence are encoded in this manifest.",
+  "progress_policy": "No numerical programme-completion percentage is claimed. The TS-005 twenty-step programme is complete through twenty individually evidenced states; the broader engineering programme remains unweighted.",
   "generated_outputs": [
     "README.md programme-state block",
     "progress-dashboard.html"
