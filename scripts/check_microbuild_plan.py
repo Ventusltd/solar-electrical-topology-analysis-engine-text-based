@@ -159,7 +159,26 @@ def validate_plan(plan: dict[str, Any], *, root: Path = ROOT) -> dict[str, objec
             require(step["evidence"] is None, f"{step['id']} may not have evidence before pass")
 
     require(len(set(test_ids)) == 20, "every step must have one unique test id")
-    require(len(current_indexes) == 1, "exactly one active or blocked step is required")
+    require(len(current_indexes) <= 1, "at most one active or blocked step is permitted")
+
+    if not current_indexes:
+        require(passed_count == 20, "a programme without an active step must be fully passed")
+        require(plan["active_step"] is None, "completed programme active_step must be null")
+        require(plan["next_step"] is None, "completed programme next_step must be null")
+        return {
+            "pass": True,
+            "programme_status": "completed",
+            "programme_id": plan["programme_id"],
+            "manifest_revision": plan["manifest_revision"],
+            "active_step": None,
+            "active_status": None,
+            "active_test_id": None,
+            "next_step": None,
+            "passed_steps": 20,
+            "planned_steps": 0,
+            "total_steps": 20,
+        }
+
     current_index = current_indexes[0]
     current = steps[current_index]
     require(plan["active_step"] == current["id"], "active_step pointer mismatch")
@@ -176,6 +195,7 @@ def validate_plan(plan: dict[str, Any], *, root: Path = ROOT) -> dict[str, objec
 
     return {
         "pass": True,
+        "programme_status": "active" if current["status"] == "active" else "blocked",
         "programme_id": plan["programme_id"],
         "manifest_revision": plan["manifest_revision"],
         "active_step": plan["active_step"],
