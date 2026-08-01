@@ -38,7 +38,8 @@ def test_programme_state_schema_arithmetic_and_capability_boundaries() -> None:
         "dc_ac_nameplate_ratio": 1.35,
     }
     assert state["current_build"] == "Build 025.5D1"
-    assert state["next_single_goal"].startswith("TS-003")
+    assert state["active_gate"].startswith("TS-003")
+    assert state["next_single_goal"].startswith("TS-004")
     assert "weighted_programme_progress" not in state
     assert "progress_percent" not in state
 
