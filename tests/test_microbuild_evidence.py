@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 import json
 from pathlib import Path
 
@@ -32,6 +33,17 @@ def _base(**overrides: object) -> dict[str, object]:
     return values
 
 
+def _active_final_plan(path: Path) -> Path:
+    plan = deepcopy(load_plan())
+    plan["manifest_revision"] = 20
+    plan["active_step"] = "MB-20"
+    plan["next_step"] = None
+    plan["steps"][-1]["status"] = "active"
+    plan["steps"][-1]["evidence"] = None
+    path.write_text(canonical_json(plan) + "\n", encoding="utf-8")
+    return path
+
+
 def test_evidence_hash_is_deterministic_and_excludes_runtime_metadata() -> None:
     first = microbuild_evidence_payload(**_base())
     second = microbuild_evidence_payload(
@@ -54,12 +66,14 @@ def test_engineering_core_changes_evidence_hash() -> None:
     assert first["evidence_hash"] != changed["evidence_hash"]
 
 
-def test_active_plan_evidence_uses_current_step_and_test() -> None:
-    summary = validate_plan(load_plan())
+def test_active_plan_evidence_uses_current_step_and_test(tmp_path: Path) -> None:
+    plan_path = _active_final_plan(tmp_path / "active-plan.json")
+    summary = validate_plan(load_plan(plan_path))
     payload = evidence_from_active_plan(
         tested_commit="c" * 40,
         result="pass",
         workflow_run_id=12,
+        plan_path=plan_path,
     )
 
     assert payload["core"]["step_id"] == summary["active_step"]
@@ -67,6 +81,18 @@ def test_active_plan_evidence_uses_current_step_and_test() -> None:
     assert payload["core"]["test_id"] == summary["active_test_id"]
     assert payload["runtime"]["workflow_run_id"] == 12
     assert payload["runtime"]["artifact_id"] is None
+
+
+def test_completed_plan_refuses_a_new_evidence_record() -> None:
+    with pytest.raises(
+        EvidenceValidationError,
+        match="completed programme has no active step",
+    ):
+        evidence_from_active_plan(
+            tested_commit="c" * 40,
+            result="pass",
+            workflow_run_id=12,
+        )
 
 
 def test_invalid_core_and_runtime_values_are_rejected() -> None:
@@ -78,7 +104,7 @@ def test_invalid_core_and_runtime_values_are_rejected() -> None:
         microbuild_evidence_payload(**_base(artifact_id=0))
 
 
-def test_worker_uses_canonical_evidence_writer() -> None:
+def test_worker_uses_canonical_evidence_writer_only_while_active() -> None:
     workflow = (ROOT / ".github/workflows/microbuild-worker.yml").read_text(
         encoding="utf-8"
     )
@@ -86,4 +112,5 @@ def test_worker_uses_canonical_evidence_writer() -> None:
     assert "python scripts/microbuild_evidence.py" in workflow
     assert '--tested-commit "$GITHUB_SHA"' in workflow
     assert '--workflow-run-id "$GITHUB_RUN_ID"' in workflow
+    assert "programme_status != 'completed'" in workflow
     assert "Path(\".microbuild/evidence/latest.json\")" not in workflow

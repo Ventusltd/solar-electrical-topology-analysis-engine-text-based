@@ -20,14 +20,12 @@ from scripts.run_microbuild import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_active_manifest_selects_only_its_allowlisted_command() -> None:
+def test_completed_manifest_selects_no_further_command() -> None:
     summary = validate_plan(load_plan())
-    test_id = str(summary["active_test_id"])
 
-    assert active_test_id() == test_id
-    assert active_command() == TEST_COMMANDS[test_id]
-    assert isinstance(active_command(), tuple)
-    assert active_command()
+    assert summary["programme_status"] == "completed"
+    assert active_test_id() is None
+    assert active_command() == ()
 
 
 def test_all_twenty_manifest_test_identifiers_are_allowlisted() -> None:
@@ -44,7 +42,7 @@ def test_unknown_identifier_is_rejected_without_shell_execution() -> None:
         command_for_test("rm_rf_repository")
 
 
-def test_cli_prints_current_selected_command_without_executing_it() -> None:
+def test_cli_reports_completed_programme_without_execution() -> None:
     completed = subprocess.run(
         [sys.executable, "scripts/run_microbuild.py"],
         cwd=ROOT,
@@ -54,5 +52,22 @@ def test_cli_prints_current_selected_command_without_executing_it() -> None:
     )
     payload = json.loads(completed.stdout)
 
-    assert payload["test_id"] == active_test_id()
-    assert payload["command"] == list(active_command())
+    assert payload == {
+        "programme_status": "completed",
+        "test_id": None,
+        "command": [],
+    }
+
+
+def test_explicit_allowlisted_test_remains_available_after_completion() -> None:
+    completed = subprocess.run(
+        [sys.executable, "scripts/run_microbuild.py", "--test-id", "manifest_contract"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    payload = json.loads(completed.stdout)
+
+    assert payload["test_id"] == "manifest_contract"
+    assert payload["command"] == list(TEST_COMMANDS["manifest_contract"])

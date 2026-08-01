@@ -58,20 +58,24 @@ def command_for_test(test_id: str) -> tuple[str, ...]:
         raise UnknownTestIdentifier(f"unknown microbuild test id: {test_id}") from exc
 
 
-def active_test_id(plan_path: Path = DEFAULT_PLAN_PATH) -> str:
-    plan = load_plan(plan_path)
-    summary = validate_plan(plan)
+def active_test_id(plan_path: Path = DEFAULT_PLAN_PATH) -> str | None:
+    summary = validate_plan(load_plan(plan_path))
     test_id = summary["active_test_id"]
+    if test_id is None:
+        return None
     if not isinstance(test_id, str):
-        raise TypeError("active test identifier must be text")
+        raise TypeError("active test identifier must be text or null")
     return test_id
 
 
 def active_command(plan_path: Path = DEFAULT_PLAN_PATH) -> tuple[str, ...]:
-    return command_for_test(active_test_id(plan_path))
+    test_id = active_test_id(plan_path)
+    return () if test_id is None else command_for_test(test_id)
 
 
 def execute(command: Sequence[str]) -> int:
+    if not command:
+        return 0
     completed = subprocess.run(tuple(command), cwd=ROOT, check=False)
     return completed.returncode
 
@@ -83,10 +87,19 @@ def main() -> int:
     parser.add_argument("--execute", action="store_true")
     args = parser.parse_args()
 
-    test_id = args.test_id or active_test_id(args.plan)
-    command = command_for_test(test_id)
+    selected = args.test_id or active_test_id(args.plan)
+    if selected is None:
+        payload = {
+            "programme_status": "completed",
+            "test_id": None,
+            "command": [],
+        }
+        print(json.dumps(payload, sort_keys=True))
+        return 0
+
+    command = command_for_test(selected)
     if not args.execute:
-        print(json.dumps({"test_id": test_id, "command": list(command)}, sort_keys=True))
+        print(json.dumps({"test_id": selected, "command": list(command)}, sort_keys=True))
         return 0
     return execute(command)
 

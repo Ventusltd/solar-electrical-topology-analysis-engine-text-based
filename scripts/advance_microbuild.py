@@ -76,6 +76,7 @@ def preview_advancement(
     evidence: dict[str, Any],
 ) -> dict[str, Any]:
     summary = validate_plan(plan)
+    require(summary["programme_status"] != "completed", "completed programme cannot advance")
     record = manifest_evidence_record(evidence)
     require(record["result"] == "pass", "only passing evidence may advance")
     require(record["step_id"] == summary["active_step"], "evidence step does not match active step")
@@ -91,19 +92,24 @@ def preview_advancement(
         for index, item in enumerate(result["steps"])
         if item["status"] in {"active", "blocked"}
     )
-    require(current_index < len(result["steps"]) - 1, "final step has no next step")
-    next_index = current_index + 1
 
     result["steps"][current_index]["status"] = "passed"
     result["steps"][current_index]["evidence"] = record
-    result["steps"][next_index]["status"] = "active"
     result["manifest_revision"] += 1
-    result["active_step"] = result["steps"][next_index]["id"]
-    result["next_step"] = (
-        result["steps"][next_index + 1]["id"]
-        if next_index + 1 < len(result["steps"])
-        else None
-    )
+
+    if current_index == len(result["steps"]) - 1:
+        result["active_step"] = None
+        result["next_step"] = None
+    else:
+        next_index = current_index + 1
+        result["steps"][next_index]["status"] = "active"
+        result["active_step"] = result["steps"][next_index]["id"]
+        result["next_step"] = (
+            result["steps"][next_index + 1]["id"]
+            if next_index + 1 < len(result["steps"])
+            else None
+        )
+
     validate_plan(result)
     return result
 

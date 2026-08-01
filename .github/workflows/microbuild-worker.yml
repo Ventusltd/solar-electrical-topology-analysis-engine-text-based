@@ -8,10 +8,12 @@ on:
       - "microbuild-plan.json"
       - "scripts/check_microbuild_plan.py"
       - "scripts/run_microbuild.py"
+      - "scripts/advance_microbuild.py"
       - "scripts/microbuild_*.py"
       - "scripts/build_authority_bundle.py"
       - "scripts/reference_block_command.py"
       - "scripts/local_authority_bridge.py"
+      - "scripts/run_authority_slice.py"
       - "scripts/validate_clean_wheel.py"
       - "scripts/validate_inverter_block_wheel.py"
       - "tests/test_microbuild*.py"
@@ -25,6 +27,7 @@ on:
       - "v10-development/topology-studio.html"
       - "v10-development/authority/**"
       - "v10-development/tests/studio-authority.test.mjs"
+      - "v10-development/tests/studio-authority-evidence.test.mjs"
       - ".github/workflows/microbuild-worker.yml"
   push:
     branches:
@@ -34,10 +37,12 @@ on:
       - "microbuild-plan.json"
       - "scripts/check_microbuild_plan.py"
       - "scripts/run_microbuild.py"
+      - "scripts/advance_microbuild.py"
       - "scripts/microbuild_*.py"
       - "scripts/build_authority_bundle.py"
       - "scripts/reference_block_command.py"
       - "scripts/local_authority_bridge.py"
+      - "scripts/run_authority_slice.py"
       - "scripts/validate_clean_wheel.py"
       - "scripts/validate_inverter_block_wheel.py"
       - "tests/test_microbuild*.py"
@@ -51,6 +56,7 @@ on:
       - "v10-development/topology-studio.html"
       - "v10-development/authority/**"
       - "v10-development/tests/studio-authority.test.mjs"
+      - "v10-development/tests/studio-authority-evidence.test.mjs"
       - ".github/workflows/microbuild-worker.yml"
 
 permissions:
@@ -88,7 +94,12 @@ jobs:
           python -m pip install -e ".[test]" "build>=1.2"
 
       - name: Validate microbuild manifest
-        run: python scripts/check_microbuild_plan.py --check
+        id: manifest
+        run: |
+          summary="$(python scripts/check_microbuild_plan.py --check)"
+          echo "$summary"
+          programme_status="$(python -c 'import json,sys; print(json.load(sys.stdin)["programme_status"])' <<< "$summary")"
+          echo "programme_status=$programme_status" >> "$GITHUB_OUTPUT"
 
       - name: Generate authority-bundle candidate
         run: |
@@ -97,7 +108,12 @@ jobs:
             --output .microbuild/candidates/reference-inverter-block.json
 
       - name: Run active allowlisted test
+        if: steps.manifest.outputs.programme_status != 'completed'
         run: python scripts/run_microbuild.py --execute
+
+      - name: Confirm completed programme
+        if: steps.manifest.outputs.programme_status == 'completed'
+        run: python scripts/run_microbuild.py
 
       - name: Upload authority-bundle candidate
         if: always()
@@ -109,7 +125,7 @@ jobs:
           path: .microbuild/candidates/reference-inverter-block.json
 
       - name: Write canonical microbuild evidence
-        if: success()
+        if: success() && steps.manifest.outputs.programme_status != 'completed'
         run: |
           python scripts/microbuild_evidence.py \
             --tested-commit "$GITHUB_SHA" \
@@ -118,7 +134,7 @@ jobs:
             --output .microbuild/evidence/latest.json
 
       - name: Upload microbuild evidence
-        if: success()
+        if: success() && steps.manifest.outputs.programme_status != 'completed'
         uses: actions/upload-artifact@v4
         with:
           name: microbuild-evidence-${{ github.sha }}

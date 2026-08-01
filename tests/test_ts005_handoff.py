@@ -22,10 +22,10 @@ def test_hostile_amnesia_reload_recovers_ts005_handoff() -> None:
     handoff = plan["steps"][9]
     reference_command = plan["steps"][10]
 
-    assert programme["active_gate"] == "TS-005 — First authoritative Studio slice"
-    assert plan["active_step"] == summary["active_step"]
-    assert plan["next_step"] == summary["next_step"]
-    assert int(str(summary["active_step"]).split("-")[1]) >= 10
+    assert programme["active_gate"].startswith("TS-005")
+    assert summary["programme_status"] == "completed"
+    assert plan["active_step"] is None
+    assert plan["next_step"] is None
 
     assert handoff["id"] == "MB-10"
     assert handoff["status"] == "passed"
@@ -78,12 +78,16 @@ def test_handoff_exposes_unresolved_authority_without_inference() -> None:
         assert unresolved in limitations
 
 
-def test_active_command_matches_current_manifest_pointer() -> None:
+def test_completed_programme_exposes_no_active_command() -> None:
     plan = load_plan()
     summary = validate_plan(plan)
 
-    assert active_test_id() == summary["active_test_id"]
-    assert active_command()
-    assert plan["active_step"] == summary["active_step"]
+    assert active_test_id() is None
+    assert active_command() == ()
+    assert plan["active_step"] == summary["active_step"] is None
     assert plan["steps"][9]["status"] == "passed"
     assert plan["steps"][9]["evidence"]["test_id"] == "ts005_handoff"
+    assert plan["steps"][19]["status"] == "passed"
+    assert plan["steps"][19]["evidence"]["test_id"] == (
+        "end_to_end_authority_slice"
+    )
