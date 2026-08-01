@@ -20,8 +20,8 @@
 
 **Dependencies:**
 - `202607311609-mission-and-philosophy.md`
-- `202607311619-system-architecture.md`
-- `202607311624-geometry-authority.md`
+- `202607311620-system-architecture.md`
+- `202607311640-geometry-authority.md`
 - `../trueself/202608010104-complete-352-kva-inverter-block-plan.md`
 - `../trueself/202608010226-ts-003-exact-equipment-contract-authority.md`
 
