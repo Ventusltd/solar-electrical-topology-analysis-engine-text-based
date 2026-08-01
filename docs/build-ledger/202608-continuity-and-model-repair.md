@@ -144,3 +144,27 @@ The disposable bundle hook and trigger remain unmerged. The programme is blocked
 | Next permitted unit | `B026-04` only |
 
 The prior blocked record remains immutable above. The successful retry removes the block and advances the machine plan without erasing the serial-executor evidence.
+
+### B026-04 — Clean-wheel authority reproduction
+
+| Field | Evidence |
+|---|---|
+| Origin head authenticated | `fa0e3768f5c4a70d6ede95ebee696d3c4cb6e0f8` |
+| Origin commit | 2026-08-01 17:42:59 Europe/London — `evidence: complete B026-03 local validation envelope` |
+| Local executor | CPython 3.13.5; package 0.4.0; authenticated offline wheelhouse; isolated workspaces outside the checkout |
+| Declared build scope | Build one wheel and install it into a second isolated virtual environment; no production file change |
+| BUILD PASS | PASS — wheel built, installed and imported outside the checkout in 4.977 seconds |
+| Built distribution | `solar_electrical_topology_engine-0.4.0-py3-none-any.whl`; 128,239 bytes; installed version `0.4.0` |
+| Test ID | `b026_clean_wheel` |
+| Installed-package gates | `python scripts/validate_clean_wheel.py`; `python scripts/validate_inverter_block_wheel.py` |
+| TEST PASS | PASS — both gates completed sequentially in 12.368 seconds; clean wheel 6.140 seconds and inverter-block clean wheel 6.226 seconds |
+| Authority identities retained | comparison `sha256:413aa93c98d1b9fd5f9ffee4f577cfe29a6e74f48bd927a3ebe7f541545d6366`; equipment contract `sha256:1482dfd06dda6b5a1765676bf1c98fe6eee78bc7858b378fe8b7acaa00ff32de`; inverter-block receipt `sha256:79f3d02a878e4fe6bd700d194c2b29e2500cd9511e23d469c34f3d8472f8a1f8`; Build 025 receipt `sha256:d2f29cbe9fb9b5ce2e7bda95ce6828b7bd2b7ece69a5bb1e4f840d2810f9c219` |
+| Evidence boundary retained | 720 modules, 24 strings, 30 modules per string and 24 physical inputs reproduced; equipment state remained `incomplete_evidence` with 47 missing items |
+| Harness diagnostics | The first build harness resolved the venv symlink to system Python and lacked `build`; corrected by retaining the venv interpreter path. A first parallel gate attempt raced on the shared checkout `build/` directory; rerunning sequentially with the directory cleared proved both gates. Neither event changed repository code. |
+| Local versus CI | Build and both gates ran locally. No CI result is claimed for this unit until the evidence transition is separately validated. |
+| Scope protection | No production geometry, topology, calculations, equipment values, browser authority, `programme-state.json` or licence status changed |
+| Origin movement during unit | No |
+| Machine receipt | `evidence/build-026/B026-04.json` |
+| Next permitted unit | `B026-05` only |
+
+The isolated wheel environments were temporary and removed after execution. The evidence transition changes only the machine plan, this ledger and the B026-04 receipt.
