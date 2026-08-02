@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_BLOCK_HASH = (
     "sha256:79f3d02a878e4fe6bd700d194c2b29e2500cd9511e23d469c34f3d8472f8a1f8"
 )
+TS005_CLOSURE = ROOT / "docs/trueself/20260801-ts-005-authoritative-slice-closure.md"
 
 
 def test_hostile_amnesia_reload_recovers_ts005_handoff() -> None:
@@ -52,11 +53,12 @@ def test_handoff_files_exist_and_bind_validated_receipt() -> None:
         (ROOT / "programme-state.json").read_text(encoding="utf-8")
     )
     spawn = ROOT / programme["current_quantum_spawn"]
-    checkpoint = ROOT / programme["current_trueself"]
+    current_trueself = ROOT / programme["current_trueself"]
 
     assert spawn.is_file()
-    assert checkpoint.is_file()
-    checkpoint_text = checkpoint.read_text(encoding="utf-8")
+    assert current_trueself.is_file()
+    assert TS005_CLOSURE.is_file()
+    checkpoint_text = TS005_CLOSURE.read_text(encoding="utf-8")
     assert EXPECTED_BLOCK_HASH in checkpoint_text
     assert "Forty-seven equipment evidence items remain unresolved" in checkpoint_text
     assert "MB-10 — TS-005 hand-off proof" in checkpoint_text

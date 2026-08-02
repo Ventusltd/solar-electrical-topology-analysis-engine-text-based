@@ -1,6 +1,6 @@
 {
   "schema_version": "globalgrid2050.solar-dc.programme-state.v1",
-  "current_build": "Build 025.5D1 / TS-005",
+  "current_build": "Build 026 — Continuity and model repair",
   "programme_stage": "First end-to-end authoritative Studio slice completed",
   "validated_commit": "747381f6c3c3325a680a80a17e516268541c8548",
   "validated_commit_scope": "The terminal twenty-step manifest, completion-aware worker controls, deterministic reference command, committed authority bundle, live local bridge, Authority Studio projections, end-to-end reference slice, full declared Python/V8/V9/V10 envelope and clean installed wheel were validated together. This closure changes programme control and projection authority without promoting unresolved equipment evidence.",
@@ -51,7 +51,7 @@
   },
   "restore_point": "restore/2026-08-01-1048-pre-mb19-mb20",
   "current_quantum_spawn": "docs/quantum-spawn/202608010303-twenty-step-github-actions-autopilot.md",
-  "current_trueself": "docs/trueself/20260801-ts-005-authoritative-slice-closure.md",
+  "current_trueself": "docs/trueself/202608011610-the-demonstration-exists-the-ledger-does-not-trueself-claude.md",
   "reference_inverter_block": {
     "module_technology": "bifacial",
     "module_rated_power_wp": 660,
@@ -92,7 +92,7 @@
     ]
   },
   "active_gate": "TS-005 — Complete",
-  "next_single_goal": "Define the next controlled programme",
+  "next_single_goal": "B026-07 — Deliberate root gitignore",
   "known_limitations": [
     "The generic equipment contract contains 47 unresolved or candidate evidence items, including module electrical values, dimensions, connector data, lead lengths, installation class and every input-to-MPPT relationship.",
     "The generic conductor resistance records remain candidates because exact source revisions are not encoded and verification is incomplete.",
