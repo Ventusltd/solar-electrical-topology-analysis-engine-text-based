@@ -1,0 +1,249 @@
+name: B026-06 Evidence Seal Generator
+
+on:
+  push:
+    branches:
+      - agent/b026-06-evidence-generator
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out clean merged B026-06 head
+        uses: actions/checkout@v4
+        with:
+          ref: 6dcb35bf94f6dff83b19e55c64017426f2f9578d
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install focused test runner
+        run: python -m pip install pytest
+
+      - name: Generate exact plan, ledger and receipt
+        env:
+          PYTHONPATH: src:.
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import subprocess
+          import time
+
+          root = Path.cwd()
+          plan_path = root / "build-plans/build-026-continuity-and-model-repair.json"
+          ledger_path = root / "docs/build-ledger/202608-continuity-and-model-repair.md"
+          receipt_path = root / "evidence/build-026/B026-06.json"
+
+          plan = json.loads(plan_path.read_text(encoding="utf-8"))
+          assert plan["next_unit"] == "B026-06"
+          unit = next(item for item in plan["units"] if item["id"] == "B026-06")
+          assert unit["build_pass"]["status"] == "planned"
+          assert unit["test_pass"]["status"] == "planned"
+
+          plan["next_unit"] = "B026-07"
+          unit["build_pass"]["status"] = "passed"
+          unit["build_pass"]["evidence"] = "evidence/build-026/B026-06.json"
+          unit["test_pass"]["status"] = "passed"
+          unit["test_pass"]["evidence"] = "evidence/build-026/B026-06.json"
+          plan_path.write_text(
+              json.dumps(plan, indent=2, ensure_ascii=False) + "\n",
+              encoding="utf-8",
+          )
+
+          ledger = ledger_path.read_text(encoding="utf-8")
+          heading = "### B026-06 — Reconcile programme-state and current Trueself"
+          assert heading not in ledger
+          entry = r'''
+          ### B026-06 — Reconcile programme-state and current Trueself
+
+          | Field | Evidence |
+          |---|---|
+          | Origin head authenticated | `ab87f9e1d1da098df8a6614ad64892f65d7c75ff` |
+          | Product Owner designation applied | `docs/trueself/202608011610-the-demonstration-exists-the-ledger-does-not-trueself-claude.md` |
+          | Bounded witness retained | The 17:16 Claude architecture study remains research input and was not promoted into machine authority |
+          | Declared build scope | Change only `current_build`, `current_trueself` and `next_single_goal`; regenerate deterministic public projections and make TS-005 handoff tests transition-safe |
+          | BUILD PASS | PASS — five-file branch assembled in a 48-second repository commit window, from `9dc6cd53` at 00:27:36 UTC to `60f88841` at 00:28:24 UTC |
+          | Production files changed | `programme-state.json`, `README.md`, `progress-dashboard.html`, `tests/test_programme_state.py`, `tests/test_ts005_handoff.py` |
+          | Programme-state boundary | Exactly three fields changed; TS-005 validation, capabilities, limitations, equipment values, active gate and all unrelated fields were preserved |
+          | Test ID | `b026_programme_state` |
+          | Focused local test | `python -m pytest -q tests/test_ts005_handoff.py tests/test_programme_state.py`: 8 passed; drift check passed; combined measured time 0.260 seconds |
+          | TEST PASS | PASS — local focused gate and full repository-controlled validation passed |
+          | Workflow evidence | PR 75; run `30725279427`; artifact `8826122809`; merge-test SHA `373f7c723556102b92acc3f407bbfbcf4361997a`; artifact digest `sha256:3bac1162558765db65643af1578df6ea5921ee09d890e43091fda37d2dd2c2a4` |
+          | Build merge | `6dcb35bf94f6dff83b19e55c64017426f2f9578d` |
+          | Validation result | Capsule links PASS; programme-state and generated-output drift PASS; 377 Python tests and all declared V8, V9, V10/Studio and clean-wheel gates PASS |
+          | Origin movement during unit | No |
+          | Machine receipt | `evidence/build-026/B026-06.json` |
+          | Next permitted unit | `B026-07` only |
+
+          The Build 026 programme is now machine-active. The completed TS-005 closure remains historical evidence rather than the current Trueself pointer.
+          '''
+          entry = "\n".join(line[10:] if line.startswith("          ") else line for line in entry.splitlines()).strip()
+          ledger_path.write_text(ledger.rstrip() + "\n\n" + entry + "\n", encoding="utf-8")
+
+          pytest_started = time.perf_counter()
+          pytest_run = subprocess.run(
+              [
+                  "python",
+                  "-m",
+                  "pytest",
+                  "-q",
+                  "tests/test_ts005_handoff.py",
+                  "tests/test_programme_state.py",
+              ],
+              cwd=root,
+              check=False,
+              text=True,
+              capture_output=True,
+              env=os.environ.copy(),
+          )
+          pytest_seconds = round(time.perf_counter() - pytest_started, 3)
+          if pytest_run.returncode != 0:
+              raise SystemExit(pytest_run.stdout + "\n" + pytest_run.stderr)
+
+          drift_started = time.perf_counter()
+          drift_run = subprocess.run(
+              ["python", "scripts/sync_programme_state.py", "--check"],
+              cwd=root,
+              check=False,
+              text=True,
+              capture_output=True,
+              env=os.environ.copy(),
+          )
+          drift_seconds = round(time.perf_counter() - drift_started, 3)
+          if drift_run.returncode != 0:
+              raise SystemExit(drift_run.stdout + "\n" + drift_run.stderr)
+
+          receipt = {
+              "schema_version": "globalgrid2050.solar-dc.build-026-receipt.v1",
+              "programme_id": "build-026-continuity-and-model-repair-20260801",
+              "unit_id": "B026-06",
+              "ordinal": 6,
+              "title": "Reconcile programme-state and current Trueself",
+              "mode": "build",
+              "origin": {
+                  "head_sha": "ab87f9e1d1da098df8a6614ad64892f65d7c75ff",
+                  "commit_date_utc": "2026-08-01T21:23:27Z",
+                  "commit_date_europe_london": "2026-08-01T22:23:27+01:00",
+                  "commit_message": "evidence: complete B026-05 reversible-work rehearsal",
+              },
+              "product_owner_designation": {
+                  "current_trueself": "docs/trueself/202608011610-the-demonstration-exists-the-ledger-does-not-trueself-claude.md",
+                  "bounded_witness_not_promoted": "202608011716 Claude architecture study",
+              },
+              "build_pass": {
+                  "status": "passed",
+                  "elapsed_seconds": 48,
+                  "elapsed_basis": "repository commit window between first four-file build commit and regenerated README commit",
+                  "branch": "agent/b026-06-programme-state",
+                  "branch_commits": [
+                      "9dc6cd53a6247c49806dd120f38484985a16f429",
+                      "60f8884121f208cb1093486111d676c09b0600b5",
+                  ],
+                  "changed_files": [
+                      "programme-state.json",
+                      "README.md",
+                      "progress-dashboard.html",
+                      "tests/test_programme_state.py",
+                      "tests/test_ts005_handoff.py",
+                  ],
+                  "programme_state_changed_fields": [
+                      "current_build",
+                      "current_trueself",
+                      "next_single_goal",
+                  ],
+                  "programme_state_preserved_fields": "all other fields",
+              },
+              "test_pass": {
+                  "status": "passed",
+                  "test_id": "b026_programme_state",
+                  "original_local": {
+                      "passed_tests": 8,
+                      "failed_tests": 0,
+                      "pytest_seconds": 0.223,
+                      "drift_check_seconds": 0.037,
+                      "elapsed_seconds": 0.260,
+                  },
+                  "generator_revalidation": {
+                      "pytest_seconds": pytest_seconds,
+                      "drift_check_seconds": drift_seconds,
+                      "pytest_output": pytest_run.stdout.strip(),
+                      "drift_output": drift_run.stdout.strip(),
+                  },
+                  "ci": {
+                      "workflow": "V10 Engine Validation",
+                      "pull_request": 75,
+                      "run_id": 30725279427,
+                      "artifact_id": 8826122809,
+                      "merge_test_sha": "373f7c723556102b92acc3f407bbfbcf4361997a",
+                      "artifact_digest": "sha256:3bac1162558765db65643af1578df6ea5921ee09d890e43091fda37d2dd2c2a4",
+                      "result": "passed",
+                  },
+              },
+              "merged_build_commit": "6dcb35bf94f6dff83b19e55c64017426f2f9578d",
+              "acceptance": {
+                  "prose_and_machine_authority_agree": True,
+                  "exactly_one_active_tranche": True,
+                  "unrelated_programme_state_fields_changed": False,
+                  "ts005_historical_closure_preserved": True,
+              },
+              "origin_moved_during_unit": False,
+              "next_permitted_unit": "B026-07",
+          }
+          receipt_path.parent.mkdir(parents=True, exist_ok=True)
+          receipt_path.write_text(
+              json.dumps(receipt, indent=2, ensure_ascii=False) + "\n",
+              encoding="utf-8",
+          )
+
+          print(json.dumps({
+              "plan_sha256": hashlib.sha256(plan_path.read_bytes()).hexdigest(),
+              "ledger_sha256": hashlib.sha256(ledger_path.read_bytes()).hexdigest(),
+              "receipt_sha256": hashlib.sha256(receipt_path.read_bytes()).hexdigest(),
+              "pytest_seconds": pytest_seconds,
+              "drift_seconds": drift_seconds,
+          }, indent=2))
+          PY
+
+      - name: Remove test caches and enforce exact three-file scope
+        run: |
+          rm -rf .pytest_cache
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          expected = {
+              "build-plans/build-026-continuity-and-model-repair.json",
+              "docs/build-ledger/202608-continuity-and-model-repair.md",
+              "evidence/build-026/B026-06.json",
+          }
+          status = subprocess.check_output(
+              ["git", "status", "--porcelain"], text=True
+          ).splitlines()
+          changed = {line[3:] for line in status if line.strip()}
+          if changed != expected:
+              raise SystemExit(f"unexpected changed files: {sorted(changed)}")
+          print("exact three-file evidence scope confirmed")
+          PY
+
+      - name: Commit clean evidence branch
+        run: |
+          git config user.name "Ventus Build 026 Evidence Worker"
+          git config user.email "actions@users.noreply.github.com"
+          git checkout -B agent/b026-06-evidence
+          git add build-plans/build-026-continuity-and-model-repair.json \
+            docs/build-ledger/202608-continuity-and-model-repair.md \
+            evidence/build-026/B026-06.json
+          git commit -m "evidence: seal B026-06 programme-state reconciliation"
+          git push --force origin HEAD:refs/heads/agent/b026-06-evidence
