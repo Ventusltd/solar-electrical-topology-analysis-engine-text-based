@@ -1,0 +1,3 @@
+Validation-only marker for the B026-06 evidence seal.
+The clean merge candidate is agent/b026-06-evidence.
+Do not merge this marker.
