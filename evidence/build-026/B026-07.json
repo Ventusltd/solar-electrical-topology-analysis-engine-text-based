@@ -38,9 +38,16 @@
     "test_id": "b026_gitignore",
     "focused_gate": {
       "test_file": "tests/test_zzz_b026_gitignore.py",
-      "cases": 13,
+      "case_breakdown": {
+        "generated_path_checks": 11,
+        "tracked_file_integrity_checks": 1,
+        "clean_tree_checks": 1,
+        "total_collected_tests": 13
+      },
       "tracked_files_ignored": 0,
-      "repository_status_after_python_setup": "clean"
+      "repository_status_after_python_setup": "clean",
+      "evidence_source": "PR 78 GitHub Actions execution artefact",
+      "reexecuted_during_receipt_review": false
     },
     "full_envelope": {
       "elapsed_seconds_sum": 100.598,
@@ -65,7 +72,9 @@
       "clean_wheel": {
         "passed": true,
         "elapsed_seconds": 12.516
-      }
+      },
+      "evidence_source": "PR 78 GitHub Actions execution artefact",
+      "reexecuted_during_receipt_review": false
     },
     "ci": {
       "workflow": "V10 Engine Validation",
@@ -75,6 +84,18 @@
       "merge_test_sha": "d9c3e1fbff0f29e231763218a9196ca3ad4f793c",
       "artifact_digest": "sha256:22dd20c85918ee01b1ff021482e0275264190720e12b2303c75ca6b588104ca5",
       "result": "passed"
+    },
+    "receipt_review": {
+      "status": "verified",
+      "method": "manual repository-grounded comparison",
+      "verified_against": [
+        "PR 78 metadata and merged diff",
+        "workflow run 30750263458 artefact metadata",
+        "downloaded V10_VALIDATION_LATEST.json execution envelope",
+        "tests/test_zzz_b026_gitignore.py at merged commit 744d85e22fc2b505a535e40e376b0d6f2a101f76"
+      ],
+      "discrepancies_found": 0,
+      "fresh_execution_performed": false
     }
   },
   "merged_build_commit": "744d85e22fc2b505a535e40e376b0d6f2a101f76",
