@@ -37,11 +37,11 @@ def test_programme_state_schema_arithmetic_and_capability_boundaries() -> None:
         "inverter_apparent_power_kva": 352,
         "dc_ac_nameplate_ratio": 1.35,
     }
-    assert state["current_build"] == "Build 025.5D1 / TS-005"
+    assert state["current_build"] == "Build 026 — Continuity and model repair"
     assert state["active_gate"] == "TS-005 — Complete"
-    assert state["next_single_goal"] == "Define the next controlled programme"
+    assert state["next_single_goal"] == "B026-07 — Deliberate root gitignore"
     assert state["current_trueself"] == (
-        "docs/trueself/20260801-ts-005-authoritative-slice-closure.md"
+        "docs/trueself/202608011610-the-demonstration-exists-the-ledger-does-not-trueself-claude.md"
     )
     assert state["validation"]["suites"][0] == {
         "name": "Python",
