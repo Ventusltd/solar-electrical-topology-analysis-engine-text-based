@@ -1,0 +1,3 @@
+Validation-only marker for the latest B026-06 evidence seal.
+Clean evidence commit: 94aa463cda91db9f7c9782d1e0895ea8495a7770
+Do not merge this marker.
