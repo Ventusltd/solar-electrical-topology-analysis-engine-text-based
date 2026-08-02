@@ -1,0 +1,112 @@
+{
+  "schema_version": "globalgrid2050.solar-dc.build-026-receipt.v1",
+  "programme_id": "build-026-continuity-and-model-repair-20260801",
+  "unit_id": "B026-07",
+  "ordinal": 7,
+  "title": "Deliberate root gitignore",
+  "mode": "build",
+  "origin": {
+    "head_sha": "deef5545996dc068e054e6cb14204d30541ffe61",
+    "commit_date_utc": "2026-08-02T13:17:32Z",
+    "commit_date_europe_london": "2026-08-02T14:17:32+01:00",
+    "commit_message": "license: adopt GPL-3.0"
+  },
+  "plan": {
+    "path": "build-plans/build-026-continuity-and-model-repair.json",
+    "starting_blob_sha1": "06252d90e15f3d04edcf2503e7d658d5eabe615e"
+  },
+  "build_pass": {
+    "status": "passed",
+    "elapsed_seconds": 42,
+    "elapsed_basis": "repository commit window from first build commit at 13:34:37 UTC to final branch commit at 13:35:19 UTC",
+    "branch": "build/07-deliberate-gitignore",
+    "branch_commits": [
+      "6f32324ee47cbf858b9b8642d9b461f3ce1fdaee",
+      "06e45cf94d2c34083e93379430b198509edd0da7",
+      "3df03958a76a14e7692997f4d07f391eb456f53e"
+    ],
+    "changed_files": [
+      ".gitignore",
+      "tests/test_zzz_b026_gitignore.py",
+      ".github/workflows/v10-validation.yml"
+    ],
+    "scope": "classify generated Python, Node, packaging, cache, editor, operating-system and local candidate artefacts; add a conservative root ignore file and its durable validation gate",
+    "production_engineering_files_changed": []
+  },
+  "test_pass": {
+    "status": "passed",
+    "test_id": "b026_gitignore",
+    "focused_gate": {
+      "test_file": "tests/test_zzz_b026_gitignore.py",
+      "case_breakdown": {
+        "generated_path_checks": 11,
+        "tracked_file_integrity_checks": 1,
+        "clean_tree_checks": 1,
+        "total_collected_tests": 13
+      },
+      "tracked_files_ignored": 0,
+      "repository_status_after_python_setup": "clean",
+      "evidence_source": "PR 78 GitHub Actions execution artefact",
+      "reexecuted_during_receipt_review": false
+    },
+    "full_envelope": {
+      "elapsed_seconds_sum": 100.598,
+      "python": {
+        "passed": 390,
+        "failed": 0,
+        "elapsed_seconds": 87.538
+      },
+      "v8": {
+        "passed": true,
+        "elapsed_seconds": 0.079
+      },
+      "v9": {
+        "passed": 10,
+        "failed": 0,
+        "elapsed_seconds": 0.041
+      },
+      "v10_javascript": {
+        "passed": true,
+        "elapsed_seconds": 0.424
+      },
+      "clean_wheel": {
+        "passed": true,
+        "elapsed_seconds": 12.516
+      },
+      "evidence_source": "PR 78 GitHub Actions execution artefact",
+      "reexecuted_during_receipt_review": false
+    },
+    "ci": {
+      "workflow": "V10 Engine Validation",
+      "pull_request": 78,
+      "run_id": 30750263458,
+      "artifact_id": 8834225463,
+      "merge_test_sha": "d9c3e1fbff0f29e231763218a9196ca3ad4f793c",
+      "artifact_digest": "sha256:22dd20c85918ee01b1ff021482e0275264190720e12b2303c75ca6b588104ca5",
+      "result": "passed"
+    },
+    "receipt_review": {
+      "status": "verified",
+      "method": "manual repository-grounded comparison",
+      "verified_against": [
+        "PR 78 metadata and merged diff",
+        "workflow run 30750263458 artefact metadata",
+        "downloaded V10_VALIDATION_LATEST.json execution envelope",
+        "tests/test_zzz_b026_gitignore.py at merged commit 744d85e22fc2b505a535e40e376b0d6f2a101f76"
+      ],
+      "discrepancies_found": 0,
+      "fresh_execution_performed": false
+    }
+  },
+  "merged_build_commit": "744d85e22fc2b505a535e40e376b0d6f2a101f76",
+  "acceptance": {
+    "tracked_files_removed": false,
+    "tracked_engineering_files_ignored": 0,
+    "generated_candidates_classified": true,
+    "python_validation_tree_clean": true,
+    "untracking_deferred": true,
+    "prohibited_engineering_surfaces_changed": false
+  },
+  "origin_moved_during_unit": false,
+  "next_permitted_unit": "B026-08"
+}
