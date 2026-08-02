@@ -190,3 +190,26 @@ The isolated wheel environments were temporary and removed after execution. The 
 | Next permitted unit | `B026-06` only, subject to Product Owner designation of the current Trueself |
 
 The throwaway edit, branch and patch were not published to production. Only the machine plan, this append-only ledger and the B026-05 receipt may enter `main`.
+
+### B026-06 — Reconcile programme-state and current Trueself
+
+| Field | Evidence |
+|---|---|
+| Origin head authenticated | `ab87f9e1d1da098df8a6614ad64892f65d7c75ff` |
+| Product Owner designation applied | `docs/trueself/202608011610-the-demonstration-exists-the-ledger-does-not-trueself-claude.md` |
+| Bounded witness retained | The 17:16 Claude architecture study remains research input and was not promoted into machine authority |
+| Declared build scope | Change only `current_build`, `current_trueself` and `next_single_goal`; regenerate deterministic public projections and make TS-005 handoff tests transition-safe |
+| BUILD PASS | PASS — five-file branch assembled in a 48-second repository commit window, from `9dc6cd53` at 00:27:36 UTC to `60f88841` at 00:28:24 UTC |
+| Production files changed | `programme-state.json`, `README.md`, `progress-dashboard.html`, `tests/test_programme_state.py`, `tests/test_ts005_handoff.py` |
+| Programme-state boundary | Exactly three fields changed; TS-005 validation, capabilities, limitations, equipment values, active gate and all unrelated fields were preserved |
+| Test ID | `b026_programme_state` |
+| Focused local test | `python -m pytest -q tests/test_ts005_handoff.py tests/test_programme_state.py`: 8 passed; drift check passed; combined measured time 0.260 seconds |
+| TEST PASS | PASS — local focused gate and full repository-controlled validation passed |
+| Workflow evidence | PR 75; run `30725279427`; artifact `8826122809`; merge-test SHA `373f7c723556102b92acc3f407bbfbcf4361997a`; artifact digest `sha256:3bac1162558765db65643af1578df6ea5921ee09d890e43091fda37d2dd2c2a4` |
+| Build merge | `6dcb35bf94f6dff83b19e55c64017426f2f9578d` |
+| Validation result | Capsule links PASS; programme-state and generated-output drift PASS; 377 Python tests and all declared V8, V9, V10/Studio and clean-wheel gates PASS |
+| Origin movement during unit | No |
+| Machine receipt | `evidence/build-026/B026-06.json` |
+| Next permitted unit | `B026-07` only |
+
+The Build 026 programme is now machine-active. The completed TS-005 closure remains historical evidence rather than the current Trueself pointer.
