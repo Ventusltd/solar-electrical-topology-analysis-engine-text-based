@@ -6,7 +6,7 @@
   "last_fully_validated_engineering_commit": "747381f6c3c3325a680a80a17e516268541c8548",
   "programme_status": "active",
   "active_unit": null,
-  "next_unit": "B026-06",
+  "next_unit": "B026-07",
   "quantum_spawn": "docs/quantum-spawn/202608011536-build-026-forty-pass-small-step-law.md",
   "ledger": "docs/build-ledger/202608-continuity-and-model-repair.md",
   "compute_limit_seconds_per_pass": 300,
@@ -145,15 +145,15 @@
       "test_scope": "Run TS-005 handoff tests and programme-state drift checks.",
       "acceptance": "Prose and machine authority agree, exactly one active tranche exists and no unrelated field changes.",
       "build_pass": {
-        "status": "planned",
+        "status": "passed",
         "max_compute_seconds": 300,
-        "evidence": null
+        "evidence": "evidence/build-026/B026-06.json"
       },
       "test_pass": {
-        "status": "planned",
+        "status": "passed",
         "max_compute_seconds": 300,
         "test_id": "b026_programme_state",
-        "evidence": null
+        "evidence": "evidence/build-026/B026-06.json"
       }
     },
     {
