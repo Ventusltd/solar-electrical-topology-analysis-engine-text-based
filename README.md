@@ -7,12 +7,12 @@ This block is generated from [`programme-state.json`](programme-state.json). CI 
 
 | Field | Current authority |
 |---|---|
-| Build | **Build 025.5D1 / TS-005** |
+| Build | **Build 026 — Continuity and model repair** |
 | Stage | First end-to-end authoritative Studio slice completed |
 | Package | `0.4.0` |
 | Last validated engineering commit | `747381f6c3c3325a680a80a17e516268541c8548` |
 | Active gate | **TS-005 — Complete** |
-| Next single goal | **Define the next controlled programme** |
+| Next single goal | **B026-07 — Deliberate root gitignore** |
 
 ### First complete product boundary
 
