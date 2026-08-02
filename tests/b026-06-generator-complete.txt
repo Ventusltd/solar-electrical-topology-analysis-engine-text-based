@@ -1,0 +1,4 @@
+B026-06 evidence generator completed.
+Clean evidence branch: agent/b026-06-evidence
+Base head: 6dcb35bf94f6dff83b19e55c64017426f2f9578d
+Merge policy: do not merge this generator branch.
