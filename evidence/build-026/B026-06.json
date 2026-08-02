@@ -1,0 +1,76 @@
+{
+  "schema_version": "globalgrid2050.solar-dc.build-026-receipt.v1",
+  "programme_id": "build-026-continuity-and-model-repair-20260801",
+  "unit_id": "B026-06",
+  "ordinal": 6,
+  "title": "Reconcile programme-state and current Trueself",
+  "mode": "build",
+  "origin": {
+    "head_sha": "ab87f9e1d1da098df8a6614ad64892f65d7c75ff",
+    "commit_date_utc": "2026-08-01T21:23:27Z",
+    "commit_date_europe_london": "2026-08-01T22:23:27+01:00",
+    "commit_message": "evidence: complete B026-05 reversible-work rehearsal"
+  },
+  "product_owner_designation": {
+    "current_trueself": "docs/trueself/202608011610-the-demonstration-exists-the-ledger-does-not-trueself-claude.md",
+    "bounded_witness_not_promoted": "202608011716 Claude architecture study"
+  },
+  "build_pass": {
+    "status": "passed",
+    "elapsed_seconds": 48,
+    "elapsed_basis": "repository commit window between first four-file build commit and regenerated README commit",
+    "branch": "agent/b026-06-programme-state",
+    "branch_commits": [
+      "9dc6cd53a6247c49806dd120f38484985a16f429",
+      "60f8884121f208cb1093486111d676c09b0600b5"
+    ],
+    "changed_files": [
+      "programme-state.json",
+      "README.md",
+      "progress-dashboard.html",
+      "tests/test_programme_state.py",
+      "tests/test_ts005_handoff.py"
+    ],
+    "programme_state_changed_fields": [
+      "current_build",
+      "current_trueself",
+      "next_single_goal"
+    ],
+    "programme_state_preserved_fields": "all other fields"
+  },
+  "test_pass": {
+    "status": "passed",
+    "test_id": "b026_programme_state",
+    "original_local": {
+      "passed_tests": 8,
+      "failed_tests": 0,
+      "pytest_seconds": 0.223,
+      "drift_check_seconds": 0.037,
+      "elapsed_seconds": 0.26
+    },
+    "generator_revalidation": {
+      "pytest_seconds": 0.599,
+      "drift_check_seconds": 0.046,
+      "pytest_output": "........                                                                 [100%]\n8 passed in 0.10s",
+      "drift_output": "programme state validated; generated outputs are in sync"
+    },
+    "ci": {
+      "workflow": "V10 Engine Validation",
+      "pull_request": 75,
+      "run_id": 30725279427,
+      "artifact_id": 8826122809,
+      "merge_test_sha": "373f7c723556102b92acc3f407bbfbcf4361997a",
+      "artifact_digest": "sha256:3bac1162558765db65643af1578df6ea5921ee09d890e43091fda37d2dd2c2a4",
+      "result": "passed"
+    }
+  },
+  "merged_build_commit": "6dcb35bf94f6dff83b19e55c64017426f2f9578d",
+  "acceptance": {
+    "prose_and_machine_authority_agree": true,
+    "exactly_one_active_tranche": true,
+    "unrelated_programme_state_fields_changed": false,
+    "ts005_historical_closure_preserved": true
+  },
+  "origin_moved_during_unit": false,
+  "next_permitted_unit": "B026-07"
+}
